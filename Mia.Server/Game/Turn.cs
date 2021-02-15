@@ -5,15 +5,9 @@ namespace Mia.Server
 {
     public class Turn
     {
-        private Guid token;
-        private int rollCount;
         private Player player;
+        private int rollCount;
         private bool hasAnnounced;
-
-        public Guid Token
-        {
-            get { return token; }
-        }
 
         public int RollCount
         {
@@ -28,27 +22,17 @@ namespace Mia.Server
         public bool HasAnnounced
         {
             get { return hasAnnounced; }
+            set { hasAnnounced = value; }
         }
 
         public Turn(Player player)
         {
             this.player = player;
-            token = Guid.NewGuid();
         }
 
         public void AddRollCount()
         {
             rollCount++;
-        }
-
-        public bool IsValid(Player player, Guid token)
-        {
-            return (this.player == player && this.token == token);
-        }
-
-        public void Announce()
-        {
-            hasAnnounced = true;
         }
     }
 }

@@ -17,7 +17,7 @@ namespace Mia.Server
     /// <summary>
     /// This class handle all the game rules without messaging and game rounds.
     /// </summary>
-    public class MiaGameServer
+    public class MiaGameManager
     {
         #region Members
 
@@ -41,7 +41,7 @@ namespace Mia.Server
 
         #region Constructor
 
-        public MiaGameServer(MessageServer messageServer)
+        public MiaGameManager(MessageServer messageServer)
         {
             messageServer.MiaServerInstance = this;
             this.messageServer = messageServer;
@@ -103,13 +103,13 @@ namespace Mia.Server
         {
             if (IsPlayerNameNotValid(playerName))
             {
-                string commandText = ServerCommand.REJECTED + ";" + ServerCommandArguments.INVALID_NAME;
+                string commandText = ServerCommand.REJECTED + ";" + ServerCommandFailureReason.INVALID_NAME;
                 messageServer.SendInfo(commandText, udpState);
                 Logger.Log(commandText);
             }
             else if (IsPlayerNameTakenByAnotherPlayer(playerName))
             {
-                messageServer.SendInfo(ServerCommand.REJECTED + ";" + ServerCommandArguments.NAME_ALREADY_TAKEN, udpState);
+                messageServer.SendInfo(ServerCommand.REJECTED + ";" + ServerCommandFailureReason.NAME_ALREADY_TAKEN, udpState);
             }
             else
             {
@@ -155,7 +155,7 @@ namespace Mia.Server
 
         public void HandleReceivedRawMessage(string message, UdpState udpState)
         {
-            Logger.Log(string.Format("Received Message: \"{0}\" from {1}:{2}", message, udpState.EndPoint.Address, udpState.EndPoint.Port));
+            //Logger.Log(string.Format("Received Message: \"{0}\" from {1}:{2}", message, udpState.EndPoint.Address, udpState.EndPoint.Port));
 
             string[] messageParts = message.Split(';');
             string command = messageParts[0];
@@ -192,7 +192,7 @@ namespace Mia.Server
 
                     if (Guid.TryParse(args[0], out senderToken))
                     {
-                        if (senderToken == currentGame.Token)
+                        if (senderToken == currentGame.GameToken)
                         {
                             currentGame.Players.Add(player);
                         }
@@ -209,7 +209,7 @@ namespace Mia.Server
 
                     if (Guid.TryParse(args[0], out senderToken))
                     {
-                        if (currentGame.Turn.Token == senderToken)
+                        if (currentGame.GameToken == senderToken)
                         {
                             switch (command)
                             {
@@ -235,7 +235,7 @@ namespace Mia.Server
                     bool isValidCommand = false;
                     if (Guid.TryParse(args[1], out senderToken))
                     {
-                        if (currentGame.Turn.Token == senderToken && currentGame.Turn.RollCount > 0)
+                        if (currentGame.GameToken == senderToken && currentGame.Turn.RollCount > 0)
                         {
                             string diceValue = args[0];
                             int diceOne, diceTwo;

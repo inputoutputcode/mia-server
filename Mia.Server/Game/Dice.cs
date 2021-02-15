@@ -15,7 +15,7 @@ namespace Mia.Server
 
         #region Properties
 
-        public int DieOne
+        public int DiceOne
         { 
             get 
             {
@@ -23,7 +23,7 @@ namespace Mia.Server
             }
         }
 
-        public int DieTwo
+        public int DiceTwo
         {
             get
             {
@@ -35,7 +35,7 @@ namespace Mia.Server
         {
             get
             {
-                return DieOne == DieTwo;
+                return DiceOne == DiceTwo;
             }
         }
 
@@ -43,7 +43,7 @@ namespace Mia.Server
         {
             get
             {
-                return DieOne == 2 && DieTwo == 1;
+                return DiceOne == 2 && DiceTwo == 1;
             }
         }
 
@@ -70,12 +70,12 @@ namespace Mia.Server
             if (otherDice == null)
                 return false;
 
-            return DieOne == otherDice.DieOne && DieTwo == otherDice.DieTwo;
+            return DiceOne == otherDice.DiceOne && DiceTwo == otherDice.DiceTwo;
         }
 
         public int ValueForOrdering()
         {
-            int value = 10 * DieOne + DieTwo;
+            int value = 10 * DiceOne + DiceTwo;
             value += IsDouble ? 100 : 0;
             value += IsMia ? 200 : 0;
 
@@ -84,7 +84,7 @@ namespace Mia.Server
 
         public bool IsHigherThan(Dice otherDice)
         {
-            return ValueForOrdering() > otherDice.ValueForOrdering();
+            return ValueForOrdering() >= otherDice.ValueForOrdering();
         }
 
         public Dice Create(int dieOne, int dieTwo)
@@ -106,7 +106,7 @@ namespace Mia.Server
 
         public override string ToString()
         {
-            return DieOne.ToString() + DieTwo;
+            return DiceOne.ToString() + DiceTwo;
         }
 
         #endregion Methods

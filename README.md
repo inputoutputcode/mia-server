@@ -14,7 +14,7 @@ Start reading the [Game Rules](GameRules.md).
 
 ## Bot Starter Kit
 
-All starter bots know the basics like REGISTER, CREATE_GAME, JOIN_GAME, ROLL, ANNOUNCE. The rest is your job. Basically there is no limit for your creativity, strategies like cheating, data science, practical approaches, logging for better analysis, everything is allowed. Have fun!
+All starter bots know the basics like REGISTER, JOIN, ROLL, ANNOUNCE. The rest is your job. Basically there is no limit for your creativity, strategies like cheating, data science, practical approaches, logging for better analysis, everything is allowed. Have fun!
 
 - [Python](Clients/python-simple-bot/)
 - [JavaScript](Clients/javascript-simple-bot/)
@@ -23,7 +23,9 @@ All starter bots know the basics like REGISTER, CREATE_GAME, JOIN_GAME, ROLL, AN
 - [C#](Clients/csharp-simple-bot/)
 - [Go](Clients/go-simple-bot/)
  
-In case you are familiar with UDP and another programming language feel free to implement your own bot, it's a fairly simple protocol. Check the [Game Rules](GameRules.md).
+In case you are familiar with UDP and another programming language feel free to implement your own bot, it's a fairly simple protocol. 
+
+Check the [Server Protocol](ServerProtocol.md).
 
 ## How to win the high score?
 

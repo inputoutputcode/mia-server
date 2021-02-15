@@ -5,7 +5,7 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
-using System.Runtime.CompilerServices;
+using System.Text.RegularExpressions;
 
 namespace Mia.Bot.Starter
 {
@@ -23,7 +23,7 @@ namespace Mia.Bot.Starter
             var localIpAddress = (from address in hostEntry.AddressList where address.AddressFamily == AddressFamily.InterNetwork select address.ToString()).FirstOrDefault();
             var localEndPoint = new IPEndPoint(IPAddress.Parse(localIpAddress), int.Parse(ConfigurationManager.AppSettings["LocalPort"]));
 
-            Thread.Sleep(3000);
+            Thread.Sleep(2000);
 
             var udpClient = new UdpClient(localEndPoint);
             udpClient.Connect(serverEndPoint);
@@ -37,7 +37,7 @@ namespace Mia.Bot.Starter
                 EndPoint = serverEndPoint,
                 UdpClient = udpClient
             };
-            udpClient.BeginReceive(new AsyncCallback(ReceiveCallBack), udpStateServer);
+            udpStateServer.UdpClient.BeginReceive(new AsyncCallback(ReceiveCallBack), udpStateServer);
         }
 
         public void SendCommand(string message, UdpClient udpClient)
@@ -45,7 +45,7 @@ namespace Mia.Bot.Starter
             byte[] messageBytes = Encoding.UTF8.GetBytes(message);
             udpClient.Send(messageBytes, messageBytes.Length);
 
-            Console.WriteLine(message);
+            WriteLog(message);
         }
 
         public void ReceiveCallBack(IAsyncResult result)
@@ -56,6 +56,9 @@ namespace Mia.Bot.Starter
             byte[] receivedBytes = client.EndReceive(result, ref endPoint);
             client.BeginReceive(new AsyncCallback(ReceiveCallBack), udpStateServer);
             string receivedValue = Encoding.UTF8.GetString(receivedBytes);
+
+            WriteLog(receivedValue);
+
             string[] messageParts = receivedValue.Split(';');
             string commandText = string.Empty;
             string token = string.Empty;
@@ -85,8 +88,12 @@ namespace Mia.Bot.Starter
                     SendCommand(commandText, client);
                     break;
             }
+        }
 
-            Console.WriteLine(receivedValue);
+        public void WriteLog(string message)
+        {
+            string filteredMessage = Regex.Replace(message, @"(\{){0,1}[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}(\}){0,1}", "", RegexOptions.IgnoreCase);
+            Console.WriteLine(message);
         }
     }
 }

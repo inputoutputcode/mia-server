@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 
@@ -8,6 +9,7 @@ using Mia.Server.Messaging;
 
 namespace Mia.Server
 {
+    [DebuggerDisplay("{" + nameof(GetDebuggerDisplay) + "(),nq}")]
     public class Player
     {
         #region Members
@@ -65,46 +67,9 @@ namespace Mia.Server
 
         #region Methods
 
-        public void HandleMessage(ClientCommand command, string[] args)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void SendMessage(ServerCommand command, string arguments)
-        {
-            string message = command.ToString() + ";#" + arguments;
-            
-            throw new NotImplementedException();
-        }
-
-        public void Registered()
-        {
-            SendMessage(ServerCommand.REGISTERED, string.Empty);
-        }
-
-        public void RegistrationRejected(ServerCommandArguments commandArguments)
-        {
-            SendMessage(ServerCommand.REJECTED, commandArguments.ToString());
-        }
-
         public void ChangeState(PlayerState state)
         {
             currentState = state;
-        }
-
-        public void WillJoinRound()
-        {
-            Guid tokenId = Guid.NewGuid();
-
-            UdpClient udpClient = new UdpClient();
-            //SendMessage(ServerCommand.ROUND_STARTED, 
-
-            //SendMessage(ServerCommand.ROUND_STARTING, tokenId.ToString());
-        }
-
-        public void RoundCanceled(ServerCommandArguments commandArguments)
-        {
-            throw new NotImplementedException();
         }
 
         public void YourTurn(Guid turnToken)
@@ -114,18 +79,11 @@ namespace Mia.Server
             messageServer.SendAndWaitForAnswer(command, turnToken, udpState);
         }
 
-        public void PlayerLost(Player[] losingPlayers, Command.FailureCommand failureCommand)
+        public string GetDebuggerDisplay()
         {
-            throw new NotImplementedException();
-        }
-
-        internal void CurrentScore(string scores)
-        {
-            throw new NotImplementedException();
+            return this.Name;
         }
 
         #endregion Methods
-
-
     }
 }

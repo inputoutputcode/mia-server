@@ -68,8 +68,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Game\Player.cs" />
     <Compile Include="Game\ScoreList.cs" />
-    <Compile Include="Game\MiaGameServer.cs" />
-    <Compile Include="Command\ServerCommandArguments.cs" />
+    <Compile Include="Game\MiaGameManager.cs" />
+    <Compile Include="Command\ServerCommandFailureReason.cs" />
     <Compile Include="Messaging\MessageServer.cs" />
     <Compile Include="Messaging\TimeOutTracker.cs" />
     <Compile Include="Game\Turn.cs" />

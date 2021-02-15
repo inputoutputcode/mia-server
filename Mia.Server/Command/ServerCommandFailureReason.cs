@@ -1,6 +1,6 @@
 ﻿namespace Mia.Server.Command
 {
-    public enum ServerCommandArguments
+    public enum ServerCommandFailureReason
     {
         None,
         NO_PLAYERS,

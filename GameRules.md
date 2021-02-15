@@ -1,79 +1,29 @@
-# Mia protocol
+# Game Rules
 
-## Preliminaries
-1. Client and server communicate via UDP (using UTF-8 encoded strings)
-1. Server opens a known port
-1. Clients register themselves as player and are -- from then on -- notified for each round
-1. Clients have to respond within in a narrow time frame (250 ms)
-1. Alternatively a client could register as a spectator. Spectators are not able to actively participate in the game. Yet they will receive all messages every other client would receive.
+## Play
+All players start with six lives. Usually the players use a die to keep track of their lives, counting down from 6 to 1 as they lose lives.
 
+The first player rolls the dice and keeps their value concealed from the other players in or under the container. The player then has three choices:
 
-## Registration
-1. client->server: REGISTER;name 
-1. client->server: REGISTER_SPECTATOR;name 
-1. client->server: JOIN_GAME;name
- 
-Valid names need to satisfy the following criteria:
-1. no whitespace
-1. no colons, semicolons, or commas
-1. up to 20 characters
+Tell the truth and announce what has been rolled.
+Lie and announce a greater value than that rolled.
+Lie and announce a lesser value.
+The concealed dice are then passed to the next player in a clockwise fashion. The receiving player now has two options:
 
-The server accepts the registration (server->client: REGISTERED) if the name is valid and either
-1. a new client registers for the first time, or
-1. an existing client re-registers from the same client IP as before (but possibly with a different port; see below).
+Believe the passer, roll the dice and pass it on, announcing a higher value—with or without looking at them. (For a poor liar it may be sensible to not look at the dice.)
+Call the passer a liar and look at the dice. If the dice show a lesser value than that announced, the passer loses a life and the receiving player starts a new round. However, if the dice show a greater or equal value, the current player loses a life and the next player starts a new round.
+Some players play with a third option: Pass the dice to the next player without rolling or looking at them, announcing the same or a higher value. This relieves the original passer of all responsibility. This choice rests on the assumption that the previous player announced a lesser value than they rolled, which may be a sensible choice if they want to get at a player further down the line.
 
-In all other cases, the server rejects the registration request (server->client: REJECTED).
+Note that each player must always announce a value greater than the previous value announced, unless she or he is passed a Mia in which case the round ends.
 
-After a successful registration, the server will send messages to the client using the IP and the port from which the registration message was sent.
+If Mia is announced, the next player has two choices:
 
-## Round start
-1. server->clients: ROUND_STARTING;token 
-1. client->server: JOIN_ROUND;token 
+They may give up without looking at the dice and lose one life.
+They may look at the dice. If it was a Mia, they lose two lives. If it wasn't, the previous player loses one life as usual.
+The first player to lose all of their lives loses the game.
 
-If at least one player participates:
-1. the server shuffles the participating players
-1. server->clients: ROUND_STARTED;roundnumber;playernames (where playernames is a ordered, comma separated list of all participating players. The lists order corresponds to how the round is going to be played.)
+## Scoring
+Unlike most dice games, the value of the roll is not the sum of the dice. Instead, the highest die is multiplied by ten and then added to the other die. So a 2 and a 1 is 21 and a 5 and 6 is 65. The highest roll is 21 which is called Mia, followed by the doubles from 66 to 11, and then all other rolls from 65 down to 31. Thus, the complete order of rolls (from highest to lowest) is 21 (Mia), 66, 55, 44, 33, 22, 11, 65, 64, 63, 62, 61, 54, 53, 52, 51, 43, 42, 41, 32, 31.
 
-Else:
-1. server->clients: ROUND_CANCELED;NO_PLAYERS (a new round is started immediately)
-Rounds with just one player are canceled right after their start: ROUND_CANCELED;ONLY_ONE_PLAYER
-
-## Turn actions
-In adherence to the previously announced order:
-1. server->client: YOUR_TURN;token 
-1. client->server: command;token (where command has to be either ROLL or SEE)
-
-On SEE:
-1. Server checks if last announced dice are valid and determines the losing players
-1. server->clients: PLAYER_WANTS_TO_SEE;name 
-1. server->clients: ACTUAL_DICE;dice 
-1. server->clients: PLAYER_LOST;name;reason 
-
-On ROLL:
-1. server->clients: PLAYER_ROLLS;name 
-1. server->client: ROLLED;dice;token 
-1. client->server: ANNOUNCE;dice;token 
-1. server->clients: ANNOUNCED;name;dice 
-
-Per turn there is a second ROLL allowed, in this case the server will not send the dice back to the player, and the player has to announce a dice. 
-
-When the server detects Mia with the first roll, the round ends, and the current player wins.
-1. server -> clients: PLAYER_LOST;names;reason (where names is a comma separated list)
-
-Whenever a players does not respond in time or does something wrong. The player will be excluded from the round.
-1. server->clients: PLAYER_LOST;name;reason 
-
-At the end of each round:
-1. server->clients: SCORE;playerpoints (where playerpoints is a comma separated list with entries in the form of name:points)
-
-## Reasons for losing a round
-1. SEE_BEFORE_FIRST_ROLL: Player wanted to SEE, but was first to act (no dice were announced before)
-1. LIED_ABOUT_MIA: Player announced Mia without actually having diced Mia
-1. ANNOUNCED_LOSING_DICE: Player announced dice that were lower than the previously announced ones
-1. DID_NOT_ANNOUNCE: Player did not announce (in time)
-1. DID_NOT_TAKE_TURN: Player did not announce turn (in time)
-1. INVALID_TURN: Player commanded an invalid turn
-1. SEE_FAILED: Player wanted to SEE, but previous player announced dice correctly
-1. CAUGHT_BLUFFING: Player announced higher dice than actually given and the next player wanted to SEE 
-1. MIA: Mia was announced
-
+## Strategy
+The appeal of Mia resides primarily in the potential it affords for bluffing. As with other games of bluff, this is partly a psychological challenge. It is important to know the other players and master the subtleties of more or less conscious interpersonal communication. A common strategy is to develop a "character". A player may, for instance pretend to be a truthful person, a notorious liar, a constantly lucky roller, or one that usually tries to get at players beyond the next player. This will make the actions of the other players more predictable, which will give the player an advantage.

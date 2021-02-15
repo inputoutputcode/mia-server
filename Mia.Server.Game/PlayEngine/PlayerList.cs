@@ -1,18 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Mia.Server.Game.Interface;
 
 
-namespace Mia.Server
+namespace Mia.Server.Game.PlayEngine
 {
     /// <summary>
     /// The class controls a registered list of players and spectators. 
     /// </summary>
-    public class PlayerList
+    internal class PlayerList : IPlayerList
     {
         #region Members
 
-        private List<Player> players;
+        private List<IPlayer> players;
         private int currentPlayerIndex = 0;
 
         #endregion Members
@@ -20,11 +21,11 @@ namespace Mia.Server
 
         #region Properties
 
-        public int Size
+        public int PlayerCount
         {
             get
             {
-                return RealPlayers.Count;
+                return ActivePlayers.Count;
             }
         }
 
@@ -32,7 +33,7 @@ namespace Mia.Server
         {
             get
             {
-                return Size == 0;
+                return PlayerCount == 0;
             }
         }
 
@@ -40,34 +41,14 @@ namespace Mia.Server
         {
             get
             {
-                return RealPlayers.Count > 0;
+                return ActivePlayers.Count > 0;
             }
         }
-
-        #endregion Properties
-
-
-        #region Constructor
-
-        public PlayerList()
-        { 
-            players = new List<Player>();
-        }
-
-        public PlayerList(List<Player> registeredPlayers)
-        {
-            players = registeredPlayers;
-        }
-
-        #endregion
-
-
-        #region Methods
 
         /// <summary>
         /// Get all players without spectators.
         /// </summary>
-        public List<Player> RealPlayers
+        public List<IPlayer> ActivePlayers
         {
             get
             {
@@ -78,7 +59,7 @@ namespace Mia.Server
         /// <summary>
         /// Get all players with the spectators.
         /// </summary>
-        public List<Player> AllPlayers
+        public List<IPlayer> RegisteredPlayers
         {
             get
             {
@@ -86,10 +67,32 @@ namespace Mia.Server
             }
         }
 
+        #endregion Properties
+
+
+        #region Constructor
+
+        public PlayerList()
+        {
+            players = new List<IPlayer>();
+        }
+
+        public PlayerList(List<IPlayer> registeredPlayers)
+        {
+            players = registeredPlayers;
+        }
+
+        #endregion
+
+
+        #region Methods
+
+
+
         /// <summary>
         /// Shake the order in player list.
         /// </summary>
-        public void Permute()
+        public void PermutePlayers()
         { 
             players = players.OrderBy(p => Guid.NewGuid()).ToList();
         }
@@ -98,7 +101,7 @@ namespace Mia.Server
         /// Add a new player.
         /// </summary>
         /// <param name="player"></param>
-        public void Add(Player player)
+        public void Add(IPlayer player)
         {
             if (players.Find(p => p.Name == player.Name) == null)
                 players.Add(player);
@@ -108,37 +111,49 @@ namespace Mia.Server
         /// Get the first player. Reset the current player index.
         /// </summary>
         /// <returns>Return null if Size = 0.</returns>
-        public Player FirstPlayer()
+        public IPlayer FirstPlayer()
         {
             if (HasPlayer)
             {
                 currentPlayerIndex = 0;
-                return RealPlayers[0];
+                return ActivePlayers[0];
             }
 
             return null;
+        }
+
+        public IPlayer PreviousPlayer()
+        {
+            int lastPlayerIndex;
+
+            if (currentPlayerIndex >= 0 && currentPlayerIndex < PlayerCount - 1)
+            {
+                lastPlayerIndex = currentPlayerIndex - 1;
+            }
+            else
+            {
+                lastPlayerIndex = PlayerCount - 1;
+            }
+
+            return players[lastPlayerIndex];
         }
 
         /// <summary>
         /// Get a tuple with players in the order: current player, last player.
         /// </summary>
         /// <returns></returns>
-        public CurrentPlayers NextPlayer()
+        public IPlayer NextPlayer()
         {
-            int lastPlayerIndex = -1;
-
-            if (currentPlayerIndex >= 0 && currentPlayerIndex < Size - 1)
+            if (currentPlayerIndex >= 0 && currentPlayerIndex < PlayerCount - 1)
             {
                 currentPlayerIndex++;
-                lastPlayerIndex = currentPlayerIndex - 1;
             }
             else
             {
                 currentPlayerIndex = 0;
-                lastPlayerIndex = Size - 1;
             }
 
-            return new CurrentPlayers() { Current = players[currentPlayerIndex], Last = players[lastPlayerIndex] };
+            return players[currentPlayerIndex];
         }
 
         #endregion Methods

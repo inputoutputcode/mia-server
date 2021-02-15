@@ -16,16 +16,17 @@ namespace Mia.Server
     {
         #region Members
 
-        private int roundCount;
-        private bool stopped;
+        private int turnCount;
+        private Turn currentTurn;
+        private bool turnClosed;
+        private bool roundClosed;
         private PlayerList players = new PlayerList();
         private DiceRoller diceRoller = new DiceRoller();
         private Dice actualDice;
         private Dice announcedDice;
         private CurrentPlayers currentPlayers;
         private ScoreList scoreList;
-        private Turn currentTurn;
-        private Guid token;
+        private Guid gameToken;
         private MessageServer messageServer;
 
         #endregion Members
@@ -33,14 +34,19 @@ namespace Mia.Server
 
         #region Properties
 
-        public int RoundCount
+        public bool RoundClosed
         {
-            get { return roundCount; }
+            get { return roundClosed; }
         }
 
-        public bool Stopped
+        public int TurnCount
         {
-            get { return stopped; }
+            get { return turnCount; }
+        }
+
+        public bool TurnClosed
+        {
+            get { return turnClosed; }
         }
 
         public PlayerList Players
@@ -48,9 +54,9 @@ namespace Mia.Server
             get { return players; }
         }
 
-        public Guid Token
+        public Guid GameToken
         {
-            get { return token; }
+            get { return gameToken; }
         }
 
         public Turn Turn
@@ -69,7 +75,7 @@ namespace Mia.Server
             this.scoreList = scoreList;
             players = scoreList.PlayerScores;
 
-            token = Guid.NewGuid();
+            gameToken = Guid.NewGuid();
         }
 
         #endregion Constructor
@@ -86,7 +92,7 @@ namespace Mia.Server
 
         public void JoinStarting()
         {
-            messageServer.SendMessageToAll(ServerCommand.ROUND_STARTING + ";" + token);
+            messageServer.SendMessageToAll(ServerCommand.ROUND_STARTING + ";" + gameToken);
 
             var tracker = new TimeOutTracker(Config.JoinTimeOut);
             while (tracker.IsValid)
@@ -101,13 +107,13 @@ namespace Mia.Server
 
             if (players.RealPlayers.Count == 0)
             {
-                message = ServerCommand.ROUND_CANCELED + ";" + ServerCommandArguments.NO_PLAYERS;
-                stopped = true;
+                message = ServerCommand.ROUND_CANCELED + ";" + ServerCommandFailureReason.NO_PLAYERS;
+                roundClosed = true;
             }
             else if (players.RealPlayers.Count < 2)
             {
-                message = ServerCommand.ROUND_CANCELED + ";" + ServerCommandArguments.ONLY_ONE_PLAYER;
-                stopped = true;
+                message = ServerCommand.ROUND_CANCELED + ";" + ServerCommandFailureReason.ONLY_ONE_PLAYER;
+                roundClosed = true;
             }
             else
             {
@@ -124,7 +130,7 @@ namespace Mia.Server
 
         public void GameStarting()
         {
-            if (stopped)
+            if (roundClosed)
                 return;
 
             GameStarted();
@@ -148,9 +154,9 @@ namespace Mia.Server
                 scoreList.IncreaseFor(player);
             }
 
-            while (!Stopped)
+            while (!RoundClosed)
             {
-                if (RoundCount == 0)
+                if (TurnCount == 0)
                 {
                     FirstTurn();
                 }
@@ -160,22 +166,20 @@ namespace Mia.Server
                 }
 
                 var player = currentPlayers.Current;
+                int timeoutTurn = turnCount;
                 var timeOut = new TimeOutTracker(Config.TurnTimeOut);
                 while (timeOut.IsValid && player.CurrentState == PlayerState.Active)
                 {
                     Thread.Sleep(20);
                 }
 
-                if (player.CurrentState == PlayerState.Active && !Stopped)
+                if (player.CurrentState == PlayerState.Active && turnCount == timeoutTurn && !RoundClosed)
                 {
                     var failure = Turn.HasAnnounced ? FailureCommand.DID_NOT_ANNOUNCE : FailureCommand.DID_NOT_TAKE_TURN;
-
                     messageServer.SendMessageToAll(ServerCommand.PLAYER_LOST + ";" + player.Name + ";" + failure);
-
                     scoreList.DecreaseFor(player);
-
                     BroadCastScore();
-                    stopped = true;
+                    roundClosed = true;
                 }
             }
         }
@@ -190,27 +194,26 @@ namespace Mia.Server
         private void NextTurn()
         {
             currentPlayers = players.NextPlayer();
-
-            if (currentPlayers.Current == players.RealPlayers[0])
-            {
-                roundCount++;
-            }
+            turnCount++;
 
             StartTurn();
         }
 
         private void StartTurn()
         {
-            var player = currentPlayers.Current;
+            if (!RoundClosed)
+            {
+                var player = currentPlayers.Current;
 
-            currentTurn = new Turn(player);
-            player.ChangeState(PlayerState.Active);
-            player.YourTurn(currentTurn.Token);
+                currentTurn = new Turn(player);
+                player.ChangeState(PlayerState.Active);
+                player.YourTurn(GameToken);
+            }
         }
 
         public void See(Player player)
         {
-            if (!Stopped)
+            if (!RoundClosed)
             {
                 string message = ServerCommand.PLAYER_WANTS_TO_SEE + ";" + player.Name;
                 messageServer.SendMessageToAll(message);
@@ -245,34 +248,38 @@ namespace Mia.Server
                 }
 
                 BroadCastScore();
-                stopped = true;
+                roundClosed = true;
             }
         }
 
         public void Announce(Player player, Dice dice)
         {
             announcedDice = dice;
+            Turn.HasAnnounced = true;
 
             string messageToAll = ServerCommand.ANNOUNCED + ";" + player.Name + ";" + dice;
             messageServer.SendMessageToAll(messageToAll);
 
-            if (actualDice.IsHigherThan(announcedDice))
+            if (dice.IsMia)
+            {
+                MiaIsAnnounced(player);
+
+                BroadCastScore();
+                roundClosed = true;
+            }
+            else if (actualDice.IsHigherThan(announcedDice) && turnCount > 0)
             {
                 messageServer.SendMessageToAll(ServerCommand.PLAYER_LOST + ";" + player.Name + ";" + FailureCommand.ANNOUNCED_LOSING_DICE);
                 scoreList.DecreaseFor(player);
 
                 BroadCastScore();
-                stopped = true;
+                roundClosed = true;
             }
             else
             {
-                if (dice.IsMia)
-                {
-                    MiaIsAnnounced(player);
-                }
+                player.ChangeState(PlayerState.Inactive);
+                NextTurn();
             }
-
-            player.ChangeState(PlayerState.Inactive);
         }
 
         public void Roll(Player player)
@@ -288,8 +295,8 @@ namespace Mia.Server
                 actualDice = diceRoller.Roll();
 
                 // ROLLED;dice;token
-                string message = ServerCommand.ROLLED.ToString() + ";" + actualDice.DieOne + actualDice.DieTwo + ";" + currentTurn.Token;
-                messageServer.SendAndWaitForAnswer(message, currentTurn.Token, player.UdpState);
+                string message = ServerCommand.ROLLED.ToString() + ";" + actualDice.DiceOne + actualDice.DiceTwo + ";" + GameToken.ToString();
+                messageServer.SendAndWaitForAnswer(message, GameToken, player.UdpState);
             }
             else
             { 
@@ -311,19 +318,19 @@ namespace Mia.Server
             {
                 messageServer.SendMessageToAll(ServerCommand.PLAYER_LOST + ";" + currentPlayers.Current + ";" + FailureCommand.LIED_ABOUT_MIA);
 
-                var winners = players.RealPlayers.FindAll(x => x.Name != currentPlayers.Last.Name);
-                var loosers = new List<Player> { currentPlayers.Last };
+                var winners = players.RealPlayers.FindAll(x => x.Name != currentPlayers.Current.Name);
+                var loosers = new List<Player> { currentPlayers.Current };
                 ScoreWinnersAndLoosers(FailureCommand.LIED_ABOUT_MIA, loosers, winners);
             }
 
-            stopped = true;
+            roundClosed = true;
         }
 
         private void BroadCastScore()
         {
             messageServer.SendMessageToAll(ServerCommand.SCORE + ";" + scoreList.AllScores());
 
-            stopped = true;
+            roundClosed = true;
         }
 
         private void ScoreWinnersAndLoosers(FailureCommand failureCommand, List<Player> loosers, List<Player> winners)

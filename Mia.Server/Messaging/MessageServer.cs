@@ -20,7 +20,7 @@ namespace Mia.Server.Messaging
         #region Members
 
         private static MessageServer currentInstance;
-        private MiaGameServer miaServer;
+        private MiaGameManager miaServer;
 
         #endregion Members
 
@@ -38,7 +38,7 @@ namespace Mia.Server.Messaging
             }
         }
 
-        public MiaGameServer MiaServerInstance
+        public MiaGameManager MiaServerInstance
         {
             set { miaServer = value; }
         }
@@ -117,16 +117,15 @@ namespace Mia.Server.Messaging
         public void SendAndWaitForAnswer(string message, Guid token, UdpState udpState)
         {
             byte[] messageBytes = GetByteArray(message);
-
             udpState.UdpClient.Send(messageBytes, messageBytes.Length, udpState.EndPoint);
 
-            var timeTracker = new TimeOutTracker(Config.JoinTimeOut);
-            udpState.UdpClient.BeginReceive(new AsyncCallback(ReceiveCallback), udpState);
+            //var timeTracker = new TimeOutTracker(Config.JoinTimeOut);
+            //udpState.UdpClient.BeginReceive(new AsyncCallback(ReceiveCallback), udpState);
 
-            while (timeTracker.IsValid)
-            {
-                Thread.Sleep(20);
-            }
+            //while (timeTracker.IsValid)
+            //{
+            //    Thread.Sleep(20);
+            //}
         }
 
         public void ReceiveCallback(IAsyncResult result)

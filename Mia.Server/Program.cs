@@ -15,7 +15,7 @@ namespace Sample.Maxle.Server
 
             using (var consoleCopy = new ConsoleCopy(string.Format(@"C:\Temp\Maxle_{0}.log", DateTime.Now.Ticks)))
             {
-                var server = new MiaGameServer(MessageServer.Instance);
+                var server = new MiaGameManager(MessageServer.Instance);
             }
 
             Console.WriteLine("Game over");
