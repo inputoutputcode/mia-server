@@ -3,6 +3,7 @@ using Mia.Server.Game.PlayEngine.Move.Interface;
 using Mia.Server.Game.Interface;
 using Mia.Server.Game.Scoring;
 using Mia.Server.Game.Scoring.Interface;
+using Mia.Server.Game.Register.Interface;
 
 
 namespace Mia.Server.Game.PlayEngine
@@ -23,6 +24,7 @@ namespace Mia.Server.Game.PlayEngine
         private ITurn currentTurn;
         private Guid token;
         private bool isSimulation;
+        private IGameManager gameManager;
 
         #endregion Members
 
@@ -49,16 +51,22 @@ namespace Mia.Server.Game.PlayEngine
             get { return isSimulation; }
         }
 
+        public string Name
+        {
+            get { return name; }
+        }
+
         #endregion Properties
 
 
         #region Constructor
 
-        public Game(string name, int rounds, ScoreMode scoreMode)
+        public Game(string name, int rounds, ScoreMode scoreMode, IGameManager gameManager)
         {
             this.name = name;
             this.rounds = rounds;
             this.gameScorer = new GameScorer(scoreMode);
+            this.gameManager = gameManager;
 
             token = new Guid();
         }
@@ -78,24 +86,14 @@ namespace Mia.Server.Game.PlayEngine
             throw new NotImplementedException();
         }
 
-        public IServerMove[] Announce(IPlayer player, IDice dice)
+        public void Move(IPlayerMove playerMove)
         {
             throw new NotImplementedException();
         }
 
-        public IServerMove[] See(IPlayer player)
+        public bool Register(IPlayer player)
         {
-            throw new NotImplementedException();
-        }
-
-        public void ReceiveCommand(IPlayerMove command)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Register(IPlayer player)
-        {
-            throw new NotImplementedException();
+            return playerList.AddPlayer(player);
         }
 
         public void RoundStarting()

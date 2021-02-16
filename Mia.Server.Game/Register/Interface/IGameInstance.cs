@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+
 
 namespace Mia.Server.Game.Register.Interface
 {
@@ -8,6 +7,6 @@ namespace Mia.Server.Game.Register.Interface
     {
         Guid GameToken { get; }
 
-        T Type { get; }
+        string Name { get; }
     }
 }

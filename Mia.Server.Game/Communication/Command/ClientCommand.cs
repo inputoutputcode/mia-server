@@ -9,7 +9,7 @@ namespace Mia.Server.Game.Communication.Command
         private string command;
         private IPEndPoint endPoint;
 
-        public string Command
+        public string CommandText
         {
             get { return command; }
         }

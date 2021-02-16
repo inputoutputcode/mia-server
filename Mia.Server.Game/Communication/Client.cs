@@ -1,4 +1,5 @@
-﻿using Mia.Server.Game.Communication.Interface;
+﻿using System.Net;
+using Mia.Server.Game.Communication.Interface;
 
 
 namespace Mia.Server.Game.Communication
@@ -8,7 +9,7 @@ namespace Mia.Server.Game.Communication
         #region Members
 
         private string name;
-        private int clientHash;
+        private IPEndPoint endPoint;
 
         #endregion Members
 
@@ -20,9 +21,9 @@ namespace Mia.Server.Game.Communication
             get { return name; }
         }
 
-        public int ClientHash
+        public IPEndPoint EndPoint
         {
-            get { return clientHash; }
+            get { return endPoint; }
         }
 
         public int Score { get; set; }
@@ -32,10 +33,10 @@ namespace Mia.Server.Game.Communication
 
         #region Constructor
 
-        public Client(string name, int clientHash)
+        public Client(string name, IPEndPoint endPoint)
         {
             this.name = name;
-            this.clientHash = clientHash;
+            this.endPoint = endPoint;
         }
 
         #endregion Constructor

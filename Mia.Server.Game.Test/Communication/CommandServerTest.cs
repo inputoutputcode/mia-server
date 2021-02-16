@@ -10,8 +10,14 @@ namespace Mia.Server.Game.Communication.Test
     /// Client commands:
     /// 
     /// REGISTER;name
-    /// REGISTER_SPECTATOTR;name
+    /// [FIND_GAME;name]
+    /// [CREATE_GAME;name]
+    /// JOIN_SPECTATOR;name;token
     /// JOIN_GAME;name;token
+    /// 
+    /// Player moves:
+    /// 
+    /// JOIN_ROUND;name;token
     /// SEE;token
     /// ROLL;token
     /// ANNOUNCE;dice;token
@@ -20,17 +26,24 @@ namespace Mia.Server.Game.Communication.Test
     /// 
     /// REGISTERED
     /// REJECTED
+    /// [FOUND_GAME]
+    /// [GAME_CREATED_JOINED;]
+    /// [GAME_JOINED]
+    /// [NOT_FOUND]
+    /// 
+    /// Game moves:
+    /// 
     /// GAME_STARTING;token
     /// GAME_STARTED;players;token
     /// GAME_CANCELLED;NO_PLAYERS
     /// GAME_CANCELLED;ONLY_ONE_PLAYER
     /// YOUR_TURN;token
-    /// PLAYER_WANTS_TO_SEE;name;token
-    /// ACTUAL_DICE;dice;token
-    /// PLAYER_LOST;name;reason;token
-    /// PLAYER_ROLLS;name;token 
     /// ROLLED;dice;token
     /// ANNOUNCED;name;dice;token 
+    /// PLAYER_WANTS_TO_SEE;name;token
+    /// ACTUAL_DICE;dice;token
+    /// PLAYER_ROLLS;name;token 
+    /// PLAYER_LOST;name;reason;token
     /// PLAYER_LOST;names;reason;token
     /// PLAYER_LOST;name;reason;token
     /// SCORE;playerpoints;token
@@ -46,6 +59,8 @@ namespace Mia.Server.Game.Communication.Test
     /// SEE_FAILED
     /// CAUGHT_BLUFFING
     /// MIA
+    /// 
+    /// [x] reserved for online version
     /// </summary>
     public class CommandServerTest
     {

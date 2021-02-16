@@ -8,17 +8,17 @@ namespace Mia.Server.Game.PlayEngine.Move
     /// <summary>
     /// 
     /// </summary>
-    public class ServerMove : IServerTurn
+    public class ServerMove : IServerMove
     {
         private ServerMoveCode code;
 
         private string value;
 
-        private ServerMoveFailureCode failureCode;
+        private ServerFailureReasonCode failureCode;
 
         private Guid gameToken;
 
-        private IPlayer player;
+        private IPlayer[] players;
 
        
         public ServerMoveCode Code
@@ -31,14 +31,14 @@ namespace Mia.Server.Game.PlayEngine.Move
             get { return value; }
         }
 
-        public ServerMoveFailureCode FailureCode
+        public ServerFailureReasonCode FailureReasonCode
         {
             get { return failureCode; }
         }
 
-        public IPlayer Player
+        public IPlayer[] Players
         {
-            get { return player; }
+            get { return players; }
         }
 
         public Guid GameToken
@@ -46,12 +46,12 @@ namespace Mia.Server.Game.PlayEngine.Move
             get { return gameToken; }
         }
 
-        public ServerMove(ServerMoveCode commandCode, string commandValue, ServerMoveFailureCode failureCode, IPlayer player, Guid gameToken)
+        public ServerMove(ServerMoveCode commandCode, string commandValue, ServerFailureReasonCode failureCode, IPlayer[] players, Guid gameToken)
         {
             this.code = commandCode;
             this.value = commandValue;
             this.failureCode = failureCode;
-            this.player = player;
+            this.players = players;
             this.gameToken = gameToken;
         }
 

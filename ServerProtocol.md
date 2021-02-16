@@ -9,7 +9,6 @@
 
 ## Registration
 1. client->server: REGISTER;name 
-1. client->server: REGISTER_SPECTATOR;name 
 1. server->client: REGISTERED or REJECTED
  
 The server accepts the registration (server->client: REGISTERED) if the name is valid and either
@@ -27,7 +26,9 @@ After a successful registration, the server will send messages to the client usi
 
 ## Game start
 1. server->clients: GAME_STARTING;token 
+1. client->server: JOIN_SPECTATOR;name;token
 1. client->server: JOIN_GAME;name;token 
+1. client->server: JOIN_ROUND;name;token (only for single server mode)
 
 If at least one player participates:
 1. server->clients: GAME_STARTED;players;token

@@ -5,7 +5,7 @@ namespace Mia.Server.Game.Communication.Command.Interface
 {
     public interface ICommand
     {
-        string Command { get; }
+        string CommandText { get; }
 
         IPEndPoint EndPoint { get; }
     }

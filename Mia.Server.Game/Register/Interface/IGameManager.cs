@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net;
+using Mia.Server.Game.Communication.Command.Interface;
 using Mia.Server.Game.Communication.Interface;
 using Mia.Server.Game.Interface;
+using Mia.Server.Game.PlayEngine.Move.Interface;
 
 
 namespace Mia.Server.Game.Register.Interface
@@ -11,12 +13,18 @@ namespace Mia.Server.Game.Register.Interface
     {
         List<IGameInstance> ActiveGames { get; }
 
-        IGame FindGame(Guid gameToken);
+        void ProcessCommand(IClientCommand command);
 
         IClient FindClient(IPEndPoint endPoint);
 
         IClient FindClient(string playerName);
 
-        
+        IGameInstance FindGameInstance(Guid gameToken);
+
+        IGameInstance FindGameInstance(string gameName);
+
+        IGame FindGame(string gameName);
+
+        void ProcessMove(IServerMove serverMove);
     }
 }

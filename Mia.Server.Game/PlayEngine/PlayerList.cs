@@ -87,7 +87,21 @@ namespace Mia.Server.Game.PlayEngine
 
         #region Methods
 
+        public bool AddPlayer(IPlayer player)
+        {
+            bool isNewPlayer = players.Exists(x => x.Name == player.Name);
+            if (isNewPlayer)
+            {
+                players.Add(player);
+            }
 
+            return isNewPlayer;
+        }
+
+        public IPlayer FindPlayer(string name)
+        {
+            return players.FirstOrDefault(x => x.Name == name);
+        }
 
         /// <summary>
         /// Shake the order in player list.

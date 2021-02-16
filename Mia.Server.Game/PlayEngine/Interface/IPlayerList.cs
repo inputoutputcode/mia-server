@@ -16,5 +16,9 @@ namespace Mia.Server.Game.Interface
         IPlayer NextPlayer();
 
         IPlayer PreviousPlayer();
+
+        bool AddPlayer(IPlayer player);
+
+        IPlayer FindPlayer(string name);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using Mia.Server.Game.Communication.Command.Interface;
 
 
@@ -9,9 +10,9 @@ namespace Mia.Server.Game.Communication.Interface
     {
         IClientCommand GetClientCommand();
 
-        void SendCommand(string message, UdpState udpState);
+        void SendCommand(IServerCommand command);
 
-        void SendCommand(string message, List<UdpState> udpStates);
+        void SendCommand(IServerCommand command, List<IPEndPoint> endPoints);
 
         void ReceiveCallback(IAsyncResult result);
     }

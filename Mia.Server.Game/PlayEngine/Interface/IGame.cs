@@ -18,9 +18,11 @@ namespace Mia.Server.Game.Interface
 
         Guid Token { get; }
 
+        string Name { get; }
+
         void CreateSimulation(IPlayerList players, ITurn turn, IDice dice);
 
-        void Register(IPlayer player);
+        bool Register(IPlayer player);
 
         void RoundStarting();
 
@@ -28,6 +30,6 @@ namespace Mia.Server.Game.Interface
 
         void RoundStarted();
 
-        void PlayerMove(IPlayerMove command);
+        void Move(IPlayerMove playerMove);
     }
 }
