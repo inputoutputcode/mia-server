@@ -18,7 +18,7 @@ namespace Mia.Server.Game.PlayEngine.Test
         {
             // Arrange
             var gameManager = new Mock<IGameManager>();
-            gameManager.Setup(m => m.ProcessMove(It.IsAny<IServerMove>()));
+            gameManager.Setup(m => m.ProcessMove(It.Is<IServerMove>()));
             
 
             int rounds = 1;
