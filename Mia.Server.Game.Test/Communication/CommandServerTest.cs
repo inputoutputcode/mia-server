@@ -110,6 +110,7 @@ namespace Mia.Server.Game.Communication.Test
             // Act
 
             // Assert
+            Assert.True(false);
         }
 
     }

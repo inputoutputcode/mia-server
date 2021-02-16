@@ -5,6 +5,10 @@ namespace Mia.Server.Game.Interface
 {
     public interface IPlayerList
     {
+        int MaximumActivePlayers { get; }
+
+        int MaximumSpectators { get; }
+
         List<IPlayer> RegisteredPlayers { get; }
 
         List<IPlayer> ActivePlayers { get; }

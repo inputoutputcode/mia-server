@@ -37,6 +37,7 @@ namespace Mia.Server.Game.PlayEngine.Test
             // Act
 
             // Assert
+            Assert.True(false);
         }
 
         [Fact]
@@ -47,7 +48,7 @@ namespace Mia.Server.Game.PlayEngine.Test
             // Act
 
             // Assert
-
+            Assert.True(false);
         }
 
         [Fact]
@@ -58,6 +59,7 @@ namespace Mia.Server.Game.PlayEngine.Test
             // Act
 
             // Assert
+            Assert.True(false);
         }
 
 
@@ -69,6 +71,7 @@ namespace Mia.Server.Game.PlayEngine.Test
             // Act
 
             // Assert
+            Assert.True(false);
         }
 
         [Fact]
@@ -79,6 +82,7 @@ namespace Mia.Server.Game.PlayEngine.Test
             // Act
 
             // Assert
+            Assert.True(false);
         }
 
         [Fact]
@@ -89,6 +93,7 @@ namespace Mia.Server.Game.PlayEngine.Test
             // Act
 
             // Assert
+            Assert.True(false);
         }
 
         [Fact]
@@ -99,6 +104,7 @@ namespace Mia.Server.Game.PlayEngine.Test
             // Act
 
             // Assert
+            Assert.True(false);
         }
 
         [Fact]
@@ -109,6 +115,7 @@ namespace Mia.Server.Game.PlayEngine.Test
             // Act
 
             // Assert
+            Assert.True(false);
         }
 
         [Fact]
@@ -119,6 +126,7 @@ namespace Mia.Server.Game.PlayEngine.Test
             // Act
 
             // Assert
+            Assert.True(false);
         }
 
         [Fact]
@@ -129,6 +137,7 @@ namespace Mia.Server.Game.PlayEngine.Test
             // Act
 
             // Assert
+            Assert.True(false);
         }
 
         [Fact]
@@ -139,6 +148,7 @@ namespace Mia.Server.Game.PlayEngine.Test
             // Act
 
             // Assert
+            Assert.True(false);
         }
     }
 }

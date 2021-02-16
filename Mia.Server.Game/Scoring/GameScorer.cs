@@ -7,6 +7,12 @@ namespace Mia.Server.Game.Scoring
     public class GameScorer : IGameScorer
     {
         private ScoreMode scoreMode;
+        private bool isGameOver;
+
+        public bool IsGameOver
+        { 
+            get { return isGameOver; }
+        }
 
         public void AddScore(IPlayerList playerList, IPlayer winner, IPlayer looser)
         {

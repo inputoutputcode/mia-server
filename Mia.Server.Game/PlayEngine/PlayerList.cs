@@ -14,7 +14,9 @@ namespace Mia.Server.Game.PlayEngine
         #region Members
 
         private List<IPlayer> players;
-        private int currentPlayerIndex = 0;
+        private int currentPlayerIndex;
+        private int maximumActivePlayers;
+        private int maximumSpectators;
 
         #endregion Members
 
@@ -67,25 +69,48 @@ namespace Mia.Server.Game.PlayEngine
             }
         }
 
+        public int MaximumActivePlayers
+        {
+            get
+            {
+                return maximumActivePlayers;
+            }
+        }
+
+        public int MaximumSpectators
+        {
+            get
+            {
+                return maximumSpectators;
+            }
+        }
+
         #endregion Properties
 
 
         #region Constructor
 
-        public PlayerList()
+        public PlayerList(int maximumActivePlayers = 20, int maximumSpectators = 20)
         {
-            players = new List<IPlayer>();
+            Initialize(new List<IPlayer>(), maximumActivePlayers, maximumSpectators);
         }
 
-        public PlayerList(List<IPlayer> registeredPlayers)
+        public PlayerList(List<IPlayer> players, int maximumActivePlayers, int maximumSpectators)
         {
-            players = registeredPlayers;
+            Initialize(players, maximumActivePlayers, maximumSpectators);
         }
 
         #endregion
 
 
         #region Methods
+
+        private void Initialize(List<IPlayer> players, int maximumActivePlayers, int maximumSpectators)
+        {
+            this.players = players;
+            this.maximumActivePlayers = maximumActivePlayers;
+            this.maximumSpectators = maximumSpectators;
+        }
 
         public bool AddPlayer(IPlayer player)
         {

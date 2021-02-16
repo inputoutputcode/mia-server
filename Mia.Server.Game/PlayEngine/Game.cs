@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Threading;
 using Mia.Server.Game.PlayEngine.Move.Interface;
 using Mia.Server.Game.Interface;
 using Mia.Server.Game.Scoring;
 using Mia.Server.Game.Scoring.Interface;
 using Mia.Server.Game.Register.Interface;
-using System.Threading;
+
 
 namespace Mia.Server.Game.PlayEngine
 {
@@ -68,6 +69,7 @@ namespace Mia.Server.Game.PlayEngine
             this.gameScorer = new GameScorer(scoreMode);
             this.gameManager = gameManager;
 
+            playerList = new PlayerList();
             token = new Guid();
         }
 

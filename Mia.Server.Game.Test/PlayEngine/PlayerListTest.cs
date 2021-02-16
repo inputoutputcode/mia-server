@@ -1,12 +1,13 @@
 using System;
 using Xunit;
 
-namespace Mia.Server.Game.Scoring.Test
+
+namespace Mia.Server.Game.PlayEngine.Test
 {
-    public class CommandServerTest
+    public class PlayerListTest
     {
         [Fact]
-        public void Should_Have_Points_For_One_Round()
+        public void Spectators_Should_Not_Be_Active_Players()
         {
             // Arrange
 
@@ -17,7 +18,7 @@ namespace Mia.Server.Game.Scoring.Test
         }
 
         [Fact]
-        public void Should_Have_Points_For_Two_Rounds()
+        public void Pick_The_First_Player()
         {
             // Arrange
 
@@ -28,7 +29,7 @@ namespace Mia.Server.Game.Scoring.Test
         }
 
         [Fact]
-        public void Should_Be_Game_Over_After_Maximum_Points_Reached()
+        public void Pick_The_Next_Player()
         {
             // Arrange
 
@@ -39,7 +40,7 @@ namespace Mia.Server.Game.Scoring.Test
         }
 
         [Fact]
-        public void Should_Reduce_Lifes_For_One_Round()
+        public void Pick_The_Last_Player()
         {
             // Arrange
 
@@ -50,7 +51,7 @@ namespace Mia.Server.Game.Scoring.Test
         }
 
         [Fact]
-        public void Should_Reduce_Lifes_For_Two_Rounds()
+        public void Permute_The_List_Of_Player()
         {
             // Arrange
 
@@ -61,7 +62,7 @@ namespace Mia.Server.Game.Scoring.Test
         }
 
         [Fact]
-        public void Should_Have_Game_Over_With_Zero_Lifes()
+        public void Add_New_Player()
         {
             // Arrange
 
@@ -72,7 +73,7 @@ namespace Mia.Server.Game.Scoring.Test
         }
 
         [Fact]
-        public void Should_Add_Money_After_One_Round()
+        public void Add_Existing_Player()
         {
             // Arrange
 
@@ -83,18 +84,7 @@ namespace Mia.Server.Game.Scoring.Test
         }
 
         [Fact]
-        public void Should_Add_Money_After_Two_Round()
-        {
-            // Arrange
-
-            // Act
-
-            // Assert
-            Assert.True(false);
-        }
-
-        [Fact]
-        public void Should_Be_Game_Over_When_One_Player_Is_Without_Money()
+        public void Do_Not_Manipulate_Internal_Player_List()
         {
             // Arrange
 
