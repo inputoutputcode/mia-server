@@ -14,7 +14,7 @@ namespace Mia.Server.Game.PlayEngine.Move
 
         public string value;
 
-        public Guid gameToken;
+        public Guid token;
 
         public IPlayer player;
 
@@ -28,9 +28,9 @@ namespace Mia.Server.Game.PlayEngine.Move
             get { return value; }
         }
 
-        public Guid GameToken
+        public Guid Token
         {
-            get { return gameToken; }
+            get { return token; }
         }
 
         public IPlayer Player
@@ -43,12 +43,12 @@ namespace Mia.Server.Game.PlayEngine.Move
             code = PlayerMoveCode.None;
         }
 
-        public PlayerMove(PlayerMoveCode code, string value, IPlayer player, Guid gameToken)
+        public PlayerMove(PlayerMoveCode code, string value, IPlayer player, Guid token)
         {
             this.code = code;
             this.value = value;
             this.player = player;
-            this.gameToken = gameToken;
+            this.token = token;
         }
     }
 }

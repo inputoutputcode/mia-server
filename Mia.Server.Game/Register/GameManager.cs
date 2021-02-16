@@ -26,14 +26,6 @@ namespace Mia.Server.Game.Register
 
         private List<IClient> clients;
 
-        private ICommandServer CommandServer
-        {
-            get
-            {
-                return commandServer;
-            }
-        }
-
         public List<IGameInstance> ActiveGames
         {
             // TODO: return a clone
@@ -216,7 +208,7 @@ namespace Mia.Server.Game.Register
             if (game != null)
             {
                 var player = new Player(client.Name, isSpectator);
-                game.Register(player);
+                game.JoinGame(player);
             }
         }
 
@@ -256,7 +248,7 @@ namespace Mia.Server.Game.Register
                     if (serverMove.FailureReasonCode != ServerFailureReasonCode.None)
                         flexibleValuePart += $"{serverMove.FailureReasonCode};";
 
-                    string commandValue = $"{serverMove.Code};{flexibleValuePart}{serverMove.GameToken}";
+                    string commandValue = $"{serverMove.Code};{flexibleValuePart}{serverMove.Token}";
                     commandServer.SendCommand(new ServerCommand(commandValue, client.EndPoint));
                 }
             }            

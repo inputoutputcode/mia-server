@@ -10,6 +10,7 @@ namespace Mia.Server.Game.PlayEngine
         private PlayerState currentState;
         private string name;
         private int score;
+        private int kickCount;
 
         #endregion Members
 
@@ -19,6 +20,10 @@ namespace Mia.Server.Game.PlayEngine
         public bool IsSpectator
         {
             get { return currentState == PlayerState.Spectator; }
+            set 
+            { 
+                currentState = value ? PlayerState.Spectator : PlayerState.Inactive; 
+            }
         }
 
         public PlayerState CurrentState
@@ -34,6 +39,12 @@ namespace Mia.Server.Game.PlayEngine
         public int Score
         {
             get { return score; }
+        }
+
+        public int KickCount
+        {
+            get { return score; }
+            set { score = value; }
         }
 
         #endregion Properties

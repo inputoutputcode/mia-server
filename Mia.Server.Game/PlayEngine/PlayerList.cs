@@ -9,7 +9,7 @@ namespace Mia.Server.Game.PlayEngine
     /// <summary>
     /// The class controls a registered list of players and spectators. 
     /// </summary>
-    internal class PlayerList : IPlayerList
+    public class PlayerList : IPlayerList
     {
         #region Members
 
@@ -112,7 +112,7 @@ namespace Mia.Server.Game.PlayEngine
             this.maximumSpectators = maximumSpectators;
         }
 
-        public bool AddPlayer(IPlayer player)
+        public bool JoinGame(IPlayer player)
         {
             bool isNewPlayer = players.Exists(x => x.Name == player.Name);
             if (isNewPlayer)
@@ -129,7 +129,7 @@ namespace Mia.Server.Game.PlayEngine
         }
 
         /// <summary>
-        /// Shake the order in player list.
+        /// Shake the order in player list
         /// </summary>
         public void PermutePlayers()
         { 
@@ -137,13 +137,14 @@ namespace Mia.Server.Game.PlayEngine
         }
 
         /// <summary>
-        /// Add a new player.
+        /// Player joins the round
         /// </summary>
         /// <param name="player"></param>
-        public void Add(IPlayer player)
+        public void JoinRound(IPlayer player)
         {
-            if (players.Find(p => p.Name == player.Name) == null)
-                players.Add(player);
+            for (int i = 0; i < players.Count; i++)
+                if (players[i].Name == player.Name)
+                    players[i].IsSpectator = false;
         }
 
         /// <summary>
@@ -193,6 +194,12 @@ namespace Mia.Server.Game.PlayEngine
             }
 
             return players[currentPlayerIndex];
+        }
+
+        public void RoundReset()
+        { 
+            // TODO: How evil is it?
+            players.All(p => { p.IsSpectator = true; return true; });
         }
 
         #endregion Methods

@@ -18,6 +18,17 @@ namespace Mia.Server.Game.PlayEngine.Test
         }
 
         [Fact]
+        public void Spectators_Should_Not_Be_Active_Players()
+        {
+            // Arrange
+
+            // Act
+
+            // Assert
+            Assert.True(false);
+        }
+
+        [Fact]
         public void Pick_The_First_Player()
         {
             // Arrange
@@ -54,11 +65,17 @@ namespace Mia.Server.Game.PlayEngine.Test
         public void Permute_The_List_Of_Player()
         {
             // Arrange
+            var playerList = new PlayerList();
+            var player1 = new Player("Player1", false);
+            playerList.JoinRound(player1);
+            var player2 = new Player("Player2", false);
+            playerList.JoinRound(player2);
 
             // Act
+            playerList.PermutePlayers();
 
             // Assert
-            Assert.True(false);
+            Assert.True(playerList.);
         }
 
         [Fact]

@@ -5,7 +5,7 @@ using Mia.Server.Game.Interface;
 using Mia.Server.Game.Scoring;
 using Mia.Server.Game.Scoring.Interface;
 using Mia.Server.Game.Register.Interface;
-
+using Mia.Server.Game.PlayEngine.Move;
 
 namespace Mia.Server.Game.PlayEngine
 {
@@ -13,11 +13,13 @@ namespace Mia.Server.Game.PlayEngine
     {
         #region Members
 
+        private string name;
         private int turnCount;
         private bool turnFinished;
         private bool roundClosed;
-        private string name;
-        private int rounds;
+        private int currentRoundNumber = 0;
+        private int roundLimit;
+        private Guid roundToken;
         private IPlayerList playerList;
         private IGameScorer gameScorer;
         private IDice currentDice;
@@ -26,6 +28,7 @@ namespace Mia.Server.Game.PlayEngine
         private Guid token;
         private bool isSimulation;
         private IGameManager gameManager;
+        private GamePhase gamePhase;
 
         #endregion Members
 
@@ -62,10 +65,10 @@ namespace Mia.Server.Game.PlayEngine
 
         #region Constructor
 
-        public Game(string name, int rounds, ScoreMode scoreMode, IGameManager gameManager)
+        public Game(string name, int roundLimit, ScoreMode scoreMode, IGameManager gameManager)
         {
             this.name = name;
-            this.rounds = rounds;
+            this.roundLimit = roundLimit;
             this.gameScorer = new GameScorer(scoreMode);
             this.gameManager = gameManager;
 
@@ -80,43 +83,81 @@ namespace Mia.Server.Game.PlayEngine
             this.playerList = players;
             this.currentTurn = turn;
             this.currentDice = dice;
+
+            this.isSimulation = true;
         }
 
         #region Methods
         public void StartRound()
         {
-            throw new NotImplementedException();
+            while (roundLimit < currentRoundNumber)
+            {
+                RoundStarting();
+                currentRoundNumber += 1;
+            }
         }
 
         public void Move(IPlayerMove playerMove)
         {
-            throw new NotImplementedException();
+            switch (playerMove.Code)
+            {
+                case PlayerMoveCode.JOIN_ROUND:
+                    if (gamePhase == GamePhase.Starting)
+                    {
+                        
+
+
+                    }
+
+                    break;
+                case PlayerMoveCode.ROLL:
+                    break;
+                case PlayerMoveCode.SEE:
+                    break;
+                case PlayerMoveCode.ANNOUNCE:
+                    break;
+            }
         }
 
-        public bool Register(IPlayer player)
+        public bool JoinGame(IPlayer player)
         {
-            return playerList.AddPlayer(player);
+            return playerList.JoinGame(player);
         }
 
         public void RoundStarting()
         {
-            throw new NotImplementedException();
+            gamePhase = GamePhase.Starting;
+            playerList.RoundReset();
+            playerList.PermutePlayers();
+
+            roundToken = Guid.NewGuid();
+            var players = playerList.ActivePlayers.ToArray();
+            var serverMove = new ServerMove(ServerMoveCode.ROUND_STARTING, string.Empty, ServerFailureReasonCode.None, players, roundToken);
+            gameManager.ProcessMove(serverMove);
 
             var tracker = new TimeOutTracker(200);
             while (tracker.IsValid)
             {
+                // TODO: Is this blocking the incoming moves?
                 Thread.Sleep(20);
             }
-        }
 
-        public void JoinRound(IPlayer player)
-        {
-            throw new NotImplementedException();
+            RoundStarted();
         }
 
         public void RoundStarted()
         {
-            throw new NotImplementedException();
+            gamePhase = GamePhase.Started;
+
+            // Send ROUND_STARTED
+            var players = playerList.ActivePlayers.ToArray();
+            var serverMove = new ServerMove(ServerMoveCode.ROUND_STARTED, string.Empty, ServerFailureReasonCode.None, players, roundToken);
+            gameManager.ProcessMove(serverMove);
+
+            // Send YOUR_TURN
+            var firstPlayer = new IPlayer[] { playerList.FirstPlayer() };
+            var serverMoveTurn = new ServerMove(ServerMoveCode.YOUR_TURN, string.Empty, ServerFailureReasonCode.None, firstPlayer, roundToken);
+            gameManager.ProcessMove(serverMoveTurn);
         }
 
         private IDice Parse(string value)

@@ -5,7 +5,7 @@ namespace Mia.Server.Game.Interface
 {
     public interface IPlayer
     {
-        bool IsSpectator { get; }
+        bool IsSpectator { get; set; }
 
         string Name { get; }
 

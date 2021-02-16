@@ -3,8 +3,7 @@
     public enum PlayerMoveCode
     {
         None,
-        JOIN_SPECTATOR,
-        JOIN_GAME,
+        JOIN_ROUND,
         ROLL,
         SEE,
         ANNOUNCE,

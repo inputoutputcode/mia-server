@@ -12,7 +12,7 @@ namespace Mia.Server.Game.PlayEngine.Move.Interface
 
         string Value { get; }
 
-        Guid GameToken { get; }
+        Guid Token { get; }
 
         IPlayer[] Players { get; }
     }

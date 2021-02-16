@@ -22,11 +22,11 @@ namespace Mia.Server.Game.Interface
 
         void CreateSimulation(IPlayerList players, ITurn turn, IDice dice);
 
-        bool Register(IPlayer player);
+        bool JoinGame(IPlayer player);
+
+        void StartRound();
 
         void RoundStarting();
-
-        void JoinRound(IPlayer player);
 
         void RoundStarted();
 

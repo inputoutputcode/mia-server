@@ -21,8 +21,10 @@ namespace Mia.Server.Game.Interface
 
         IPlayer PreviousPlayer();
 
-        bool AddPlayer(IPlayer player);
+        bool JoinGame(IPlayer player);
 
         IPlayer FindPlayer(string name);
+
+        void RoundReset();
     }
 }
