@@ -1,5 +1,4 @@
-﻿using System;
-using Mia.Server.Game.Interface;
+﻿using Mia.Server.Game.Interface;
 using Mia.Server.Game.Scoring.Interface;
 
 
@@ -17,6 +16,20 @@ namespace Mia.Server.Game.Scoring
         public GameScorer(ScoreMode scoreMode)
         {
             this.scoreMode = scoreMode;
+        }
+
+        public string GetScoreList(IPlayerList playerList)
+        {
+            string scores = string.Empty;
+
+            foreach (IPlayer player in playerList.ActivePlayers)
+            {
+                scores += player.Name + ":" + player.Score + ",";
+            }
+
+            scores = scores.Remove(scores.Length - 1);
+
+            return scores;
         }
     }
 }

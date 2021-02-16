@@ -25,6 +25,8 @@ namespace Mia.Server.Game.Register.Interface
 
         IGame FindGame(string gameName);
 
+        bool ValidateName(string playerName);
+
         void ProcessMove(IServerMove serverMove);
     }
 }

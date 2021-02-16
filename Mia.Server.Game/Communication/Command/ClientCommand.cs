@@ -4,7 +4,7 @@ using Mia.Server.Game.Communication.Command.Interface;
 
 namespace Mia.Server.Game.Communication.Command
 {
-    public class ClientCommand : BaseCommand, IClientCommand
+    public class ClientCommand : IClientCommand
     {
         private string command;
         private IPEndPoint endPoint;

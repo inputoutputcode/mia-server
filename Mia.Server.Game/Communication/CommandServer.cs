@@ -1,27 +1,29 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using Mia.Server.Game.Communication.Command;
 using Mia.Server.Game.Communication.Command.Interface;
 using Mia.Server.Game.Communication.Interface;
+using Mia.Server.Logging;
 
 
 namespace Mia.Server.Game.Communication
 {
     public class CommandServer : ICommandServer
     {
+        private UdpClient udpClient;
+
         /// <summary>
         /// This queue collects all incoming messages
         /// </summary>
         private ConcurrentQueue<Tuple<string, IPEndPoint>> messageQueue = new ConcurrentQueue<Tuple<string, IPEndPoint>>();
 
-        public CommandServer()
+        public CommandServer(int port)
         {
-            var localEndPoint = new IPEndPoint(IPAddress.Any, Config.ServerPort);
-            var udpClient = new UdpClient(localEndPoint);
+            var localEndPoint = new IPEndPoint(IPAddress.Any, port);
+            udpClient = new UdpClient(localEndPoint);
 
             UdpState udpStateServer = new UdpState
             {
@@ -32,7 +34,7 @@ namespace Mia.Server.Game.Communication
             udpStateServer.UdpClient.BeginReceive(new AsyncCallback(ReceiveCallback), udpStateServer);
         }
 
-        public void ReceiveCallback(IAsyncResult result)
+        private void ReceiveCallback(IAsyncResult result)
         {
             var udpClient = ((UdpState)(result.AsyncState)).UdpClient;
             var endPoint = ((UdpState)(result.AsyncState)).EndPoint;
@@ -46,15 +48,19 @@ namespace Mia.Server.Game.Communication
             };
             udpClient.BeginReceive(new AsyncCallback(ReceiveCallback), udpStateClient);
 
+            string receivedValue = Encoding.UTF8.GetString(receivedBytes);
+            ReceiveCommand(receivedValue, endPoint);
+        }
+
+        public void ReceiveCommand(string receivedValue, IPEndPoint endPoint)
+        {
             try
             {
-                string receivedValue = Encoding.UTF8.GetString(receivedBytes);
-
                 messageQueue.Enqueue(new Tuple<string, IPEndPoint>(receivedValue, endPoint));
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Logger.Log(ex.Message);
             }
         }
 
@@ -69,25 +75,11 @@ namespace Mia.Server.Game.Communication
             return new ClientCommand();
         }
 
-        public void SendCommand(string message, UdpState udpState)
+        public void SendCommand(IServerCommand serverCommand)
         {
-            SendCommand(message, new List<UdpState> { udpState });
+            byte[] messageBytes = Encoding.UTF8.GetBytes(serverCommand.CommandText);
+
+            udpClient.Send(messageBytes, messageBytes.Length, serverCommand.EndPoint);
         }
-
-        /// <summary>
-        /// Send a one way message to end points
-        /// </summary>
-        /// <param name="message"></param>
-        /// <param name="endPoints"></param>
-        public void SendCommand(string message, List<UdpState> udpStates)
-        {
-            byte[] messageBytes = Encoding.UTF8.GetBytes(message);
-
-            foreach (UdpState udpState in udpStates)
-            {
-                udpState.UdpClient.Send(messageBytes, messageBytes.Length, udpState.EndPoint);
-            }
-        }
-
     }
 }

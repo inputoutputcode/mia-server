@@ -2,7 +2,8 @@ using System;
 using System.Net;
 using Xunit;
 using Mia.Server.Game.PlayEngine.Move;
-
+using Mia.Server.Game.Communication.Command;
+using Moq;
 
 namespace Mia.Server.Game.Communication.Test
 {
@@ -64,53 +65,41 @@ namespace Mia.Server.Game.Communication.Test
     /// </summary>
     public class CommandServerTest
     {
-
-
-
         [Fact]
         public void Client_Sends_Register()
         {
             // Arrange
-            var commandServer = new CommandServer();
-
-            var udpState = new UdpState();
-            udpState.EndPoint = new IPEndPoint(IPAddress.Parse("10.10.4.6"), 1001);
-            udpState.UdpClient = null;
-
+            var commandServer = new CommandServer(5000);
+            var endPoint = new IPEndPoint(IPAddress.Parse("10.10.4.6"), 1001);
             string playerName = "Player1";
-            string message = $"{PlayerMoveCode.REGISTER};{playerName}";
+            string message = $"{ClientCommandCode.REGISTER};{playerName}";
 
             // Act
-            var clientCommand = commandServer.ConvertMessage(message, udpState);
+            commandServer.ReceiveCommand(message, endPoint);
+            var clientCommand = commandServer.GetClientCommand();
 
             // Assert
-            Assert.True(clientCommand.Code == PlayerMoveCode.REGISTER);
-            Assert.True(clientCommand.Value == playerName);
-            Assert.True(clientCommand.Client == );
+            Assert.True(clientCommand.CommandText == message);
+            Assert.True(clientCommand.EndPoint == endPoint);
         }
 
         [Fact]
         public void Client_Sends_Join_Game()
         {
             // Arrange
-            var commandServer = new CommandServer();
-
-            var udpState = new UdpState();
-            udpState.EndPoint = new IPEndPoint(IPAddress.Parse("10.10.4.6"), 1001);
-            udpState.UdpClient = null;
-
+            var commandServer = new CommandServer(5000);
+            var endPoint = new IPEndPoint(IPAddress.Parse("10.10.4.6"), 1001);
             string playerName = "Player1";
             Guid gameToken = Guid.NewGuid();
             string message = $"{PlayerMoveCode.JOIN_GAME};{playerName};{gameToken}";
 
             // Act
-            var clientCommand = commandServer.ConvertMessage(message, udpState);
+            commandServer.ReceiveCommand(message, endPoint);
+            var clientCommand = commandServer.GetClientCommand();
 
             // Assert
-            Assert.True(clientCommand.Code == PlayerMoveCode.JOIN_GAME);
-            Assert.True(clientCommand.Value == playerName);
-            Assert.True(clientCommand.Client == );
-            Assert.True(clientCommand.GameToken == gameToken);
+            Assert.True(clientCommand.CommandText == message);
+            Assert.True(clientCommand.EndPoint == endPoint);
         }
 
         [Fact]

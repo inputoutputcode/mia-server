@@ -1,8 +1,8 @@
 using Moq;
 using Xunit;
 using Mia.Server.Game.Scoring;
-using Mia.Server.Game.Interface;
-using Mia.Server.Game.Command;
+using Mia.Server.Game.PlayEngine.Move;
+using Mia.Server.Game.Register.Interface;
 
 
 namespace Mia.Server.Game.PlayEngine.Test
@@ -13,24 +13,20 @@ namespace Mia.Server.Game.PlayEngine.Test
         public void Game_Round_Will_Be_Cancelled_Without_Players()
         {
             // Arrange
-            var commandServer = new Mock<ICommandServer>().Object;
+            var gameManager = new Mock<IGameManager>().Object;
             int rounds = 1;
-            var game = new Game("Game1", rounds, ScoreMode.Points, commandServer);
+            var game = new Game("Game1", rounds, ScoreMode.Points, gameManager);
 
             var player1 = new Player("Player1", false);
             var player2 = new Player("Player2", false);
 
-            var registerCommandPlayer1 = new ClientCommand(ClientCommandCode.REGISTER, player1.Name, player1, game.Token);
-            var registerCommandPlayer2 = new ClientCommand(ClientCommandCode.REGISTER, player2.Name, player2, game.Token);
+            var joinGamePlayer1 = new PlayerMove(PlayerMoveCode.JOIN_GAME, player1.Name, player1, game.Token);
+            var joinGamePlayer2 = new PlayerMove(PlayerMoveCode.JOIN_GAME, player2.Name, player2, game.Token);
 
             // Act
-            game.Register(player1);
-            game.Register(player2);
-
-
-
 
             // Assert
+
         }
 
         [Fact]
@@ -47,25 +43,11 @@ namespace Mia.Server.Game.PlayEngine.Test
         public void See_Should_Raise_Lost_For_Current_Player_If_Dice_Higher_Or_Equal()
         {
             // Arrange
-            var commandServer = new Mock<ICommandServer>().Object;
-            int rounds = 1;
-            var game = new Game("Game1", rounds, ScoreMode.Points, commandServer);
-
-            var player1 = new Player("Player1", false);
-            var player2 = new Player("Player2", false);
-
-            var registerCommandPlayer1 = new ClientCommand(ClientCommandCode.REGISTER, player1.Name, player1, game.Token);
-            var registerCommandPlayer2 = new ClientCommand(ClientCommandCode.REGISTER, player2.Name, player2, game.Token);
-
-            var joinCommandPlayer1 = new ClientCommand(ClientCommandCode.JOIN_ROUND, player1.Name, player1, game.Token);
-            var joinCommandPlayer2 = new ClientCommand(ClientCommandCode.JOIN_ROUND, player2.Name, player2, game.Token);
 
             // Act
-            game.Register(player1);
-            game.Register(player2);
-
 
             // Assert
+
         }
 
         [Fact]

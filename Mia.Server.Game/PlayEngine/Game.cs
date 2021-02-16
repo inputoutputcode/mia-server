@@ -4,7 +4,7 @@ using Mia.Server.Game.Interface;
 using Mia.Server.Game.Scoring;
 using Mia.Server.Game.Scoring.Interface;
 using Mia.Server.Game.Register.Interface;
-
+using System.Threading;
 
 namespace Mia.Server.Game.PlayEngine
 {
@@ -99,6 +99,12 @@ namespace Mia.Server.Game.PlayEngine
         public void RoundStarting()
         {
             throw new NotImplementedException();
+
+            var tracker = new TimeOutTracker(200);
+            while (tracker.IsValid)
+            {
+                Thread.Sleep(20);
+            }
         }
 
         public void JoinRound(IPlayer player)

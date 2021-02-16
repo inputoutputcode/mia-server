@@ -40,11 +40,11 @@ namespace Mia.Server.Game.Register
             get { return activeGameInstances; }
         }
 
-        public GameManager()
+        public GameManager(int listenPort)
         {
             Initialize();
 
-            this.commandServer = new CommandServer();
+            this.commandServer = new CommandServer(listenPort);
             StartGame("Party Game", 1, ScoreMode.Points);
 
             while (true)
@@ -218,6 +218,26 @@ namespace Mia.Server.Game.Register
                 var player = new Player(client.Name, isSpectator);
                 game.Register(player);
             }
+        }
+
+        public bool ValidateName(string playerName)
+        {
+            bool isValid = true;
+
+            if (string.IsNullOrWhiteSpace(playerName))
+            {
+                isValid = false;
+            }
+            else if (playerName.Length > 20)
+            {
+                isValid = false;
+            }
+            else if (playerName.All(n => Char.IsLetterOrDigit(n) || n == '_'))
+            {
+                isValid = false;
+            }
+
+            return isValid;
         }
 
         public void ProcessMove(IServerMove serverMove)

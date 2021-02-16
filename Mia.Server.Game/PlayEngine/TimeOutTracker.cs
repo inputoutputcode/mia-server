@@ -2,7 +2,7 @@
 using System.Diagnostics;
 
 
-namespace Mia.Server.Messaging
+namespace Mia.Server.Game.PlayEngine
 {
     public class TimeOutTracker
     {
