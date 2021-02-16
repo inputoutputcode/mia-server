@@ -92,12 +92,7 @@ namespace Mia.Server.Game.PlayEngine
 
         public PlayerList(int maximumActivePlayers = 20, int maximumSpectators = 20)
         {
-            Initialize(new List<IPlayer>(), maximumActivePlayers, maximumSpectators);
-        }
-
-        public PlayerList(List<IPlayer> players, int maximumActivePlayers, int maximumSpectators)
-        {
-            Initialize(players, maximumActivePlayers, maximumSpectators);
+            Initialize(maximumActivePlayers, maximumSpectators);
         }
 
         #endregion
@@ -105,9 +100,9 @@ namespace Mia.Server.Game.PlayEngine
 
         #region Methods
 
-        private void Initialize(List<IPlayer> players, int maximumActivePlayers, int maximumSpectators)
+        private void Initialize(int maximumActivePlayers, int maximumSpectators)
         {
-            this.players = players;
+            this.players = new List<IPlayer>();
             this.maximumActivePlayers = maximumActivePlayers;
             this.maximumSpectators = maximumSpectators;
         }
@@ -200,6 +195,7 @@ namespace Mia.Server.Game.PlayEngine
         { 
             // TODO: How evil is it?
             players.All(p => { p.IsSpectator = true; return true; });
+
         }
 
         #endregion Methods

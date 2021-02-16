@@ -18,17 +18,6 @@ namespace Mia.Server.Game.PlayEngine.Test
         }
 
         [Fact]
-        public void Spectators_Should_Not_Be_Active_Players()
-        {
-            // Arrange
-
-            // Act
-
-            // Assert
-            Assert.True(false);
-        }
-
-        [Fact]
         public void Pick_The_First_Player()
         {
             // Arrange
@@ -75,7 +64,8 @@ namespace Mia.Server.Game.PlayEngine.Test
             playerList.PermutePlayers();
 
             // Assert
-            Assert.True(playerList.);
+            Assert.True(playerList.ActivePlayers[0].Name == player1.Name);
+            Assert.True(playerList.ActivePlayers[1].Name == player2.Name);
         }
 
         [Fact]

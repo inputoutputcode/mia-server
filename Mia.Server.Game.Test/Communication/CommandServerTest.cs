@@ -91,7 +91,7 @@ namespace Mia.Server.Game.Communication.Test
             var endPoint = new IPEndPoint(IPAddress.Parse("10.10.4.6"), 1001);
             string playerName = "Player1";
             Guid gameToken = Guid.NewGuid();
-            string message = $"{PlayerMoveCode.JOIN_GAME};{playerName};{gameToken}";
+            string message = $"{PlayerMoveCode.JOIN_ROUND};{playerName};{gameToken}";
 
             // Act
             commandServer.ReceiveCommand(message, endPoint);
