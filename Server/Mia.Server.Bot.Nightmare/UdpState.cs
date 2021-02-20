@@ -2,7 +2,7 @@
 using System.Net.Sockets;
 
 
-namespace Mia.Bot.Winner
+namespace Mia.Server.Bot.Nightmare
 {
     public struct UdpState
     {

@@ -24,7 +24,7 @@ namespace Mia.Server.Game.Interface
 
         bool JoinGame(IPlayer player);
 
-        void StartRound();
+        void NewRound();
 
         void RoundStarting();
 

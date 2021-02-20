@@ -3,17 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30907.101
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mia.Bot.Starter", "Mia.Bot.Starter\Mia.Bot.Starter.csproj", "{744E6A53-C1D3-47A8-8010-4B082EB66435}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mia.Bot.Winner", "Mia.Bot.Winner\Mia.Bot.Winner.csproj", "{7A2B04CB-1CB8-4B81-A93F-8415DCAD5CA2}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mia.Server.Game", "Mia.Server.Game\Mia.Server.Game.csproj", "{F633A659-3B7D-455A-B524-5B0C3889B5E4}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mia.Server.Game.Test", "Mia.Server.Game.Test\Mia.Server.Game.Test.csproj", "{FD59FC05-05C5-4521-83C4-E653C28E3D75}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionFiles", "SolutionFiles", "{4CA8F579-1B20-4A80-AB3D-E0A2BC2F88C3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mia.Server.Exe", "Mia.Server.Console\Mia.Server.Exe.csproj", "{612AD9B9-A040-495D-8FAA-14D5E4039CA4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mia.Server.ConsoleRunner", "Mia.Server.Console\Mia.Server.ConsoleRunner.csproj", "{612AD9B9-A040-495D-8FAA-14D5E4039CA4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mia.Server.Bot.Starter", "Mia.Server.Bot.Starter\Mia.Server.Bot.Starter.csproj", "{FE42E806-CC06-4297-8FD7-2921B756757D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mia.Server.Bot.Nightmare", "Mia.Server.Bot.Nightmare\Mia.Server.Bot.Nightmare.csproj", "{315E722D-51BC-4056-993D-DE5892E4AA21}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,14 +21,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{744E6A53-C1D3-47A8-8010-4B082EB66435}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{744E6A53-C1D3-47A8-8010-4B082EB66435}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{744E6A53-C1D3-47A8-8010-4B082EB66435}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{744E6A53-C1D3-47A8-8010-4B082EB66435}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7A2B04CB-1CB8-4B81-A93F-8415DCAD5CA2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7A2B04CB-1CB8-4B81-A93F-8415DCAD5CA2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7A2B04CB-1CB8-4B81-A93F-8415DCAD5CA2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7A2B04CB-1CB8-4B81-A93F-8415DCAD5CA2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F633A659-3B7D-455A-B524-5B0C3889B5E4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F633A659-3B7D-455A-B524-5B0C3889B5E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F633A659-3B7D-455A-B524-5B0C3889B5E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -41,6 +33,14 @@ Global
 		{612AD9B9-A040-495D-8FAA-14D5E4039CA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{612AD9B9-A040-495D-8FAA-14D5E4039CA4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{612AD9B9-A040-495D-8FAA-14D5E4039CA4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FE42E806-CC06-4297-8FD7-2921B756757D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE42E806-CC06-4297-8FD7-2921B756757D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE42E806-CC06-4297-8FD7-2921B756757D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE42E806-CC06-4297-8FD7-2921B756757D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{315E722D-51BC-4056-993D-DE5892E4AA21}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{315E722D-51BC-4056-993D-DE5892E4AA21}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{315E722D-51BC-4056-993D-DE5892E4AA21}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{315E722D-51BC-4056-993D-DE5892E4AA21}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

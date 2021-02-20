@@ -17,9 +17,34 @@ namespace Mia.Server.Game.PlayEngine.Test
         public void Game_Round_Will_Be_Cancelled_Without_Players()
         {
             // Arrange
-            var gameManager = new Mock<IGameManager>();
-            gameManager.Setup(m => m.ProcessMove(It.Is<IServerMove>()));
+            var gameManager = new Mock<IGameManager>(MockBehavior.Strict);
+            gameManager.Setup(m => m.ProcessMove(It.IsAny<IServerMove>()));
             
+
+            int rounds = 1;
+            var game = new Game("Game1", rounds, ScoreMode.Points, gameManager.Object);
+
+            var player1 = new Player("Player1", true);
+            game.JoinGame(player1);
+            var player2 = new Player("Player2", true);
+            game.JoinGame(player2);
+
+            // Act
+            game.NewRound();
+
+            // Assert
+            gameManager.Verify(m => m.ProcessMove(It.Is<IServerMove>(x => x.Code == ServerMoveCode.ROUND_STARTING)), Times.AtMost(2));
+            gameManager.Verify(m => m.ProcessMove(It.Is<IServerMove>(x => x.Code == ServerMoveCode.ROUND_STARTED)), Times.AtMost(2));
+            gameManager.Verify(m => m.ProcessMove(It.Is<IServerMove>(x => x.Code == ServerMoveCode.ANNOUNCED)), Times.AtMost(1));
+        }
+
+        [Fact]
+        public void Game_Round_Will_Be_Cancelled_With_One_Player()
+        {
+            // Arrange
+            var gameManager = new Mock<IGameManager>(MockBehavior.Strict);
+            gameManager.Setup(m => m.ProcessMove(It.IsAny<IServerMove>())).Verifiable();
+
 
             int rounds = 1;
             var game = new Game("Game1", rounds, ScoreMode.Points, gameManager.Object);
@@ -33,20 +58,11 @@ namespace Mia.Server.Game.PlayEngine.Test
             var joinGamePlayer2 = new PlayerMove(PlayerMoveCode.JOIN_ROUND, player2.Name, player2, game.Token);
 
             // Act
+            game.NewRound();
+            game.Move(joinGamePlayer1);
 
             // Assert
             gameManager.Verify(m => m.ProcessMove(It.Is<IServerMove>(x => x.Code == ServerMoveCode.ROUND_CANCELLED)));
-        }
-
-        [Fact]
-        public void Game_Round_Will_Be_Cancelled_With_One_Player()
-        {
-            // Arrange
-
-            // Act
-
-            // Assert
-            Assert.True(false);
         }
 
         [Fact]
@@ -68,7 +84,7 @@ namespace Mia.Server.Game.PlayEngine.Test
             var joinGamePlayer2 = new PlayerMove(PlayerMoveCode.JOIN_ROUND, player2.Name, player2, game.Token);
 
             // Act
-            game.StartRound();
+            game.NewRound();
 
             // Assert
             gameManager.Verify(m => m.ProcessMove(It.Is<IServerMove>(x => x.Code == ServerMoveCode.ROUND_STARTING)));

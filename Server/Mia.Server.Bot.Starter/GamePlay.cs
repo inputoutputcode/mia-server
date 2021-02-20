@@ -1,34 +1,49 @@
 ﻿using System;
-using System.Configuration;
 using System.Net;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Text.RegularExpressions;
+using Mia.Server.Bot.Starter.Configuration;
 
-namespace Mia.Bot.Starter
+
+namespace Mia.Server.Bot.Starter
 {
-    public class StarterBot
+    public class GamePlay
     {
         public UdpState udpStateServer;
 
-        public StarterBot()
+        public IPAddress LocalIPAddress
         {
-            string serverAddress = ConfigurationManager.AppSettings["ServerAddress"];
-            string serverPort = ConfigurationManager.AppSettings["ServerPort"];
+            get
+            {
+                var hostEntry = Dns.GetHostEntry(Dns.GetHostName());
+                var ipAddress = (from address in hostEntry.AddressList where address.AddressFamily == AddressFamily.InterNetwork select address.ToString()).FirstOrDefault();
 
-            var serverEndPoint = new IPEndPoint(IPAddress.Parse(serverAddress), int.Parse(serverPort));
+                return IPAddress.Parse(ipAddress);
+            }
+        }
+
+        public GamePlay(bool isLocalServer = false)
+        {
+            string serverAddress = Config.Settings.ServerAddress;
+            int serverPort = Config.Settings.ServerPort;
+
+            if (isLocalServer)
+                serverAddress = LocalIPAddress.ToString();
+
+            var serverEndPoint = new IPEndPoint(IPAddress.Parse(serverAddress), serverPort);
             var hostEntry = Dns.GetHostEntry(Dns.GetHostName());
             var localIpAddress = (from address in hostEntry.AddressList where address.AddressFamily == AddressFamily.InterNetwork select address.ToString()).FirstOrDefault();
-            var localEndPoint = new IPEndPoint(IPAddress.Parse(localIpAddress), int.Parse(ConfigurationManager.AppSettings["LocalPort"]));
+            var localEndPoint = new IPEndPoint(IPAddress.Parse(localIpAddress), Config.Settings.LocalPort);
 
             Thread.Sleep(2000);
 
             var udpClient = new UdpClient(localEndPoint);
             udpClient.Connect(serverEndPoint);
 
-            string playerName = ConfigurationManager.AppSettings["PlayerName"];
+            string playerName = Config.Settings.PlayerName;
             string commandText = "REGISTER;" + playerName;
             SendCommand(commandText, udpClient);
 

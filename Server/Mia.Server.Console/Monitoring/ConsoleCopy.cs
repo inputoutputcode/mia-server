@@ -3,7 +3,7 @@ using System.IO;
 using System.Text;
 
 
-namespace Mia.Server.Exe
+namespace Mia.Server.ConsoleRunner.Monitoring
 {
     class ConsoleCopy : IDisposable
     {

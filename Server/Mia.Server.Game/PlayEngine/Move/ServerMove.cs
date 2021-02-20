@@ -54,12 +54,5 @@ namespace Mia.Server.Game.PlayEngine.Move
             this.players = players;
             this.token = token;
         }
-
-        public ServerMove(ServerMoveCode commandCode, Guid token)
-        {
-            this.code = commandCode;
-            this.token = token;
-        }
-
     }
 }

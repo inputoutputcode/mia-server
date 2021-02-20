@@ -1,14 +1,14 @@
 ﻿using System;
 
 
-namespace Mia.Bot.Winner
+namespace Mia.Server.Bot.Starter
 {
     class Program
     {
         static void Main(string[] args)
         {
-            Console.Title = "Winner Bot";
-            var bot = new WinnerBot();
+            Console.Title = Configuration.Config.Settings.PlayerName;
+            new GamePlay(true);
             Console.ReadKey();
         }
     }

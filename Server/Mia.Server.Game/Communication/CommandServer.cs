@@ -6,7 +6,7 @@ using System.Text;
 using Mia.Server.Game.Communication.Command;
 using Mia.Server.Game.Communication.Command.Interface;
 using Mia.Server.Game.Communication.Interface;
-using Mia.Server.Logging;
+using Mia.Server.Game.Monitoring;
 
 
 namespace Mia.Server.Game.Communication
@@ -60,7 +60,7 @@ namespace Mia.Server.Game.Communication
             }
             catch (Exception ex)
             {
-                Logger.Log(ex.Message);
+                Log.Message(ex.Message);
             }
         }
 
@@ -72,7 +72,7 @@ namespace Mia.Server.Game.Communication
             if (isDequeued)
                 return new ClientCommand(clientMessage.Item1, clientMessage.Item2);
 
-            return new ClientCommand();
+            return null;
         }
 
         public void SendCommand(IServerCommand serverCommand)

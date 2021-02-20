@@ -12,7 +12,7 @@ using Mia.Server.Game.Communication.Command;
 using Mia.Server.Game.PlayEngine;
 using Mia.Server.Game.PlayEngine.Move;
 using Mia.Server.Game.PlayEngine.Move.Interface;
-
+using Mia.Server.Game.Monitoring;
 
 namespace Mia.Server.Game.Register
 {
@@ -42,7 +42,8 @@ namespace Mia.Server.Game.Register
             while (true)
             {
                 var command = commandServer.GetClientCommand();
-                ProcessCommand(command);
+                if (command != null)
+                    ProcessCommand(command);
             }
         }
 
@@ -88,7 +89,7 @@ namespace Mia.Server.Game.Register
 
                 if (firstPart == "REGISTER" && commandParts.Length > 1)
                 {
-                    string playerName = commandParts[2];
+                    string playerName = commandParts[1];
                     IClient newClient = new Client(playerName, command.EndPoint);
                     RegisterClient(newClient);
                 }
@@ -99,20 +100,20 @@ namespace Mia.Server.Game.Register
 
                 if (firstCommandPart == "FIND_GAME" && commandParts.Length > 1)
                 {
-                    string gameName = commandParts[2];
+                    string gameName = commandParts[1];
                     var gameInstance = FindGame(gameName);
 
-                    // TODO: cluster version
+                    // TODO: only for cluster version
                 }
                 else if (firstCommandPart == "JOIN_GAME" && commandParts.Length > 1)
                 {
-                    string gameName = commandParts[2];
+                    string gameName = commandParts[1];
                     var gameInstance = FindGameInstance(gameName);
                     JoinGame(gameInstance, client, false);
                 }
                 else if (firstCommandPart == "JOIN_SPECTATOR" && commandParts.Length > 1)
                 {
-                    string gameName = commandParts[2];
+                    string gameName = commandParts[1];
                     var gameInstance = FindGameInstance(gameName);
                     JoinGame(gameInstance, client, true);
                 }
@@ -177,11 +178,13 @@ namespace Mia.Server.Game.Register
             if (isRejected)
             {
                 command = new ServerCommand(ServerCommandCode.REJECTED.ToString(), client.EndPoint);
+                Log.Message($"{client.Name} {ServerCommandCode.REJECTED}");
             }
             else
             {
                 clients.Add(client);
                 command = new ServerCommand(ServerCommandCode.REGISTERED.ToString(), client.EndPoint);
+                Log.Message($"{client.Name} {ServerCommandCode.REGISTERED}");
             }
 
             commandServer.SendCommand(command);

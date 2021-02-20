@@ -11,6 +11,8 @@ namespace Mia.Server.Game.Interface
 
         List<IPlayer> RegisteredPlayers { get; }
 
+        List<IPlayer> Spectators { get; }
+
         List<IPlayer> ActivePlayers { get; }
 
         void PermutePlayers();

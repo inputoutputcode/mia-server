@@ -3,9 +3,11 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using Mia.Server.Game.Register;
+using Mia.Server.ConsoleRunner.Configuration;
+using Mia.Server.ConsoleRunner.Monitoring;
 
 
-namespace Mia.Server.Exe
+namespace Mia.Server.ConsoleRunner
 {
     class Program
     {

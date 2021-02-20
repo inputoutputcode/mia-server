@@ -6,6 +6,7 @@ using Mia.Server.Game.Scoring;
 using Mia.Server.Game.Scoring.Interface;
 using Mia.Server.Game.Register.Interface;
 using Mia.Server.Game.PlayEngine.Move;
+using Mia.Server.Game.Monitoring;
 
 namespace Mia.Server.Game.PlayEngine
 {
@@ -65,7 +66,7 @@ namespace Mia.Server.Game.PlayEngine
 
         #region Constructor
 
-        public Game(string name, int roundLimit, ScoreMode scoreMode, IGameManager gameManager)
+        public Game(string name, int roundLimit, ScoreMode scoreMode, IGameManager gameManager, bool isSimulation = false)
         {
             this.name = name;
             this.roundLimit = roundLimit;
@@ -74,6 +75,9 @@ namespace Mia.Server.Game.PlayEngine
 
             playerList = new PlayerList();
             token = new Guid();
+
+            if (!isSimulation)
+                NewRound();
         }
 
         #endregion
@@ -83,17 +87,19 @@ namespace Mia.Server.Game.PlayEngine
             this.playerList = players;
             this.currentTurn = turn;
             this.currentDice = dice;
-
-            this.isSimulation = true;
         }
 
         #region Methods
-        public void StartRound()
+        public void NewRound()
         {
-            while (roundLimit < currentRoundNumber)
+            if (currentRoundNumber < roundLimit)
             {
                 RoundStarting();
                 currentRoundNumber += 1;
+            }
+            else
+            {
+                // TODO: send final score
             }
         }
 
@@ -121,7 +127,10 @@ namespace Mia.Server.Game.PlayEngine
 
         public bool JoinGame(IPlayer player)
         {
-            return playerList.JoinGame(player);
+            bool isJoined = playerList.JoinGame(player);
+            Log.Message($"Player '{player.Name}' joined the game '{this.Name}'");
+
+            return isJoined;
         }
 
         public void RoundStarting()
@@ -129,35 +138,77 @@ namespace Mia.Server.Game.PlayEngine
             gamePhase = GamePhase.Starting;
             playerList.RoundReset();
             playerList.PermutePlayers();
-
             roundToken = Guid.NewGuid();
-            var players = playerList.ActivePlayers.ToArray();
-            var serverMove = new ServerMove(ServerMoveCode.ROUND_STARTING, string.Empty, ServerFailureReasonCode.None, players, roundToken);
-            gameManager.ProcessMove(serverMove);
 
-            var tracker = new TimeOutTracker(200);
-            while (tracker.IsValid)
+            Log.Message($"Round '{currentRoundNumber}' starting in game '{this.Name}'");
+
+            var players = playerList.RegisteredPlayers.ToArray();
+            if (players.Length > 0)
             {
-                // TODO: Is this blocking the incoming moves?
-                Thread.Sleep(20);
-            }
+                var serverMove = new ServerMove(ServerMoveCode.ROUND_STARTING, string.Empty, ServerFailureReasonCode.None, players, roundToken);
+                gameManager.ProcessMove(serverMove);
 
-            RoundStarted();
+                var tracker = new TimeOutTracker(200);
+                while (tracker.IsValid)
+                {
+                    // TODO: This should not block incoming moves
+                    Thread.Sleep(20);
+                }
+
+                RoundStarted();
+            }
+            else
+            {
+                var tracker = new TimeOutTracker(1000);
+                while (tracker.IsValid)
+                {
+                    // TODO: This should not block incoming moves
+                    Thread.Sleep(20);
+                }
+
+                NewRound();
+            }
         }
 
         public void RoundStarted()
         {
             gamePhase = GamePhase.Started;
+            
+            var activePlayers = playerList.ActivePlayers.ToArray();
+            if (activePlayers.Length < 2)
+            {
+                ServerFailureReasonCode failureCode;
+                if (activePlayers.Length == 0)
+                    failureCode = ServerFailureReasonCode.NO_PLAYERS;
+                else
+                    failureCode = ServerFailureReasonCode.ONLY_ONE_PLAYER;
 
-            // Send ROUND_STARTED
-            var players = playerList.ActivePlayers.ToArray();
-            var serverMove = new ServerMove(ServerMoveCode.ROUND_STARTED, string.Empty, ServerFailureReasonCode.None, players, roundToken);
-            gameManager.ProcessMove(serverMove);
+                // Send ROUND_CANCELLED
+                var spectators = playerList.RegisteredPlayers.ToArray();
+                var serverMove = new ServerMove(ServerMoveCode.ROUND_CANCELLED, string.Empty, failureCode, spectators, roundToken);
+                gameManager.ProcessMove(serverMove);
+                Log.Message($"Round '{currentRoundNumber}' cancelled in game '{this.Name}'");
+            }
+            else
+            {
+                // Send ROUND_STARTED
+                var serverMove = new ServerMove(ServerMoveCode.ROUND_STARTED, string.Empty, ServerFailureReasonCode.None, activePlayers, roundToken);
+                gameManager.ProcessMove(serverMove);
+                Log.Message($"Round '{currentRoundNumber}' started in game '{this.Name}'");
 
-            // Send YOUR_TURN
-            var firstPlayer = new IPlayer[] { playerList.FirstPlayer() };
-            var serverMoveTurn = new ServerMove(ServerMoveCode.YOUR_TURN, string.Empty, ServerFailureReasonCode.None, firstPlayer, roundToken);
-            gameManager.ProcessMove(serverMoveTurn);
+                // Send YOUR_TURN
+                var firstPlayer = new IPlayer[] { playerList.FirstPlayer() };
+                var serverMoveTurn = new ServerMove(ServerMoveCode.YOUR_TURN, string.Empty, ServerFailureReasonCode.None, firstPlayer, roundToken);
+                gameManager.ProcessMove(serverMoveTurn);
+                Log.Message($"The game '{this.Name}' send YOUR_TURN to '{playerList.FirstPlayer().Name}'");
+
+                var tracker = new TimeOutTracker(200);
+                while (tracker.IsValid)
+                {
+                    // TODO: This should not block incoming moves
+                    Thread.Sleep(20);
+                }
+            }
         }
 
         private IDice Parse(string value)

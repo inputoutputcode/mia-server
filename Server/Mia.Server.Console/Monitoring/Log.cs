@@ -1,11 +1,11 @@
 ﻿using System;
 
 
-namespace Mia.Server.Logging
+namespace Mia.Server.ConsoleRunner.Logging
 {
-    public class Logger
+    public class Log : ILog
     {
-        public static void Log(string message)
+        public void Message(string message)
         {
             string timeValue = DateTime.Now.ToString("yyyyMMdd HH:mm:ss.fff");
             Console.WriteLine($"{timeValue} { message}");

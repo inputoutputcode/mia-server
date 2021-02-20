@@ -2,7 +2,7 @@
 using System.IO;
 
 
-namespace Mia.Server.Exe
+namespace Mia.Server.ConsoleRunner.Configuration
 {
     public static class Config
     {
@@ -18,7 +18,7 @@ namespace Mia.Server.Exe
                     config = builder.Build();
                 }
 
-                return config.GetSection("appSetting").Get<AppSettings>();
+                return config.GetSection("appSettings").Get<AppSettings>();
             }
         }
 

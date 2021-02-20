@@ -58,6 +58,14 @@ namespace Mia.Server.Game.PlayEngine
             }
         }
 
+        public List<IPlayer> Spectators
+        {
+            get
+            {
+                return players.FindAll(p => p.IsSpectator);
+            }
+        }
+
         /// <summary>
         /// Get all players with the spectators.
         /// </summary>
@@ -109,7 +117,7 @@ namespace Mia.Server.Game.PlayEngine
 
         public bool JoinGame(IPlayer player)
         {
-            bool isNewPlayer = players.Exists(x => x.Name == player.Name);
+            bool isNewPlayer = !players.Exists(x => x.Name == player.Name);
             if (isNewPlayer)
             {
                 players.Add(player);
