@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mia.Server.Game.Test", "Mia
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionFiles", "SolutionFiles", "{4CA8F579-1B20-4A80-AB3D-E0A2BC2F88C3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mia.Server.ConsoleRunner", "Mia.Server.Console\Mia.Server.ConsoleRunner.csproj", "{612AD9B9-A040-495D-8FAA-14D5E4039CA4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mia.Server.ConsoleRunner", "Mia.Server.ConsoleRunner\Mia.Server.ConsoleRunner.csproj", "{612AD9B9-A040-495D-8FAA-14D5E4039CA4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mia.Server.Bot.Starter", "Mia.Server.Bot.Starter\Mia.Server.Bot.Starter.csproj", "{FE42E806-CC06-4297-8FD7-2921B756757D}"
 EndProject

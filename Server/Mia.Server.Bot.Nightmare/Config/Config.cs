@@ -14,7 +14,8 @@ namespace Mia.Server.Bot.Nightmare.Configuration
             {
                 if (config == null)
                 {
-                    var builder = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appSettings.json", optional: false);
+                    string configFileName = "Mia.Server.Bot.Nightmare.Config.json";
+                    var builder = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile(configFileName, optional: false);
                     config = builder.Build();
                 }
 

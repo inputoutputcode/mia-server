@@ -7,6 +7,8 @@ using Mia.Server.Game.Scoring.Interface;
 using Mia.Server.Game.Register.Interface;
 using Mia.Server.Game.PlayEngine.Move;
 using Mia.Server.Game.Monitoring;
+using System.Threading.Tasks;
+using Mia.Server.ConsoleRunner.Configuration;
 
 namespace Mia.Server.Game.PlayEngine
 {
@@ -14,12 +16,10 @@ namespace Mia.Server.Game.PlayEngine
     {
         #region Members
 
-        private string name;
+        private int gameNumber;
         private int turnCount;
         private bool turnFinished;
         private bool roundClosed;
-        private int currentRoundNumber = 0;
-        private int roundLimit;
         private Guid roundToken;
         private IPlayerList playerList;
         private IGameScorer gameScorer;
@@ -56,9 +56,9 @@ namespace Mia.Server.Game.PlayEngine
             get { return isSimulation; }
         }
 
-        public string Name
+        public int GameNumber
         {
-            get { return name; }
+            get { return gameNumber; }
         }
 
         #endregion Properties
@@ -66,18 +66,14 @@ namespace Mia.Server.Game.PlayEngine
 
         #region Constructor
 
-        public Game(string name, int roundLimit, ScoreMode scoreMode, IGameManager gameManager, bool isSimulation = false)
+        public Game(int gameNumber, ScoreMode scoreMode, IGameManager gameManager, bool isSimulation = false)
         {
-            this.name = name;
-            this.roundLimit = roundLimit;
+            this.gameNumber = gameNumber;
             this.gameScorer = new GameScorer(scoreMode);
             this.gameManager = gameManager;
 
             playerList = new PlayerList();
             token = new Guid();
-
-            if (!isSimulation)
-                NewRound();
         }
 
         #endregion
@@ -90,18 +86,6 @@ namespace Mia.Server.Game.PlayEngine
         }
 
         #region Methods
-        public void NewRound()
-        {
-            if (currentRoundNumber < roundLimit)
-            {
-                RoundStarting();
-                currentRoundNumber += 1;
-            }
-            else
-            {
-                // TODO: send final score
-            }
-        }
 
         public void Move(IPlayerMove playerMove)
         {
@@ -128,19 +112,37 @@ namespace Mia.Server.Game.PlayEngine
         public bool JoinGame(IPlayer player)
         {
             bool isJoined = playerList.JoinGame(player);
-            Log.Message($"Player '{player.Name}' joined the game '{this.Name}'");
+            Log.Message($"Player '{player.Name}' joined the game");
 
             return isJoined;
         }
 
-        public void RoundStarting()
+        public void Start()
         {
+            var cts = new CancellationTokenSource();
+            var task = Task.Run(async () => {
+                await t1();
+            }, cts.Token);
+
+            cts.CancelAfter(TimeSpan.FromMilliseconds(Config.Settings.JoinTimeOut));
+
+            try
+            {
+                await task;
+            }
+            catch (OperationCanceledException)
+            {
+                // The cancellation token was triggered, add logic for that
+            }
+
+
+
             gamePhase = GamePhase.Starting;
             playerList.RoundReset();
             playerList.PermutePlayers();
             roundToken = Guid.NewGuid();
 
-            Log.Message($"Round '{currentRoundNumber}' starting in game '{this.Name}'");
+            Log.Message($"Round '{gameNumber}' starting");
 
             var players = playerList.RegisteredPlayers.ToArray();
             if (players.Length > 0)
@@ -187,20 +189,20 @@ namespace Mia.Server.Game.PlayEngine
                 var spectators = playerList.RegisteredPlayers.ToArray();
                 var serverMove = new ServerMove(ServerMoveCode.ROUND_CANCELLED, string.Empty, failureCode, spectators, roundToken);
                 gameManager.ProcessMove(serverMove);
-                Log.Message($"Round '{currentRoundNumber}' cancelled in game '{this.Name}'");
+                Log.Message($"Round '{gameNumber}' cancelled");
             }
             else
             {
                 // Send ROUND_STARTED
                 var serverMove = new ServerMove(ServerMoveCode.ROUND_STARTED, string.Empty, ServerFailureReasonCode.None, activePlayers, roundToken);
                 gameManager.ProcessMove(serverMove);
-                Log.Message($"Round '{currentRoundNumber}' started in game '{this.Name}'");
+                Log.Message($"Round '{gameNumber}' started ");
 
                 // Send YOUR_TURN
                 var firstPlayer = new IPlayer[] { playerList.FirstPlayer() };
                 var serverMoveTurn = new ServerMove(ServerMoveCode.YOUR_TURN, string.Empty, ServerFailureReasonCode.None, firstPlayer, roundToken);
                 gameManager.ProcessMove(serverMoveTurn);
-                Log.Message($"The game '{this.Name}' send YOUR_TURN to '{playerList.FirstPlayer().Name}'");
+                Log.Message($"Send YOUR_TURN to '{playerList.FirstPlayer().Name}'");
 
                 var tracker = new TimeOutTracker(200);
                 while (tracker.IsValid)

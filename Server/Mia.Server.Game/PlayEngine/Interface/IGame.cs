@@ -18,7 +18,7 @@ namespace Mia.Server.Game.Interface
 
         Guid Token { get; }
 
-        string Name { get; }
+        int GameNumber { get; }
 
         void CreateSimulation(IPlayerList players, ITurn turn, IDice dice);
 
@@ -26,7 +26,7 @@ namespace Mia.Server.Game.Interface
 
         void NewRound();
 
-        void RoundStarting();
+        void Start();
 
         void RoundStarted();
 

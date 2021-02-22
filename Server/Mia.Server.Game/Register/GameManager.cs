@@ -13,6 +13,8 @@ using Mia.Server.Game.PlayEngine;
 using Mia.Server.Game.PlayEngine.Move;
 using Mia.Server.Game.PlayEngine.Move.Interface;
 using Mia.Server.Game.Monitoring;
+using Mia.Server.ConsoleRunner.Configuration;
+
 
 namespace Mia.Server.Game.Register
 {
@@ -37,14 +39,11 @@ namespace Mia.Server.Game.Register
             Initialize();
 
             this.commandServer = new CommandServer(listenPort);
-            StartGame("Party Game", 1, ScoreMode.Points);
 
-            while (true)
-            {
-                var command = commandServer.GetClientCommand();
-                if (command != null)
-                    ProcessCommand(command);
-            }
+            var scoreMode = ScoreMode.Points;
+            Enum.TryParse(Config.Settings.ScoreMode, out scoreMode);
+
+            StartGame(scoreMode);
         }
 
         public GameManager(ICommandServer commandServer)
@@ -66,13 +65,29 @@ namespace Mia.Server.Game.Register
         /// </summary>
         /// <param name="name"></param>
         /// <param name="mode"></param>
-        private void StartGame(string name, int rounds, ScoreMode mode)
+        private void StartGame(ScoreMode scoreMode)
         {
-            var game = new PlayEngine.Game("Party Game", 1, ScoreMode.Points, this);
-            var gameInstance = new GameInstance(game.Name, game.Token);
+            int currentRoundNumber = 0;
 
-            activeGameInstances.Add(gameInstance);
-            activeGames.Add(game);
+            while (currentRoundNumber < Config.Settings.RoundsPerGame)
+            {
+                var game = new PlayEngine.Game(currentRoundNumber, scoreMode, this);
+                var gameInstance = new GameInstance(game.GameNumber, game.Token);
+
+                activeGameInstances.Add(gameInstance);
+                activeGames.Add(game);
+
+                game.Start();
+
+                currentRoundNumber += 1;
+            }
+
+            while (true)
+            {
+                var command = commandServer.GetClientCommand();
+                if (command != null)
+                    ProcessCommand(command);
+            }
         }
 
         public void ProcessCommand(IClientCommand command)
@@ -100,10 +115,13 @@ namespace Mia.Server.Game.Register
 
                 if (firstCommandPart == "FIND_GAME" && commandParts.Length > 1)
                 {
-                    string gameName = commandParts[1];
-                    var gameInstance = FindGame(gameName);
-
-                    // TODO: only for cluster version
+                    int gameNumber;
+                    bool isParsed = int.TryParse(commandParts[1], out gameNumber);
+                    if (isParsed)
+                    {
+                        var gameInstance = FindGame(gameNumber);
+                        // TODO: only for cluster version
+                    }
                 }
                 else if (firstCommandPart == "JOIN_GAME" && commandParts.Length > 1)
                 {
@@ -139,7 +157,7 @@ namespace Mia.Server.Game.Register
 
                         if (gameInstance != null)
                         {
-                            var game = FindGame(gameInstance.Name);
+                            var game = FindGame(gameInstance.GameNumber);
 
                             // TODO: Move codes should be part of Game domain only (SoC)
                             PlayerMoveCode moveCode;
@@ -200,9 +218,9 @@ namespace Mia.Server.Game.Register
             return activeGameInstances.FirstOrDefault(x => x.Name == gameName);
         }
 
-        public IGame FindGame(string gameName)
+        public IGame FindGame(int gameNumber)
         {
-            return activeGames.FirstOrDefault(x => x.Name == gameName);
+            return activeGames.FirstOrDefault(x => x.GameNumber == gameNumber);
         }
 
         private void JoinGame(IGameInstance gameInstance, IClient client, bool isSpectator = false)

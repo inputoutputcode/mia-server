@@ -23,7 +23,7 @@ namespace Mia.Server.Game.Register.Interface
 
         IGameInstance FindGameInstance(string gameName);
 
-        IGame FindGame(string gameName);
+        IGame FindGame(int gameNumber);
 
         bool ValidateName(string playerName);
 

@@ -2,7 +2,7 @@
 using System.IO;
 
 
-namespace Mia.Server.Bot.Starter.Configuration
+namespace Mia.Server.ConsoleRunner.Configuration
 {
     public static class Config
     {
@@ -14,7 +14,7 @@ namespace Mia.Server.Bot.Starter.Configuration
             {
                 if (config == null)
                 {
-                    string configFileName = "Mia.Server.Bot.Starter.Config.json";
+                    string configFileName = "Mia.Server.Game.Config.json";
                     var builder = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile(configFileName, optional: false);
                     config = builder.Build();
                 }
