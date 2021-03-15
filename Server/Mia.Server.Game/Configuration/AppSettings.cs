@@ -13,5 +13,13 @@
         public int TurnTimeOut { get; set; }
 
         public string ScoreMode { get; set; }
+
+        public int MaximumActivePlayers { get; set; }
+
+        public int MaximumSpectactors { get; set; }
+
+        public int ScoreIncrement { get; set; }
+
+        public int ScoreDecrement { get; set; }
     }
 }

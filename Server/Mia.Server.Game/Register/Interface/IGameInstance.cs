@@ -7,6 +7,6 @@ namespace Mia.Server.Game.Register.Interface
     {
         Guid GameToken { get; }
 
-        int GameNumber { get; }
+        string Name { get; }
     }
 }

@@ -21,9 +21,9 @@ namespace Mia.Server.Game.Register.Interface
 
         IGameInstance FindGameInstance(Guid gameToken);
 
-        IGameInstance FindGameInstance(string gameName);
+        IGameInstance FindGameInstance(string name);
 
-        IGame FindGame(int gameNumber);
+        IGame FindGame(Guid gameToken);
 
         bool ValidateName(string playerName);
 

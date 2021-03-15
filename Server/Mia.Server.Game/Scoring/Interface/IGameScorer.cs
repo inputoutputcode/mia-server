@@ -1,14 +1,22 @@
-﻿using Mia.Server.Game.Interface;
+﻿using System.Collections.Generic;
+
+using Mia.Server.Game.Interface;
 
 
 namespace Mia.Server.Game.Scoring.Interface
 {
     public interface IGameScorer
     {
-        bool IsGameOver { get; }
+        void SetActivePlayers(List<IPlayer> activePlayers);
 
-        void AddScore(IPlayerList playerList, IPlayer winner, IPlayer looser);
+        void Lost(IPlayer player);
 
-        string GetScoreList(IPlayerList playerList);
+        void Looser(IPlayer player);
+
+        void Winner(IPlayer player);
+
+        string GetScoreValues();
+
+        List<IPlayer> GetScores();
     }
 }

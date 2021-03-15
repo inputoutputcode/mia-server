@@ -56,12 +56,12 @@ namespace Mia.Server.Game.PlayEngine.Test
             // Arrange
             var playerList = new PlayerList();
             var player1 = new Player("Player1", false);
-            playerList.JoinRound(player1);
+            playerList.Join(player1);
             var player2 = new Player("Player2", false);
-            playerList.JoinRound(player2);
+            playerList.Join(player2);
 
             // Act
-            playerList.PermutePlayers();
+            playerList.Permute();
 
             // Assert
             Assert.True(playerList.ActivePlayers[0].Name == player1.Name);

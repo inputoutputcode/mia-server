@@ -6,7 +6,7 @@ namespace Mia.Server.Game.Register
 {
     public class GameInstance : IGameInstance
     {
-        private int gameNumber;
+        private string name;
 
         private Guid gameToken;
 
@@ -15,14 +15,14 @@ namespace Mia.Server.Game.Register
             get { return gameToken; }
         }
 
-        public int GameNumber
+        public string Name
         {
-            get { return gameNumber; }
+            get { return name; }
         }
 
-        public GameInstance(int gameNumber, Guid gameToken)
+        public GameInstance(string name, Guid gameToken)
         {
-            this.gameNumber = gameNumber;
+            this.name = name;
             this.gameToken = gameToken;
         }
     }

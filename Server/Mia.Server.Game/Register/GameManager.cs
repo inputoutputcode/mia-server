@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+
 using Mia.Server.Game.Communication.Interface;
 using Mia.Server.Game.Interface;
 using Mia.Server.Game.Scoring;
@@ -65,19 +66,20 @@ namespace Mia.Server.Game.Register
         /// </summary>
         /// <param name="name"></param>
         /// <param name="mode"></param>
-        private void StartGame(ScoreMode scoreMode)
+        private async void StartGame(ScoreMode scoreMode)
         {
             int currentRoundNumber = 0;
 
             while (currentRoundNumber < Config.Settings.RoundsPerGame)
             {
                 var game = new PlayEngine.Game(currentRoundNumber, scoreMode, this);
-                var gameInstance = new GameInstance(game.GameNumber, game.Token);
+                var gameInstance = new GameInstance(game.GameNumber.ToString(), game.Token);
 
                 activeGameInstances.Add(gameInstance);
                 activeGames.Add(game);
 
-                game.Start();
+                await game.StartAsync();
+                //game.GetScore();
 
                 currentRoundNumber += 1;
             }
@@ -115,25 +117,28 @@ namespace Mia.Server.Game.Register
 
                 if (firstCommandPart == "FIND_GAME" && commandParts.Length > 1)
                 {
-                    int gameNumber;
-                    bool isParsed = int.TryParse(commandParts[1], out gameNumber);
-                    if (isParsed)
-                    {
-                        var gameInstance = FindGame(gameNumber);
-                        // TODO: only for cluster version
-                    }
+                    var gameInstance = FindGameInstance(commandParts[1].ToString());
+                    // TODO: only for cluster version
                 }
                 else if (firstCommandPart == "JOIN_GAME" && commandParts.Length > 1)
                 {
-                    string gameName = commandParts[1];
-                    var gameInstance = FindGameInstance(gameName);
-                    JoinGame(gameInstance, client, false);
+                    Guid gameToken;
+                    bool isParsed = Guid.TryParse(commandParts[1], out gameToken);
+                    if (isParsed)
+                    {
+                        var gameInstance = FindGameInstance(gameToken);
+                        JoinGame(gameInstance, client, false);
+                    }
                 }
                 else if (firstCommandPart == "JOIN_SPECTATOR" && commandParts.Length > 1)
                 {
-                    string gameName = commandParts[1];
-                    var gameInstance = FindGameInstance(gameName);
-                    JoinGame(gameInstance, client, true);
+                    Guid gameToken;
+                    bool isParsed = Guid.TryParse(commandParts[1], out gameToken);
+                    if (isParsed)
+                    {
+                        var gameInstance = FindGameInstance(gameToken);
+                        JoinGame(gameInstance, client, true);
+                    }
                 }
                 else if (commandParts.Length > 1)
                 {
@@ -153,22 +158,17 @@ namespace Mia.Server.Game.Register
 
                     if (Guid.TryParse(gameTokenValue, out gameToken))
                     {
-                        var gameInstance = FindGameInstance(gameToken);
+                        var game = FindGame(gameToken);
 
-                        if (gameInstance != null)
+                        // TODO: Move codes should be part of Game domain only (SoC)
+                        PlayerMoveCode moveCode;
+                        if (Enum.TryParse(firstCommandPart, out moveCode))
                         {
-                            var game = FindGame(gameInstance.GameNumber);
-
-                            // TODO: Move codes should be part of Game domain only (SoC)
-                            PlayerMoveCode moveCode;
-                            if (Enum.TryParse(firstCommandPart, out moveCode))
+                            var player = game.Players.Find(p => p.Name == client.Name);
+                            if (player != null)
                             {
-                                var player = game.Players.FindPlayer(client.Name);
-                                if (player != null)
-                                {
-                                    var playerMove = new PlayerMove(moveCode, commandValue, player, gameToken);
-                                    game.Move(playerMove);
-                                }
+                                var playerMove = new PlayerMove(moveCode, commandValue, player, gameToken);
+                                game.Move(playerMove);
                             }
                         }
                     }
@@ -213,14 +213,14 @@ namespace Mia.Server.Game.Register
             return activeGameInstances.FirstOrDefault(x => x.GameToken == gameToken);
         }
 
-        public IGameInstance FindGameInstance(string gameName)
+        public IGameInstance FindGameInstance(string name)
         {
-            return activeGameInstances.FirstOrDefault(x => x.Name == gameName);
+            return activeGameInstances.FirstOrDefault(x => x.Name == name);
         }
 
-        public IGame FindGame(int gameNumber)
+        public IGame FindGame(Guid gameToken)
         {
-            return activeGames.FirstOrDefault(x => x.GameNumber == gameNumber);
+            return activeGames.FirstOrDefault(x => x.Token == gameToken);
         }
 
         private void JoinGame(IGameInstance gameInstance, IClient client, bool isSpectator = false)
@@ -229,7 +229,7 @@ namespace Mia.Server.Game.Register
             if (game != null)
             {
                 var player = new Player(client.Name, isSpectator);
-                game.JoinGame(player);
+                game.Register(player);
             }
         }
 

@@ -56,7 +56,7 @@ On ROLL:
 1. client->server: ANNOUNCE;dice;token 
 1. server->clients: ANNOUNCED;name;dice;token 
 
-Per turn there is a second ROLL allowed, in this case the server will not send the dice back to the player, and the player has to announce a dice. 
+Per turn there is a second ROLL allowed, in this case the server will not send the dice back to the player, but the player still has to announce something.
 
 When the server detects Mia with the first roll, the game ends, and the current player wins.
 1. server -> clients: PLAYER_LOST;names;reason;token (where names is a comma separated list)
@@ -72,7 +72,7 @@ At the end of each game:
 1. LIED_ABOUT_MIA: Player announced Mia without actually having diced Mia
 1. ANNOUNCED_LOSING_DICE: Player announced dice that were lower than the previously announced ones
 1. DID_NOT_ANNOUNCE: Player did not announce (in time)
-1. DID_NOT_TAKE_TURN: Player did not announce turn (in time)
+1. DID_NOT_TAKE_TURN: Player did not take the turn (in time)
 1. INVALID_TURN: Player commanded an invalid turn
 1. SEE_FAILED: Player wanted to SEE, but previous player announced dice correctly
 1. CAUGHT_BLUFFING: Player announced higher dice than actually given and the next player wanted to SEE 

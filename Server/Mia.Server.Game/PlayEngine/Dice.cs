@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+
 using Mia.Server.Game.Interface;
 
 
@@ -55,10 +56,7 @@ namespace Mia.Server.Game
 
         public Dice()
         {
-            int diceOne = new Random().Next(1, 6);
-            int diceTwo = new Random().Next(1, 6);
-
-            SetDices(diceOne, diceTwo);
+            Shake();
         }
 
         public Dice(int diceOne, int diceTwo)
@@ -90,12 +88,36 @@ namespace Mia.Server.Game
 
         public bool IsHigherThan(IDice otherDice)
         {
-            return Scoring(this) > Scoring(otherDice);
+            return Scoring(this) >= Scoring(otherDice);
         }
 
         public override string ToString()
         {
             return DiceOne.ToString() + DiceTwo;
+        }
+
+        public IDice Parse(string value)
+        {
+            string[] diceValues = value.Split(',');
+
+            int dieOne;
+            int dieTwo;
+
+            int.TryParse(diceValues[0], out dieOne);
+            int.TryParse(diceValues[1], out dieTwo);
+
+            if (dieOne > 0 && dieTwo > 0)
+                return new Dice(dieOne, dieTwo);
+
+            return null;
+        }
+
+        public void Shake()
+        {
+            int diceOne = new Random().Next(1, 6);
+            int diceTwo = new Random().Next(1, 6);
+
+            SetDices(diceOne, diceTwo);
         }
 
         #endregion Methods

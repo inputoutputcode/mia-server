@@ -6,8 +6,6 @@
 
         int RollCount { get; }
 
-        bool HasAnnounced { get; }
-
-        bool HasFinished { get; }
+        void AddRollCount();
     }
 }

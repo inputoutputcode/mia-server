@@ -10,21 +10,11 @@ namespace Mia.Server.Game.PlayEngine
         private PlayerState currentState;
         private string name;
         private int score;
-        private int kickCount;
 
         #endregion Members
 
 
         #region Properties
-
-        public bool IsSpectator
-        {
-            get { return currentState == PlayerState.Spectator; }
-            set 
-            { 
-                currentState = value ? PlayerState.Spectator : PlayerState.Inactive; 
-            }
-        }
 
         public PlayerState CurrentState
         {
@@ -37,11 +27,6 @@ namespace Mia.Server.Game.PlayEngine
         }
 
         public int Score
-        {
-            get { return score; }
-        }
-
-        public int KickCount
         {
             get { return score; }
             set { score = value; }
@@ -64,10 +49,18 @@ namespace Mia.Server.Game.PlayEngine
 
         #region Methods
 
-        public void ChangeState(PlayerState state)
+        /// <summary>
+        /// Only for Active or Inactive, Spectator must register again.
+        /// </summary>
+        /// <param name="state"></param>
+        public void SetActive()
         {
-            if (state == PlayerState.Active || state == PlayerState.Inactive)
-                currentState = state;
+            currentState = PlayerState.Active;
+        }
+
+        public void Kick()
+        {
+            currentState = PlayerState.Inactive;
         }
 
         public string GetDebuggerDisplay()

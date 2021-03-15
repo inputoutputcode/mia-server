@@ -14,7 +14,7 @@ namespace Mia.Server.Game.PlayEngine.Test
 
 
         [Fact]
-        public void Game_Round_Will_Be_Cancelled_Without_Players()
+        public async void Game_Round_Will_Be_Cancelled_Without_Players()
         {
             // Arrange
             var gameManager = new Mock<IGameManager>(MockBehavior.Strict);
@@ -22,15 +22,15 @@ namespace Mia.Server.Game.PlayEngine.Test
             
 
             int rounds = 1;
-            var game = new Game("Game1", rounds, ScoreMode.Points, gameManager.Object);
+            var game = new Game(rounds, ScoreMode.Points, gameManager.Object);
 
             var player1 = new Player("Player1", true);
-            game.JoinGame(player1);
+            game.Register(player1);
             var player2 = new Player("Player2", true);
-            game.JoinGame(player2);
+            game.Register(player2);
 
             // Act
-            game.NewRound();
+            await game.StartAsync();
 
             // Assert
             gameManager.Verify(m => m.ProcessMove(It.Is<IServerMove>(x => x.Code == ServerMoveCode.ROUND_STARTING)), Times.AtMost(2));
@@ -39,7 +39,7 @@ namespace Mia.Server.Game.PlayEngine.Test
         }
 
         [Fact]
-        public void Game_Round_Will_Be_Cancelled_With_One_Player()
+        public async void Game_Round_Will_Be_Cancelled_With_One_Player()
         {
             // Arrange
             var gameManager = new Mock<IGameManager>(MockBehavior.Strict);
@@ -47,18 +47,18 @@ namespace Mia.Server.Game.PlayEngine.Test
 
 
             int rounds = 1;
-            var game = new Game("Game1", rounds, ScoreMode.Points, gameManager.Object);
+            var game = new Game(rounds, ScoreMode.Points, gameManager.Object);
 
             var player1 = new Player("Player1", true);
-            game.JoinGame(player1);
+            game.Register(player1);
             var player2 = new Player("Player2", true);
-            game.JoinGame(player2);
+            game.Register(player2);
 
             var joinGamePlayer1 = new PlayerMove(PlayerMoveCode.JOIN_ROUND, player1.Name, player1, game.Token);
             var joinGamePlayer2 = new PlayerMove(PlayerMoveCode.JOIN_ROUND, player2.Name, player2, game.Token);
 
             // Act
-            game.NewRound();
+            await game.StartAsync();
             game.Move(joinGamePlayer1);
 
             // Assert
@@ -66,25 +66,25 @@ namespace Mia.Server.Game.PlayEngine.Test
         }
 
         [Fact]
-        public void Should_Send_The_First_Server_Move()
+        public async void Should_Send_The_First_Server_Move()
         {
             // Arrange
             var gameManager = new Mock<IGameManager>();
             gameManager.Setup(m => m.ProcessMove(It.IsAny<IServerMove>()));
 
             int rounds = 1;
-            IGame game = new Game("Game1", rounds, ScoreMode.Points, gameManager.Object);
+            var game = new Game(rounds, ScoreMode.Points, gameManager.Object);
 
             var player1 = new Player("Player1", false);
-            game.JoinGame(player1);
+            game.Register(player1);
             var player2 = new Player("Player2", false);
-            game.JoinGame(player2);
+            game.Register(player2);
 
             var joinGamePlayer1 = new PlayerMove(PlayerMoveCode.JOIN_ROUND, player1.Name, player1, game.Token);
             var joinGamePlayer2 = new PlayerMove(PlayerMoveCode.JOIN_ROUND, player2.Name, player2, game.Token);
 
             // Act
-            game.NewRound();
+            await game.StartAsync();
 
             // Assert
             gameManager.Verify(m => m.ProcessMove(It.Is<IServerMove>(x => x.Code == ServerMoveCode.ROUND_STARTING)));

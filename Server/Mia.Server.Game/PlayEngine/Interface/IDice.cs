@@ -11,5 +11,9 @@
         bool IsMia { get; }
 
         bool IsHigherThan(IDice otherDice);
+
+        IDice Parse(string value);
+
+        void Shake();
     }
 }

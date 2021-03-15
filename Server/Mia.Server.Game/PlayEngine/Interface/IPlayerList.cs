@@ -15,17 +15,21 @@ namespace Mia.Server.Game.Interface
 
         List<IPlayer> ActivePlayers { get; }
 
-        void PermutePlayers();
+        bool Register(IPlayer player);
 
-        IPlayer FirstPlayer();
+        bool Join(IPlayer player);
 
-        IPlayer NextPlayer();
+        IPlayer Find(string name);
 
-        IPlayer PreviousPlayer();
+        IPlayer First();
 
-        bool JoinGame(IPlayer player);
+        IPlayer Current();
 
-        IPlayer FindPlayer(string name);
+        IPlayer Next();
+
+        IPlayer Previous();
+
+        void Permute();
 
         void RoundReset();
     }
