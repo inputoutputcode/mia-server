@@ -9,7 +9,7 @@ using Mia.Server.Game.Scoring.Interface;
 using Mia.Server.Game.Register.Interface;
 using Mia.Server.Game.PlayEngine.Move;
 using Mia.Server.Game.Monitoring;
-using Mia.Server.ConsoleRunner.Configuration;
+using Mia.Server.Game.Configuration;
 
 
 namespace Mia.Server.Game.PlayEngine
@@ -73,6 +73,7 @@ namespace Mia.Server.Game.PlayEngine
             this.gameScorer = GameScoreFactory.Create(scoreMode);
             this.gameManager = gameManager;
             this.currentDice = new Dice();
+            this.isSimulation = isSimulation;
 
             playerList = new PlayerList(Config.Settings.MaximumActivePlayers, Config.Settings.MaximumSpectactors);
             token = new Guid();
@@ -259,7 +260,7 @@ namespace Mia.Server.Game.PlayEngine
                 case PlayerMoveCode.ANNOUNCE:
                     if (playerMove.Player.Name == playerList.Current().Name && currentTurn.RollCount <= 2)
                     {
-                        var announcedDice = currentDice.Parse(playerMove.Value);
+                        announcedDice = currentDice.Parse(playerMove.Value);
 
                         if (announcedDice.IsMia)
                         {

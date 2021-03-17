@@ -1,4 +1,4 @@
-﻿using Mia.Server.ConsoleRunner.Configuration;
+﻿using Mia.Server.Game.Configuration;
 using Mia.Server.Game.Interface;
 
 

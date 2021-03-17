@@ -2,7 +2,7 @@
 using System.IO;
 
 
-namespace Mia.Server.ConsoleRunner.Configuration
+namespace Mia.Server.Game.Configuration
 {
     public static class Config
     {

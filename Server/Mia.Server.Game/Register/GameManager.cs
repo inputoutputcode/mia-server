@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 
 using Mia.Server.Game.Communication.Interface;
 using Mia.Server.Game.Interface;
@@ -14,7 +15,7 @@ using Mia.Server.Game.PlayEngine;
 using Mia.Server.Game.PlayEngine.Move;
 using Mia.Server.Game.PlayEngine.Move.Interface;
 using Mia.Server.Game.Monitoring;
-using Mia.Server.ConsoleRunner.Configuration;
+using Mia.Server.Game.Configuration;
 
 
 namespace Mia.Server.Game.Register
@@ -37,14 +38,9 @@ namespace Mia.Server.Game.Register
 
         public GameManager(int listenPort)
         {
-            Initialize();
-
             this.commandServer = new CommandServer(listenPort);
 
-            var scoreMode = ScoreMode.Points;
-            Enum.TryParse(Config.Settings.ScoreMode, out scoreMode);
-
-            StartGame(scoreMode);
+            Initialize();
         }
 
         public GameManager(ICommandServer commandServer)
@@ -54,11 +50,29 @@ namespace Mia.Server.Game.Register
             this.commandServer = commandServer;
         }
 
-        private void Initialize()
+        private async void Initialize()
         {
             activeGameInstances = new List<IGameInstance>();
             activeGames = new List<IGame>();
             clients = new List<IClient>();
+
+            var scoreMode = ScoreMode.Points;
+            Enum.TryParse(Config.Settings.ScoreMode, out scoreMode);
+
+            var gameTask = StartGameAsync(scoreMode);
+            var clientCommandsTask = ReceiveClientCommands();
+
+            await Task.WhenAny(clientCommandsTask, gameTask);
+        }
+
+        private async Task ReceiveClientCommands()
+        {
+            while (true)
+            {
+                var command = commandServer.GetClientCommand();
+                if (command != null)
+                    ProcessCommand(command);
+            }
         }
 
         /// <summary>
@@ -66,11 +80,11 @@ namespace Mia.Server.Game.Register
         /// </summary>
         /// <param name="name"></param>
         /// <param name="mode"></param>
-        private async void StartGame(ScoreMode scoreMode)
+        private async Task StartGameAsync(ScoreMode scoreMode)
         {
-            int currentRoundNumber = 0;
+            int currentRoundNumber = 1;
 
-            while (currentRoundNumber < Config.Settings.RoundsPerGame)
+            while (currentRoundNumber <= Config.Settings.RoundsPerGame)
             {
                 var game = new PlayEngine.Game(currentRoundNumber, scoreMode, this);
                 var gameInstance = new GameInstance(game.GameNumber.ToString(), game.Token);
@@ -82,13 +96,6 @@ namespace Mia.Server.Game.Register
                 //game.GetScore();
 
                 currentRoundNumber += 1;
-            }
-
-            while (true)
-            {
-                var command = commandServer.GetClientCommand();
-                if (command != null)
-                    ProcessCommand(command);
             }
         }
 
