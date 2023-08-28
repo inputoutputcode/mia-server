@@ -1,6 +1,6 @@
 ﻿{
   "appSettings": {
-    "RoundsPerGame": 2,
+    "RoundsPerGame": 1000,
     "MinimumPlayerCount": 2,
     "RegistrationTimeOut": 10000,
     "JoinTimeOut": 2000,
@@ -9,6 +9,7 @@
     "MaximumSpectators": 20,
     "ScoreMode": "Points",
     "ScoreIncrement": 5,
-    "ScoreDecrement": 10
+    "ScoreDecrement": 10,
+    "ConnectionKey": "Corp123!"
   }
 }

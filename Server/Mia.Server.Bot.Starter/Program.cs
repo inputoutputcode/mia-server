@@ -1,5 +1,8 @@
 ﻿using System;
 
+using Mia.Server.Bot.Starter.Game;
+using Mia.Server.Bot.Starter.Network;
+
 
 namespace Mia.Server.Bot.Starter
 {
@@ -8,7 +11,10 @@ namespace Mia.Server.Bot.Starter
         static void Main(string[] args)
         {
             Console.Title = Configuration.Config.Settings.PlayerName;
-            new GamePlay(true);
+            
+            var client = new Client(new ClientListener(new GameLogic()), true);
+            client.Start();
+
             Console.ReadKey();
         }
     }

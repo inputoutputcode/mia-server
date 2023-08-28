@@ -69,7 +69,7 @@ namespace Mia.Server.Game.Communication.Test
         public void Client_Sends_Register()
         {
             // Arrange
-            var commandServer = new CommandServer(5000);
+            var commandServer = new Server(5000);
             var endPoint = new IPEndPoint(IPAddress.Parse("10.10.4.6"), 1001);
             string playerName = "Player1";
             string message = $"{ClientCommandCode.REGISTER};{playerName}";
@@ -87,7 +87,7 @@ namespace Mia.Server.Game.Communication.Test
         public void Client_Sends_Join_Game()
         {
             // Arrange
-            var commandServer = new CommandServer(5000);
+            var commandServer = new Server(5000);
             var endPoint = new IPEndPoint(IPAddress.Parse("10.10.4.6"), 1001);
             string playerName = "Player1";
             Guid gameToken = Guid.NewGuid();

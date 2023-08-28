@@ -6,6 +6,7 @@
     "ServerPort": 1000,
     "RegistrationTimeOut": 10000,
     "JoinTimeOut": 2000,
-    "TurnTimeOut": 200000
+    "TurnTimeOut": 200000,
+    "ConnectionKey":  "Corp123!"
   }
 }

@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using LiteNetLib;
+
 using Mia.Server.Game.Communication.Interface;
 
 
@@ -9,7 +10,7 @@ namespace Mia.Server.Game.Communication
         #region Members
 
         private string name;
-        private IPEndPoint endPoint;
+        private NetPeer peer;
 
         #endregion Members
 
@@ -21,9 +22,9 @@ namespace Mia.Server.Game.Communication
             get { return name; }
         }
 
-        public IPEndPoint EndPoint
+        public NetPeer Peer
         {
-            get { return endPoint; }
+            get { return peer; }
         }
 
         public int Score { get; set; }
@@ -33,10 +34,10 @@ namespace Mia.Server.Game.Communication
 
         #region Constructor
 
-        public Client(string name, IPEndPoint endPoint)
+        public Client(string name, NetPeer peer)
         {
             this.name = name;
-            this.endPoint = endPoint;
+            this.peer = peer;
         }
 
         #endregion Constructor

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30907.101
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33530.505
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mia.Server.Game", "Mia.Server.Game\Mia.Server.Game.csproj", "{F633A659-3B7D-455A-B524-5B0C3889B5E4}"
 EndProject
@@ -11,9 +11,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionFiles", "SolutionFi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mia.Server.ConsoleRunner", "Mia.Server.ConsoleRunner\Mia.Server.ConsoleRunner.csproj", "{612AD9B9-A040-495D-8FAA-14D5E4039CA4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mia.Server.Bot.Starter", "Mia.Server.Bot.Starter\Mia.Server.Bot.Starter.csproj", "{FE42E806-CC06-4297-8FD7-2921B756757D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mia.Server.Bot.Starter", "Mia.Server.Bot.Starter\Mia.Server.Bot.Starter.csproj", "{FE42E806-CC06-4297-8FD7-2921B756757D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mia.Server.Bot.Nightmare", "Mia.Server.Bot.Nightmare\Mia.Server.Bot.Nightmare.csproj", "{315E722D-51BC-4056-993D-DE5892E4AA21}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mia.Server.Bot.Nightmare", "Mia.Server.Bot.Nightmare\Mia.Server.Bot.Nightmare.csproj", "{315E722D-51BC-4056-993D-DE5892E4AA21}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

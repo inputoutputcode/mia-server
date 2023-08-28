@@ -96,10 +96,10 @@ namespace Mia.Server.Game.PlayEngine
             playerList.Permute();
             roundToken = Guid.NewGuid();
 
-            Log.Message($"Round '{gameNumber}' starting");
+            Log.Write($"Round '{gameNumber}' starting");
 
             var players = playerList.RegisteredPlayers.ToArray();
-            if (players.Length > 0)
+            if (players.Length > 1)
             {
                 var serverMove = new ServerMove(ServerMoveCode.ROUND_STARTING, string.Empty, ServerFailureReasonCode.None, players, roundToken);
                 gameManager.ProcessMove(serverMove);
@@ -111,6 +111,8 @@ namespace Mia.Server.Game.PlayEngine
             }
             else
             {
+                Log.Write($"Not enough players, wait till next round.");
+
                 HandleNextRoundWaitTimeAsync();
             }
         }
@@ -118,7 +120,7 @@ namespace Mia.Server.Game.PlayEngine
         public bool Register(IPlayer player)
         {
             bool isRegistered = playerList.Register(player);
-            Log.Message($"Player '{player.Name}' registered for the game");
+            Log.Write($"Player '{player.Name}' registered for the game");
 
             return isRegistered;
         }
@@ -141,14 +143,14 @@ namespace Mia.Server.Game.PlayEngine
                 var spectators = playerList.RegisteredPlayers.ToArray();
                 var serverMove = new ServerMove(ServerMoveCode.ROUND_CANCELLED, string.Empty, failureCode, spectators, roundToken);
                 gameManager.ProcessMove(serverMove);
-                Log.Message($"Round '{gameNumber}' cancelled");
+                Log.Write($"Round '{gameNumber}' cancelled");
             }
             else
             {
                 // Send ROUND_STARTED
                 var serverMove = new ServerMove(ServerMoveCode.ROUND_STARTED, string.Empty, ServerFailureReasonCode.None, activePlayers, roundToken);
                 gameManager.ProcessMove(serverMove);
-                Log.Message($"Round '{gameNumber}' started ");
+                Log.Write($"Round '{gameNumber}' started ");
 
                 // Send YOUR_TURN
                 SendPlayerTurn(playerList.First());
@@ -245,7 +247,7 @@ namespace Mia.Server.Game.PlayEngine
 
                             var serverMoveTurn = new ServerMove(ServerMoveCode.PLAYER_LOST, looserPlayer.Name, reasonCode, playerList.RegisteredPlayers.ToArray(), roundToken);
                             gameManager.ProcessMove(serverMoveTurn);
-                            Log.Message($"Send PLAYER_LOST for '{looserPlayer.Name}'");
+                            Log.Write($"Send PLAYER_LOST for '{looserPlayer.Name}'");
 
                             GameOver();
                         }
@@ -341,7 +343,7 @@ namespace Mia.Server.Game.PlayEngine
             var serverMoveTurn = new ServerMove(ServerMoveCode.YOUR_TURN, string.Empty, ServerFailureReasonCode.None, playerList, roundToken);
             gameManager.ProcessMove(serverMoveTurn);
             NewTurn(player);
-            Log.Message($"Send YOUR_TURN to '{player.Name}'");
+            Log.Write($"Send YOUR_TURN to '{player.Name}'");
 
             HandleTurnTimeoutAsync(player);
         }
@@ -359,7 +361,7 @@ namespace Mia.Server.Game.PlayEngine
 
             var serverMoveTurn = new ServerMove(ServerMoveCode.PLAYER_LOST, player.Name, reasonCode, playerList.RegisteredPlayers.ToArray(), roundToken);
             gameManager.ProcessMove(serverMoveTurn);
-            Log.Message($"Send PLAYER_LOST for '{player.Name}'");
+            Log.Write($"Send PLAYER_LOST for '{player.Name}'");
 
             if (playerList.ActivePlayers.Count < Config.Settings.MinimumPlayerCount)
             {
@@ -376,7 +378,7 @@ namespace Mia.Server.Game.PlayEngine
         {
             var serverMoveTurn = new ServerMove(ServerMoveCode.SCORE, gameScorer.GetScoreValues(), ServerFailureReasonCode.None, playerList.RegisteredPlayers.ToArray(), roundToken);
             gameManager.ProcessMove(serverMoveTurn);
-            Log.Message($"Send SCORE");
+            Log.Write($"Send SCORE");
 
             gameOverCompletion?.TrySetResult(true);
         }

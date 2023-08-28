@@ -16,5 +16,6 @@
 
         public int TurnTimeOut { get; set; }
 
+        public string ConnectionKey { get; set; }
     }
 }

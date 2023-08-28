@@ -9,5 +9,7 @@
         public int ServerPort { get; set; }
 
         public int LocalPort { get; set; }
+
+        public string ConnectionKey { get; set; }
     }
 }

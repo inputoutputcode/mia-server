@@ -40,7 +40,7 @@ namespace Mia.Server.Game.PlayEngine
         public Player(string name, bool isSpectator, int score = 0)
         {
             this.name = name;
-            this.currentState = isSpectator ? PlayerState.Spectator : PlayerState.Inactive;
+            this.currentState = isSpectator ? PlayerState.Spectator : PlayerState.Active;
             this.score = score;
         }
 

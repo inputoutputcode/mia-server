@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
+using System.Text;
 
 using Mia.Server.Game.Communication.Interface;
 using Mia.Server.Game.Interface;
@@ -16,12 +16,14 @@ using Mia.Server.Game.PlayEngine.Move.Interface;
 using Mia.Server.Game.Monitoring;
 using Mia.Server.ConsoleRunner.Configuration;
 
+using LiteNetLib;
+using System.Threading.Tasks;
 
 namespace Mia.Server.Game.Register
 {
     public class GameManager : IGameManager
     {
-        private ICommandServer commandServer;
+        private IServer server;
 
         private List<IGameInstance> activeGameInstances;
 
@@ -29,17 +31,39 @@ namespace Mia.Server.Game.Register
 
         private List<IClient> clients;
 
+        private int serverPort;
+
         public List<IGameInstance> ActiveGames
         {
             // TODO: return a clone
             get { return activeGameInstances; }
         }
 
-        public GameManager(int listenPort)
+        public int ServerPort
         {
-            Initialize();
+            set { serverPort = value; }
+        }
 
-            this.commandServer = new CommandServer(listenPort);
+        public GameManager()
+        {
+            this.server = new Communication.Server(this);
+        }
+
+        public GameManager(IServer commandServer)
+        {
+            this.server = commandServer;
+        }
+
+        public void Initialize()
+        {
+            activeGameInstances = new List<IGameInstance>();
+            activeGames = new List<IGame>();
+            clients = new List<IClient>();
+
+            server.CreateServer(serverPort);
+
+            // Wait to let clients register to game server
+            Task.Delay(100);
 
             var scoreMode = ScoreMode.Points;
             Enum.TryParse(Config.Settings.ScoreMode, out scoreMode);
@@ -47,18 +71,16 @@ namespace Mia.Server.Game.Register
             StartGame(scoreMode);
         }
 
-        public GameManager(ICommandServer commandServer)
+        public void ProcessEvent(string eventMessage, NetPeer peer)
         {
-            Initialize();
-
-            this.commandServer = commandServer;
+            var clientCommand = new ClientCommand(eventMessage, peer);
+            ProcessCommand(clientCommand);
         }
 
-        private void Initialize()
+        public void SendEvent(IServerCommand serverCommand)
         {
-            activeGameInstances = new List<IGameInstance>();
-            activeGames = new List<IGame>();
-            clients = new List<IClient>();
+            byte[] messageBytes = Encoding.UTF8.GetBytes(serverCommand.CommandText);
+            serverCommand.Peer.Send(messageBytes, DeliveryMethod.ReliableOrdered);
         }
 
         /// <summary>
@@ -72,32 +94,32 @@ namespace Mia.Server.Game.Register
 
             while (currentRoundNumber < Config.Settings.RoundsPerGame)
             {
+                Log.Write($"Start game: {currentRoundNumber}");
+
                 var game = new PlayEngine.Game(currentRoundNumber, scoreMode, this);
                 var gameInstance = new GameInstance(game.GameNumber.ToString(), game.Token);
 
                 activeGameInstances.Add(gameInstance);
                 activeGames.Add(game);
 
+                for(int i = 0; i < clients.Count; i++)
+                {
+                    game.Register(new Player(clients[i].Name, false));
+                }
+
                 await game.StartAsync();
                 //game.GetScore();
 
                 currentRoundNumber += 1;
             }
-
-            while (true)
-            {
-                var command = commandServer.GetClientCommand();
-                if (command != null)
-                    ProcessCommand(command);
-            }
         }
 
         public void ProcessCommand(IClientCommand command)
         {
-            if (string.IsNullOrWhiteSpace(command.CommandText) || command.EndPoint == null)
+            if (string.IsNullOrWhiteSpace(command.CommandText) || command.Peer == null)
                 return;
 
-            var client = FindClient(command.EndPoint);
+            var client = FindClient(command.Peer);
             string[] commandParts = command.CommandText.Split(';');
 
             if (client == null && commandParts.Length > 0)
@@ -107,7 +129,7 @@ namespace Mia.Server.Game.Register
                 if (firstPart == "REGISTER" && commandParts.Length > 1)
                 {
                     string playerName = commandParts[1];
-                    IClient newClient = new Client(playerName, command.EndPoint);
+                    IClient newClient = new Client(playerName, command.Peer);
                     RegisterClient(newClient);
                 }
             }
@@ -176,10 +198,10 @@ namespace Mia.Server.Game.Register
             }
         }
 
-        public IClient FindClient(IPEndPoint endPoint)
+        public IClient FindClient(NetPeer peer)
         {
             // TODO: Performance?
-            return clients.FirstOrDefault(x => x.EndPoint == endPoint);
+            return clients.FirstOrDefault(x => x.Peer == peer);
         }
 
         public IClient FindClient(string playerName)
@@ -190,22 +212,22 @@ namespace Mia.Server.Game.Register
 
         public void RegisterClient(IClient client)
         {
-            var isRejected = clients.Exists(x => x.Name == client.Name || x.EndPoint.Address == client.EndPoint.Address);
+            var isRejected = clients.Exists(x => x.Name == client.Name || x.Peer.EndPoint.Address == client.Peer.EndPoint.Address);
             IServerCommand command;
 
             if (isRejected)
             {
-                command = new ServerCommand(ServerCommandCode.REJECTED.ToString(), client.EndPoint);
-                Log.Message($"{client.Name} {ServerCommandCode.REJECTED}");
+                command = new ServerCommand(ServerCommandCode.REJECTED.ToString(), client.Peer);
+                Log.Write($"{client.Name} {ServerCommandCode.REJECTED}");
             }
             else
             {
                 clients.Add(client);
-                command = new ServerCommand(ServerCommandCode.REGISTERED.ToString(), client.EndPoint);
-                Log.Message($"{client.Name} {ServerCommandCode.REGISTERED}");
+                command = new ServerCommand(ServerCommandCode.REGISTERED.ToString(), client.Peer);
+                Log.Write($"{client.Name} {ServerCommandCode.REGISTERED}");
             }
 
-            commandServer.SendCommand(command);
+            SendEvent(command);
         }
 
         public IGameInstance FindGameInstance(Guid gameToken)
@@ -245,7 +267,7 @@ namespace Mia.Server.Game.Register
             {
                 isValid = false;
             }
-            else if (playerName.All(n => Char.IsLetterOrDigit(n) || n == '_'))
+            else if (!playerName.All(n => (Char.IsLetterOrDigit(n) || n == '_')))
             {
                 isValid = false;
             }
@@ -263,14 +285,16 @@ namespace Mia.Server.Game.Register
                     // TODO: Domain knowledge of the game (SoC)
                     string flexibleValuePart = string.Empty;
                     
-                    if (string.IsNullOrEmpty(serverMove.Value))
+                    if (!string.IsNullOrEmpty(serverMove.Value))
                         flexibleValuePart += $"{serverMove.Value};";
 
                     if (serverMove.FailureReasonCode != ServerFailureReasonCode.None)
                         flexibleValuePart += $"{serverMove.FailureReasonCode};";
 
-                    string commandValue = $"{serverMove.Code};{flexibleValuePart}{serverMove.Token}";
-                    commandServer.SendCommand(new ServerCommand(commandValue, client.EndPoint));
+                    string commandMessage = $"{serverMove.Code};{flexibleValuePart}{serverMove.Token}";
+
+                    byte[] messageBytes = Encoding.UTF8.GetBytes(commandMessage);
+                    client.Peer.Send(messageBytes, DeliveryMethod.ReliableOrdered);
                 }
             }            
         }

@@ -21,5 +21,7 @@
         public int ScoreIncrement { get; set; }
 
         public int ScoreDecrement { get; set; }
+
+        public string ConnectionKey { get; set; }
     }
 }

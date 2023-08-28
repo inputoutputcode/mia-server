@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using LiteNetLib;
 using Mia.Server.Game.Communication.Command.Interface;
 
 
@@ -7,26 +8,26 @@ namespace Mia.Server.Game.Communication.Command
     public class ServerCommand : IServerCommand
     {
         private string command;
-        private IPEndPoint endPoint;
+        private NetPeer peer;
 
         public string CommandText
         {
             get { return command; }
         }
 
-        public IPEndPoint EndPoint
+        public NetPeer Peer
         {
-            get { return endPoint; }
+            get { return peer; }
         }
 
         public ServerCommand()
         {
         }
 
-        public ServerCommand(string command, IPEndPoint endPoint)
+        public ServerCommand(string command, NetPeer peer)
         {
             this.command = command;
-            this.endPoint = endPoint;
+            this.peer = peer;
         }
     }
 }

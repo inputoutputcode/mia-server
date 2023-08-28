@@ -11,7 +11,7 @@ namespace Mia.Server.Game.Register.Test
         public void Validate_Player_Name()
         {
             // Arrange
-            var commandServer = new Mock<ICommandServer>();
+            var commandServer = new Mock<IServer>();
             var gameManager = new GameManager(commandServer.Object);
 
             string playerName1 = "ThisNameIsOk12";

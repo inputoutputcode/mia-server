@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net;
+using LiteNetLib;
 using Mia.Server.Game.Communication.Command.Interface;
 using Mia.Server.Game.Communication.Interface;
 using Mia.Server.Game.Interface;
@@ -15,7 +16,9 @@ namespace Mia.Server.Game.Register.Interface
 
         void ProcessCommand(IClientCommand command);
 
-        IClient FindClient(IPEndPoint endPoint);
+        void ProcessEvent(string eventMessage, NetPeer peer);
+
+        IClient FindClient(NetPeer peer);
 
         IClient FindClient(string playerName);
 

@@ -3,9 +3,8 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using Mia.Server.Game.Register;
-using Mia.Server.ConsoleRunner.Configuration;
 using Mia.Server.ConsoleRunner.Monitoring;
-
+using Mia.Server.ConsoleRunner.Configuration;
 
 namespace Mia.Server.ConsoleRunner
 {
@@ -13,16 +12,15 @@ namespace Mia.Server.ConsoleRunner
     {
         static void Main(string[] args)
         {
-            Console.Title = "Mia Server";
+            Console.Title = "Mia Server started";
 
             using (var consoleCopy = new ConsoleCopy(string.Format(@"C:\Temp\Maxle_{0}.log", DateTime.Now.Ticks)))
             {
-                var server = new GameManager(Config.Settings.ServerPort);
-
-                Console.WriteLine($"Mia serer is listening on {LocalIPAddress}:{Config.Settings.ServerPort}");
+                var server = new GameManager() { ServerPort = Config.Settings.ServerPort };
+                server.Initialize();
             }
 
-            Console.WriteLine("Game over");
+            Console.WriteLine("Mia Server stopped");
             Console.ReadKey();
         }
 
