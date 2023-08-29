@@ -1,4 +1,4 @@
-﻿namespace Mia.Server.Bot.Starter.Configuration
+﻿namespace Game.Server.Bot.Starter.Configuration
 {
     public class AppSettings
     {

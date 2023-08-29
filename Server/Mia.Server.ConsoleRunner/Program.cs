@@ -3,17 +3,17 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 
-using Mia.Server.Game.Register;
-using Mia.Server.ConsoleRunner.Logging;
+using Game.Server.Register;
+using Game.Server.Console.Logging;
 
 
-namespace Mia.Server.ConsoleRunner
+namespace Game.Server.Console
 {
     class Program
     {
         static void Main(string[] args)
         {
-            Console.Title = "Mia Server started";
+            System.Console.Title = "Mia Server started";
 
             using (var consoleCopy = new ConsoleCopy(string.Format(@"C:\Temp\Maxle_{0}.log", DateTime.Now.Ticks)))
             {
@@ -21,8 +21,8 @@ namespace Mia.Server.ConsoleRunner
                 server.Initialize();
             }
 
-            Console.WriteLine("Mia Server stopped");
-            Console.ReadKey();
+            System.Console.WriteLine("Mia Server stopped");
+            System.Console.ReadKey();
         }
 
         public static IPAddress LocalIPAddress

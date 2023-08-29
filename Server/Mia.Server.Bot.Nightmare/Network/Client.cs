@@ -4,12 +4,10 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Threading;
 
-using Mia.Server.Bot.Nightmare.Configuration;
-
 using LiteNetLib;
 
 
-namespace Mia.Server.Bot.Nightmare.Network
+namespace Game.Mia.Bot.Nightmare.Network
 {
     public class Client
     {
@@ -24,7 +22,7 @@ namespace Mia.Server.Bot.Nightmare.Network
 
         public void Start()
         {
-            string serverAddress = Config.Settings.ServerAddress;
+            string serverAddress = Config.Config.Settings.ServerAddress;
 
             if (isLocalServer)
                 serverAddress = LocalIPAddress.ToString();
@@ -34,8 +32,8 @@ namespace Mia.Server.Bot.Nightmare.Network
             var client = new NetManager(listener);
             client.AutoRecycle = true;
             client.DisconnectTimeout = 60000;
-            client.Start(Config.Settings.LocalPort);
-            client.Connect(serverAddress, Config.Settings.ServerPort, Config.Settings.ConnectionKey);
+            client.Start(Config.Config.Settings.LocalPort);
+            client.Connect(serverAddress, Config.Config.Settings.ServerPort, Config.Config.Settings.ConnectionKey);
 
             while (!Console.KeyAvailable)
             {

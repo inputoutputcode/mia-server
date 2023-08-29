@@ -1,14 +1,14 @@
 ﻿using System;
 
 
-namespace Mia.Server.ConsoleRunner.Logging
+namespace Game.Server.Console.Logging
 {
     public class Log : ILog
     {
         public void Message(string message)
         {
             string timeValue = DateTime.Now.ToString("yyyyMMdd HH:mm:ss.fff");
-            Console.WriteLine($"{timeValue} { message}");
+            System.Console.WriteLine($"{timeValue} { message}");
         }
     }
 }

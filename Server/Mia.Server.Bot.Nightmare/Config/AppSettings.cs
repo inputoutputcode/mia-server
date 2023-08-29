@@ -1,4 +1,4 @@
-﻿namespace Mia.Server.Bot.Nightmare.Configuration
+﻿namespace Game.Mia.Bot.Nightmare.Config
 {
     public class AppSettings
     {

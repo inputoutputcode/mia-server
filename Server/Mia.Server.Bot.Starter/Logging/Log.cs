@@ -1,7 +1,7 @@
 ﻿using System;
 
 
-namespace Mia.Server.Bot.Starter.Logging
+namespace Game.Server.Bot.Starter.Logging
 {
     public class Log
     {

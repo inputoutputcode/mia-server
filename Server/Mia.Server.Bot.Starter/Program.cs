@@ -1,10 +1,10 @@
 ﻿using System;
 
-using Mia.Server.Bot.Starter.Game;
-using Mia.Server.Bot.Starter.Network;
+using Game.Server.Bot.Starter.Game;
+using Game.Server.Bot.Starter.Network;
 
 
-namespace Mia.Server.Bot.Starter
+namespace Game.Server.Bot.Starter
 {
     class Program
     {

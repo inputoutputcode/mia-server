@@ -3,7 +3,7 @@ using System.IO;
 using System.Text;
 
 
-namespace Mia.Server.ConsoleRunner.Logging
+namespace Game.Server.Console.Logging
 {
     class ConsoleCopy : IDisposable
     {
@@ -49,7 +49,7 @@ namespace Mia.Server.ConsoleRunner.Logging
 
         public ConsoleCopy(string path)
         {
-            oldOut = Console.Out;
+            oldOut = System.Console.Out;
 
             try
             {
@@ -62,16 +62,16 @@ namespace Mia.Server.ConsoleRunner.Logging
             }
             catch (Exception e)
             {
-                Console.WriteLine("Cannot open file for writing");
-                Console.WriteLine(e.Message);
+                System.Console.WriteLine("Cannot open file for writing");
+                System.Console.WriteLine(e.Message);
                 return;
             }
-            Console.SetOut(doubleWriter);
+            System.Console.SetOut(doubleWriter);
         }
 
         public void Dispose()
         {
-            Console.SetOut(oldOut);
+            System.Console.SetOut(oldOut);
             if (fileWriter != null)
             {
                 fileWriter.Flush();

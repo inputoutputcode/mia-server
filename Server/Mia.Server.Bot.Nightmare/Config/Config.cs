@@ -2,7 +2,7 @@
 using System.IO;
 
 
-namespace Mia.Server.Bot.Nightmare.Configuration
+namespace Game.Mia.Bot.Nightmare.Config
 {
     public static class Config
     {
@@ -14,7 +14,7 @@ namespace Mia.Server.Bot.Nightmare.Configuration
             {
                 if (config == null)
                 {
-                    string configFileName = "Mia.Server.Bot.Nightmare.Config.json";
+                    string configFileName = "Game.Mia.Bot.Nightmare.Config.json";
                     var builder = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile(configFileName, optional: false);
                     config = builder.Build();
                 }

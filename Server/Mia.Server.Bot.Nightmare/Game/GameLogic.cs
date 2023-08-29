@@ -1,18 +1,20 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 
-using Mia.Server.Bot.Nightmare.Configuration;
-using Mia.Server.Bot.Nightmare.Logging;
+using Game.Mia.Bot.Nightmare.Logging;
 
 using LiteNetLib;
 
 
-namespace Mia.Server.Bot.Nightmare.Game
+namespace Game.Mia.Bot.Nightmare.Game
 {
     public class GameLogic
     {
+        private Dicer lastDice = null;
+
         public void SendRegisterClient(NetPeer peer)
         {
-            string playerName = Config.Settings.PlayerName;
+            string playerName = Config.Config.Settings.PlayerName;
             string message = "REGISTER;" + playerName;
             byte[] messageBytes = Encoding.UTF8.GetBytes(message);
             peer.Send(messageBytes, DeliveryMethod.ReliableOrdered);
@@ -51,7 +53,11 @@ namespace Mia.Server.Bot.Nightmare.Game
                 case "ROLLED":
                     token = messageParts[1];
                     dice = messageParts[2];
-                    messageResponse = "ANNOUNCE;" + token + ";" + dice;
+
+                    lastDice = Dicer.Parse(dice);
+                    var nextDice = Dicer.Beat(lastDice);
+
+                    messageResponse = "ANNOUNCE;" + token + ";" + nextDice;
                     break;
             }
 

@@ -1,16 +1,16 @@
 ﻿using System;
 
-using Mia.Server.Bot.Nightmare.Game;
-using Mia.Server.Bot.Nightmare.Network;
+using Game.Mia.Bot.Nightmare.Game;
+using Game.Mia.Bot.Nightmare.Network;
 
 
-namespace Mia.Server.Bot.Nightmare
+namespace Game.Mia.Bot.Nightmare
 {
     class Program
     {
         static void Main(string[] args)
         {
-            Console.Title = Configuration.Config.Settings.PlayerName;
+            Console.Title = Config.Config.Settings.PlayerName;
 
             var client = new Client(new ClientListener(new GameLogic()), true);
             client.Start();

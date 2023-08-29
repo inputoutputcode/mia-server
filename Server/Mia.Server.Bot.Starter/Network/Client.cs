@@ -4,13 +4,13 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Threading;
 
-using Mia.Server.Bot.Starter.Configuration;
-using Mia.Server.Bot.Starter.Game;
+using Game.Server.Bot.Starter.Configuration;
+using Game.Server.Bot.Starter.Game;
 
 using LiteNetLib;
 
 
-namespace Mia.Server.Bot.Starter.Network
+namespace Game.Server.Bot.Starter.Network
 {
     public class Client
     {

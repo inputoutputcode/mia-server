@@ -2,14 +2,13 @@
 using System.Net.Sockets;
 using System.Text;
 
-using Mia.Server.Bot.Nightmare.Configuration;
-using Mia.Server.Bot.Nightmare.Game;
-using Mia.Server.Bot.Nightmare.Logging;
+using Game.Mia.Bot.Nightmare.Game;
+using Game.Mia.Bot.Nightmare.Logging;
 
 using LiteNetLib;
 
 
-namespace Mia.Server.Bot.Nightmare.Network
+namespace Game.Mia.Bot.Nightmare.Network
 {
     public class ClientListener : INetEventListener
     {
@@ -62,8 +61,8 @@ namespace Mia.Server.Bot.Nightmare.Network
         {
             Log.Write($"OnConnectionRequest: {request.RemoteEndPoint.Address}:{request.RemoteEndPoint.Port}");
 
-            if (request.RemoteEndPoint.Address.ToString() == Config.Settings.ServerAddress
-                && request.RemoteEndPoint.Port == Config.Settings.ServerPort)
+            if (request.RemoteEndPoint.Address.ToString() == Config.Config.Settings.ServerAddress
+                && request.RemoteEndPoint.Port == Config.Config.Settings.ServerPort)
             {
                 var peer = request.Accept();
             }

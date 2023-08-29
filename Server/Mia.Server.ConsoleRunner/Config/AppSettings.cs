@@ -1,4 +1,4 @@
-﻿namespace Mia.Server.ConsoleRunner.Config
+﻿namespace Game.Server.Console.Config
 {
     public class AppSettings
     {

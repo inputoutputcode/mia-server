@@ -1,4 +1,4 @@
-﻿namespace Mia.Server.ConsoleRunner.Logging
+﻿namespace Game.Server.Console.Logging
 {
     public interface ILog
     {

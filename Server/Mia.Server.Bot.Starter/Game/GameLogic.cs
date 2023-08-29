@@ -1,12 +1,12 @@
 ﻿using System.Text;
 
-using Mia.Server.Bot.Starter.Configuration;
-using Mia.Server.Bot.Starter.Logging;
+using Game.Server.Bot.Starter.Configuration;
+using Game.Server.Bot.Starter.Logging;
 
 using LiteNetLib;
 
 
-namespace Mia.Server.Bot.Starter.Game
+namespace Game.Server.Bot.Starter.Game
 {
     public class GameLogic
     {

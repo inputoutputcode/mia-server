@@ -1,7 +1,7 @@
 ﻿using System;
 
 
-namespace Mia.Server.Bot.Nightmare.Logging
+namespace Game.Mia.Bot.Nightmare.Logging
 {
     public class Log
     {
