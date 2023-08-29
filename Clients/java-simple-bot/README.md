@@ -1,2 +1,0 @@
-# Java Starter Bot
-

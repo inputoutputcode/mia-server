@@ -1,2 +1,0 @@
-# C# Starter Bot
-
