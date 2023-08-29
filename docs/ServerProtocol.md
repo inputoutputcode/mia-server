@@ -1,5 +1,7 @@
 # Server protocol
 
+![Game Start Procedure](./images/GameStartProcedure.png)
+
 ## Preliminaries
 1. Client and server communicate via UDP (using UTF-8 encoded strings)
 1. Server opens a known port

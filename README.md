@@ -13,23 +13,23 @@ One option is to run the server every 30 minutes for 2 minutes, continuous run i
 
 There are three types of score modes. The original game mode is everyone starts with six lives. You wanna see how you loose your money, go with the money mode.
 
-Start reading the [Game Rules](GameRules.md).
+Start reading the [Game Rules](docs/GameRules.md).
 
 ## Bot Starter Kit
 
 All starter bots know the basics like REGISTER, JOIN_ROUND, ROLL, ANNOUNCE. The rest is your job. Basically there is no limit for your creativity, strategies like cheating, data science, practical approaches in terms of knowing the character of your colleague, log for better analysis, hack the server, everything is allowed. Have fun!
 
-- [Python](Clients/python-simple-bot/)
-- [JavaScript](Clients/javascript-simple-bot/)
-- [Java](Clients/java-simple-bot/)
-- [C++](Clients/cplusplus-simple-bot/)
-- [C#](Clients/csharp-simple-bot/)
-- [Go](Clients/go-simple-bot/)
-- [Elixir](Clients/elixir-simple-bot/)
+- [Python](clients/python-simple-bot/)
+- [JavaScript](clients/javascript-simple-bot/)
+- [Java](clients/java-simple-bot/)
+- [C++](clients/cplusplus-simple-bot/)
+- [C#](clients/csharp-simple-bot/)
+- [Go](clients/go-simple-bot/)
+- [Elixir](clients/elixir-simple-bot/)
  
 In case you are familiar with UDP and another programming language feel free to implement your own bot, it's a fairly simple protocol. 
 
-Check the [Server Protocol](ServerProtocol.md).
+Check the [Server Protocol](docs/ServerProtocol.md).
 
 ## How to win the high score?
 

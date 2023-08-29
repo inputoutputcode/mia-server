@@ -8,21 +8,21 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionFiles", "SolutionFi
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game.Server.Console", "Mia.Server.ConsoleRunner\Game.Server.Console.csproj", "{612AD9B9-A040-495D-8FAA-14D5E4039CA4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game.Server.Console", "Game.Server.ConsoleRunner\Game.Server.Console.csproj", "{612AD9B9-A040-495D-8FAA-14D5E4039CA4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game.Mia.Bot.Starter", "Mia.Server.Bot.Starter\Game.Mia.Bot.Starter.csproj", "{FE42E806-CC06-4297-8FD7-2921B756757D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game.Mia.Bot.Starter", "Game.Mia.Bot.Starter\Game.Mia.Bot.Starter.csproj", "{FE42E806-CC06-4297-8FD7-2921B756757D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game.Mia.Bot.Nightmare", "Mia.Server.Bot.Nightmare\Game.Mia.Bot.Nightmare.csproj", "{315E722D-51BC-4056-993D-DE5892E4AA21}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game.Mia.Bot.Nightmare", "Game.Mia.Bot.Nightmare\Game.Mia.Bot.Nightmare.csproj", "{315E722D-51BC-4056-993D-DE5892E4AA21}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game.Server.Test", "Mia.Server.Test\Game.Server.Test.csproj", "{04EBE11E-06D4-4622-80C6-020DE4554711}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game.Server.Test", "Game.Server.Test\Game.Server.Test.csproj", "{04EBE11E-06D4-4622-80C6-020DE4554711}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game.Server", "Mia.Server\Game.Server.csproj", "{A18561A5-CC70-444F-BAEA-2CBD4C528071}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game.Server", "Game.Server\Game.Server.csproj", "{A18561A5-CC70-444F-BAEA-2CBD4C528071}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Bots", "Bots", "{1A075B0A-8215-4C51-BD43-B749326A99A2}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Server", "Server", "{A2C14416-16D9-4585-AA05-36FA5F2FC9B2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game.Mia.Bot.Advanced", "Mia.Server.Bot.Advanced\Game.Mia.Bot.Advanced.csproj", "{C123C713-A102-433C-8528-DE3F5A359F37}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game.Mia.Bot.Advanced", "Game.Mia.Bot.Advanced\Game.Mia.Bot.Advanced.csproj", "{9586AF14-C517-4E13-9681-C5761F2DF1EB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -50,10 +50,10 @@ Global
 		{A18561A5-CC70-444F-BAEA-2CBD4C528071}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A18561A5-CC70-444F-BAEA-2CBD4C528071}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A18561A5-CC70-444F-BAEA-2CBD4C528071}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C123C713-A102-433C-8528-DE3F5A359F37}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C123C713-A102-433C-8528-DE3F5A359F37}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C123C713-A102-433C-8528-DE3F5A359F37}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C123C713-A102-433C-8528-DE3F5A359F37}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9586AF14-C517-4E13-9681-C5761F2DF1EB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9586AF14-C517-4E13-9681-C5761F2DF1EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9586AF14-C517-4E13-9681-C5761F2DF1EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9586AF14-C517-4E13-9681-C5761F2DF1EB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -64,7 +64,7 @@ Global
 		{315E722D-51BC-4056-993D-DE5892E4AA21} = {1A075B0A-8215-4C51-BD43-B749326A99A2}
 		{04EBE11E-06D4-4622-80C6-020DE4554711} = {A2C14416-16D9-4585-AA05-36FA5F2FC9B2}
 		{A18561A5-CC70-444F-BAEA-2CBD4C528071} = {A2C14416-16D9-4585-AA05-36FA5F2FC9B2}
-		{C123C713-A102-433C-8528-DE3F5A359F37} = {1A075B0A-8215-4C51-BD43-B749326A99A2}
+		{9586AF14-C517-4E13-9681-C5761F2DF1EB} = {1A075B0A-8215-4C51-BD43-B749326A99A2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {71F39BD5-8A06-4B79-9D4F-56C5191A276F}

@@ -21,11 +21,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Mia.Server\Game.Server.csproj" />
+    <Folder Include="Network\" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Network\" />
+    <ProjectReference Include="..\Game.Server\Game.Server.csproj" />
   </ItemGroup>
 
 </Project>
