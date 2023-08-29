@@ -1,6 +1,7 @@
-﻿using Mia.Server.Bot.Nightmare.Game;
+﻿using System;
+
+using Mia.Server.Bot.Nightmare.Game;
 using Mia.Server.Bot.Nightmare.Network;
-using System;
 
 
 namespace Mia.Server.Bot.Nightmare

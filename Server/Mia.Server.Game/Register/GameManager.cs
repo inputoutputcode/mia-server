@@ -33,7 +33,7 @@ namespace Mia.Server.Game.Register
 
         private int serverPort;
 
-        public List<IGameInstance> ActiveGames
+        public List<IGameInstance> ActiveGamesInstances
         {
             // TODO: return a clone
             get { return activeGameInstances; }
@@ -133,7 +133,7 @@ namespace Mia.Server.Game.Register
                     RegisterClient(newClient);
                 }
             }
-            else if (client == null && commandParts.Length > 1)
+            else if (client != null && commandParts.Length > 1)
             {
                 string firstCommandPart = commandParts[0];
 
@@ -142,14 +142,15 @@ namespace Mia.Server.Game.Register
                     var gameInstance = FindGameInstance(commandParts[1].ToString());
                     // TODO: only for cluster version
                 }
-                else if (firstCommandPart == "JOIN_GAME" && commandParts.Length > 1)
+                else if (firstCommandPart == "JOIN_ROUND" && commandParts.Length > 1)
                 {
                     Guid gameToken;
                     bool isParsed = Guid.TryParse(commandParts[1], out gameToken);
                     if (isParsed)
                     {
                         var gameInstance = FindGameInstance(gameToken);
-                        JoinGame(gameInstance, client, false);
+                        if (gameInstance != null)
+                            JoinGame(gameInstance, client, false);
                     }
                 }
                 else if (firstCommandPart == "JOIN_SPECTATOR" && commandParts.Length > 1)
@@ -168,14 +169,14 @@ namespace Mia.Server.Game.Register
                     string commandValue = null;
                     string gameTokenValue;
 
-                    if (commandParts.Length > 2)
+                    if (commandParts.Length > 1)
                     {
-                        commandValue = commandParts[1];
-                        gameTokenValue = commandParts[2];
+                        commandValue = commandParts[0];
+                        gameTokenValue = commandParts[1];
                     }
                     else
                     {
-                        gameTokenValue = commandParts[1];
+                        gameTokenValue = commandParts[0];
                     }
 
                     if (Guid.TryParse(gameTokenValue, out gameToken))
@@ -184,7 +185,7 @@ namespace Mia.Server.Game.Register
 
                         // TODO: Move codes should be part of Game domain only (SoC)
                         PlayerMoveCode moveCode;
-                        if (Enum.TryParse(firstCommandPart, out moveCode))
+                        if (game != null && Enum.TryParse(firstCommandPart, out moveCode))
                         {
                             var player = game.Players.Find(p => p.Name == client.Name);
                             if (player != null)

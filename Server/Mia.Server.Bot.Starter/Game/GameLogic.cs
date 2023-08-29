@@ -32,7 +32,7 @@ namespace Mia.Server.Bot.Starter.Game
 
                 case "ROUND_STARTING":
                     token = messageParts[1];
-                    message = "JOIN;" + token;
+                    message = "JOIN_ROUND;" + token;
                     break;
 
                 case "YOUR_TURN":

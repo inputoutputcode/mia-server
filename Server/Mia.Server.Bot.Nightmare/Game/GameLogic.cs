@@ -40,7 +40,7 @@ namespace Mia.Server.Bot.Nightmare.Game
 
                 case "ROUND_STARTING":
                     token = messageParts[1];
-                    commandText = "JOIN;" + token;
+                    commandText = "JOIN_ROUND;" + token;
                     SendEvent(commandText, peer);
                     break;
 

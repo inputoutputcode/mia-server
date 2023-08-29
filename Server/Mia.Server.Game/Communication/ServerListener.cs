@@ -3,12 +3,12 @@ using System.Net.Sockets;
 using System.Text;
 
 using Mia.Server.ConsoleRunner.Configuration;
-using Mia.Server.Game.Communication.Command.Interface;
+using Mia.Server.Game.Register.Interface;
 using Mia.Server.Game.Monitoring;
 
 using LiteNetLib;
 using LiteNetLib.Utils;
-using Mia.Server.Game.Register.Interface;
+
 
 namespace Mia.Server.Game.Communication
 {

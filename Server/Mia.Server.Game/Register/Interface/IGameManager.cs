@@ -1,18 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net;
-using LiteNetLib;
+
 using Mia.Server.Game.Communication.Command.Interface;
 using Mia.Server.Game.Communication.Interface;
 using Mia.Server.Game.Interface;
 using Mia.Server.Game.PlayEngine.Move.Interface;
+
+using LiteNetLib;
 
 
 namespace Mia.Server.Game.Register.Interface
 {
     public interface IGameManager
     {
-        List<IGameInstance> ActiveGames { get; }
+        List<IGameInstance> ActiveGamesInstances { get; }
 
         void ProcessCommand(IClientCommand command);
 

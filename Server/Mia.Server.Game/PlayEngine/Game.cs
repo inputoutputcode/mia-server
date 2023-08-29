@@ -75,7 +75,7 @@ namespace Mia.Server.Game.PlayEngine
             this.currentDice = new Dice();
 
             playerList = new PlayerList(Config.Settings.MaximumActivePlayers, Config.Settings.MaximumSpectactors);
-            token = new Guid();
+            token = Guid.NewGuid();
         }
 
         #endregion
@@ -92,15 +92,20 @@ namespace Mia.Server.Game.PlayEngine
         public async Task StartAsync()
         {
             gamePhase = GamePhase.Starting;
-            playerList.RoundReset();
+            
+            // TODO: Clean up as rounds are handled by GameManager currently. Review multi-tenant design.
+            //playerList.RoundReset();
             playerList.Permute();
-            roundToken = Guid.NewGuid();
+
+            // TODO: Implement a round token
+            roundToken = token;
 
             Log.Write($"Round '{gameNumber}' starting");
 
             var players = playerList.RegisteredPlayers.ToArray();
             if (players.Length > 1)
             {
+                // Send ROUND_STARTING
                 var serverMove = new ServerMove(ServerMoveCode.ROUND_STARTING, string.Empty, ServerFailureReasonCode.None, players, roundToken);
                 gameManager.ProcessMove(serverMove);
 
@@ -120,12 +125,14 @@ namespace Mia.Server.Game.PlayEngine
         public bool Register(IPlayer player)
         {
             bool isRegistered = playerList.Register(player);
-            Log.Write($"Player '{player.Name}' registered for the game");
+            isRegistered = playerList.Join(player);
+
+            Log.Write($"Player '{player.Name}' registered for the game.");
 
             return isRegistered;
         }
 
-        public async void RoundStarted()
+        public void RoundStarted()
         {
             gamePhase = GamePhase.Started;
             gameScorer.SetActivePlayers(playerList.ActivePlayers);
@@ -148,6 +155,7 @@ namespace Mia.Server.Game.PlayEngine
             else
             {
                 // Send ROUND_STARTED
+                roundToken = Guid.NewGuid();
                 var serverMove = new ServerMove(ServerMoveCode.ROUND_STARTED, string.Empty, ServerFailureReasonCode.None, activePlayers, roundToken);
                 gameManager.ProcessMove(serverMove);
                 Log.Write($"Round '{gameNumber}' started ");
