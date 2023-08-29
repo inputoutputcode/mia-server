@@ -1,9 +1,9 @@
 ﻿using LiteNetLib;
 
-using Mia.Server.Game.Communication.Interface;
+using Mia.Server.Game.Network.Interface;
 
 
-namespace Mia.Server.Game.Communication
+namespace Mia.Server.Game.Network
 {
     internal class Client : IClient
     {

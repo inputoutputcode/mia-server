@@ -8,8 +8,8 @@ using Mia.Server.Game.Scoring;
 using Mia.Server.Game.Scoring.Interface;
 using Mia.Server.Game.Register.Interface;
 using Mia.Server.Game.PlayEngine.Move;
-using Mia.Server.Game.Monitoring;
-using Mia.Server.ConsoleRunner.Configuration;
+using Mia.Server.Game.Logging;
+using Mia.Server.ConsoleRunner.Config;
 
 
 namespace Mia.Server.Game.PlayEngine
@@ -20,7 +20,6 @@ namespace Mia.Server.Game.PlayEngine
 
         private int gameNumber;
         private int turnCount;
-        private Guid roundToken;
         private IPlayerList playerList;
         private IGameScorer gameScorer;
         private IDice currentDice;
@@ -97,16 +96,13 @@ namespace Mia.Server.Game.PlayEngine
             //playerList.RoundReset();
             playerList.Permute();
 
-            // TODO: Implement a round token
-            roundToken = token;
-
             Log.Write($"Round '{gameNumber}' starting");
 
             var players = playerList.RegisteredPlayers.ToArray();
             if (players.Length > 1)
             {
                 // Send ROUND_STARTING
-                var serverMove = new ServerMove(ServerMoveCode.ROUND_STARTING, string.Empty, ServerFailureReasonCode.None, players, roundToken);
+                var serverMove = new ServerMove(ServerMoveCode.ROUND_STARTING, string.Empty, ServerFailureReasonCode.None, players, token);
                 gameManager.ProcessMove(serverMove);
 
                 HandleJoinTimeoutAsync();
@@ -148,15 +144,13 @@ namespace Mia.Server.Game.PlayEngine
 
                 // Send ROUND_CANCELLED
                 var spectators = playerList.RegisteredPlayers.ToArray();
-                var serverMove = new ServerMove(ServerMoveCode.ROUND_CANCELLED, string.Empty, failureCode, spectators, roundToken);
+                var serverMove = new ServerMove(ServerMoveCode.ROUND_CANCELLED, string.Empty, failureCode, spectators, token);
                 gameManager.ProcessMove(serverMove);
                 Log.Write($"Round '{gameNumber}' cancelled");
             }
             else
             {
-                // Send ROUND_STARTED
-                roundToken = Guid.NewGuid();
-                var serverMove = new ServerMove(ServerMoveCode.ROUND_STARTED, string.Empty, ServerFailureReasonCode.None, activePlayers, roundToken);
+                var serverMove = new ServerMove(ServerMoveCode.ROUND_STARTED, string.Empty, ServerFailureReasonCode.None, activePlayers, token);
                 gameManager.ProcessMove(serverMove);
                 Log.Write($"Round '{gameNumber}' started ");
 
@@ -184,7 +178,7 @@ namespace Mia.Server.Game.PlayEngine
                 case PlayerMoveCode.ROLL:
                     if (playerMove.Player.Name == playerList.Current().Name && currentTurn.RollCount <= 1)
                     {
-                        var serverMoveRolls = new ServerMove(ServerMoveCode.PLAYER_ROLLS, playerMove.Player.Name, ServerFailureReasonCode.None, playerList.RegisteredPlayers.ToArray(), roundToken);
+                        var serverMoveRolls = new ServerMove(ServerMoveCode.PLAYER_ROLLS, playerMove.Player.Name, ServerFailureReasonCode.None, playerList.RegisteredPlayers.ToArray(), token);
                         gameManager.ProcessMove(serverMoveRolls);
 
                         currentDice.Shake();
@@ -195,7 +189,7 @@ namespace Mia.Server.Game.PlayEngine
                             if (currentDice.IsMia)
                             {
                                 var loosingPlayer = playerList.Previous();
-                                var serverMoveMia = new ServerMove(ServerMoveCode.PLAYER_LOST, loosingPlayer.Name, ServerFailureReasonCode.MIA, playerList.RegisteredPlayers.ToArray(), roundToken);
+                                var serverMoveMia = new ServerMove(ServerMoveCode.PLAYER_LOST, loosingPlayer.Name, ServerFailureReasonCode.MIA, playerList.RegisteredPlayers.ToArray(), token);
                                 gameManager.ProcessMove(serverMoveMia);
 
                                 gameScorer.Winner(playerMove.Player);
@@ -206,7 +200,7 @@ namespace Mia.Server.Game.PlayEngine
                             else
                             {
                                 var currentPlayer = new IPlayer[] { playerMove.Player };
-                                var serverMoveRolled = new ServerMove(ServerMoveCode.ROLLED, currentDice.ToString(), ServerFailureReasonCode.None, currentPlayer, roundToken);
+                                var serverMoveRolled = new ServerMove(ServerMoveCode.ROLLED, currentDice.ToString(), ServerFailureReasonCode.None, currentPlayer, token);
                                 gameManager.ProcessMove(serverMoveRolled);
                             }
                         }
@@ -228,10 +222,10 @@ namespace Mia.Server.Game.PlayEngine
                         }
                         else
                         {
-                            var serverMoveSee = new ServerMove(ServerMoveCode.PLAYER_WANTS_TO_SEE, playerMove.Player.Name, ServerFailureReasonCode.None, playerList.RegisteredPlayers.ToArray(), roundToken);
+                            var serverMoveSee = new ServerMove(ServerMoveCode.PLAYER_WANTS_TO_SEE, playerMove.Player.Name, ServerFailureReasonCode.None, playerList.RegisteredPlayers.ToArray(), token);
                             gameManager.ProcessMove(serverMoveSee);
 
-                            var serverMoveDice = new ServerMove(ServerMoveCode.ACTUAL_DICE, currentDice.ToString(), ServerFailureReasonCode.None, playerList.RegisteredPlayers.ToArray(), roundToken);
+                            var serverMoveDice = new ServerMove(ServerMoveCode.ACTUAL_DICE, currentDice.ToString(), ServerFailureReasonCode.None, playerList.RegisteredPlayers.ToArray(), token);
                             gameManager.ProcessMove(serverMoveDice);
 
                             IPlayer looserPlayer;
@@ -253,7 +247,7 @@ namespace Mia.Server.Game.PlayEngine
                             gameScorer.Lost(looserPlayer);
                             gameScorer.Winner(winnerPlayer);
 
-                            var serverMoveTurn = new ServerMove(ServerMoveCode.PLAYER_LOST, looserPlayer.Name, reasonCode, playerList.RegisteredPlayers.ToArray(), roundToken);
+                            var serverMoveTurn = new ServerMove(ServerMoveCode.PLAYER_LOST, looserPlayer.Name, reasonCode, playerList.RegisteredPlayers.ToArray(), token);
                             gameManager.ProcessMove(serverMoveTurn);
                             Log.Write($"Send PLAYER_LOST for '{looserPlayer.Name}'");
 
@@ -276,7 +270,7 @@ namespace Mia.Server.Game.PlayEngine
                             if (currentDice.IsMia)
                             {
                                 var loosingPlayer = playerList.Previous();
-                                var serverMoveMia = new ServerMove(ServerMoveCode.PLAYER_LOST, loosingPlayer.Name, ServerFailureReasonCode.MIA, playerList.RegisteredPlayers.ToArray(), roundToken);
+                                var serverMoveMia = new ServerMove(ServerMoveCode.PLAYER_LOST, loosingPlayer.Name, ServerFailureReasonCode.MIA, playerList.RegisteredPlayers.ToArray(), token);
                                 gameManager.ProcessMove(serverMoveMia);
 
                                 gameScorer.Winner(playerMove.Player);
@@ -287,7 +281,7 @@ namespace Mia.Server.Game.PlayEngine
                             else
                             {
                                 var nextPlayer = playerList.Next();
-                                var serverMoveMia = new ServerMove(ServerMoveCode.PLAYER_LOST, playerMove.Player.Name, ServerFailureReasonCode.LIED_ABOUT_MIA, playerList.RegisteredPlayers.ToArray(), roundToken);
+                                var serverMoveMia = new ServerMove(ServerMoveCode.PLAYER_LOST, playerMove.Player.Name, ServerFailureReasonCode.LIED_ABOUT_MIA, playerList.RegisteredPlayers.ToArray(), token);
                                 gameManager.ProcessMove(serverMoveMia);
 
                                 gameScorer.Winner(nextPlayer);
@@ -299,7 +293,7 @@ namespace Mia.Server.Game.PlayEngine
                         else if (announcedDice.IsHigherThan(currentDice))
                         {
                             string broadcastValue = $"{playerMove.Player.Name};{announcedDice}";
-                            var serverMoveAnnounced = new ServerMove(ServerMoveCode.ANNOUNCED, broadcastValue, ServerFailureReasonCode.None, playerList.RegisteredPlayers.ToArray(), roundToken);
+                            var serverMoveAnnounced = new ServerMove(ServerMoveCode.ANNOUNCED, broadcastValue, ServerFailureReasonCode.None, playerList.RegisteredPlayers.ToArray(), token);
                             gameManager.ProcessMove(serverMoveAnnounced);
 
                             var nextPlayer = playerList.Next();
@@ -347,11 +341,13 @@ namespace Mia.Server.Game.PlayEngine
 
         private void SendPlayerTurn(IPlayer player)
         {
-            var playerList = new IPlayer[] { player };
-            var serverMoveTurn = new ServerMove(ServerMoveCode.YOUR_TURN, string.Empty, ServerFailureReasonCode.None, playerList, roundToken);
+            var singlePlayerList = new IPlayer[] { player };
+            var serverMoveTurn = new ServerMove(ServerMoveCode.YOUR_TURN, string.Empty, ServerFailureReasonCode.None, singlePlayerList, token);
             gameManager.ProcessMove(serverMoveTurn);
             NewTurn(player);
             Log.Write($"Send YOUR_TURN to '{player.Name}'");
+
+            // TODO: Send data to spectators
 
             HandleTurnTimeoutAsync(player);
         }
@@ -367,7 +363,7 @@ namespace Mia.Server.Game.PlayEngine
             gameScorer.Lost(player);
             player.Kick();
 
-            var serverMoveTurn = new ServerMove(ServerMoveCode.PLAYER_LOST, player.Name, reasonCode, playerList.RegisteredPlayers.ToArray(), roundToken);
+            var serverMoveTurn = new ServerMove(ServerMoveCode.PLAYER_LOST, player.Name, reasonCode, playerList.RegisteredPlayers.ToArray(), token);
             gameManager.ProcessMove(serverMoveTurn);
             Log.Write($"Send PLAYER_LOST for '{player.Name}'");
 
@@ -384,7 +380,7 @@ namespace Mia.Server.Game.PlayEngine
 
         public void GameOver()
         {
-            var serverMoveTurn = new ServerMove(ServerMoveCode.SCORE, gameScorer.GetScoreValues(), ServerFailureReasonCode.None, playerList.RegisteredPlayers.ToArray(), roundToken);
+            var serverMoveTurn = new ServerMove(ServerMoveCode.SCORE, gameScorer.GetScoreValues(), ServerFailureReasonCode.None, playerList.RegisteredPlayers.ToArray(), token);
             gameManager.ProcessMove(serverMoveTurn);
             Log.Write($"Send SCORE");
 

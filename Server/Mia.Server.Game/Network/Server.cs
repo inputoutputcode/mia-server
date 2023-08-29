@@ -1,19 +1,19 @@
 ﻿using System;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using LiteNetLib;
-using Mia.Server.Game.Communication.Command;
-using Mia.Server.Game.Communication.Interface;
-using Mia.Server.Game.Monitoring;
+
+using Mia.Server.Game.Network.Interface;
+using Mia.Server.Game.Logging;
 using Mia.Server.Game.Register.Interface;
 
-namespace Mia.Server.Game.Communication
+using LiteNetLib;
+
+
+namespace Mia.Server.Game.Network
 {
     public class Server : IServer
     {
         private readonly IGameManager gameManager;
-        private int port;
         private NetManager server;
 
         public Server(IGameManager gameManager)
@@ -23,8 +23,6 @@ namespace Mia.Server.Game.Communication
         
         public async void CreateServer(int port)
         {
-            this.port = port;
-
             Log.Write($"Server starting on port {port}");
 
             var listener = new ServerListener(gameManager);
@@ -56,12 +54,6 @@ namespace Mia.Server.Game.Communication
 
                 server.Stop();
             });
-        }
-
-        public void SendToAll(string message)
-        {
-            byte[] messageBytes = Encoding.UTF8.GetBytes(message);
-            server.SendToAll(messageBytes, DeliveryMethod.ReliableOrdered);
         }
     }
 }

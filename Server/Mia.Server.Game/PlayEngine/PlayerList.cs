@@ -176,7 +176,7 @@ namespace Mia.Server.Game.PlayEngine
         {
             int lastPlayerIndex;
 
-            if (currentPlayerIndex >= 0 && currentPlayerIndex < PlayerCount - 1)
+            if (currentPlayerIndex > 0 && currentPlayerIndex < PlayerCount - 1)
             {
                 lastPlayerIndex = currentPlayerIndex - 1;
             }

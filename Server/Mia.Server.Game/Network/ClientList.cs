@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Mia.Server.Game.Communication.Interface;
+using Mia.Server.Game.Network.Interface;
 
 
 namespace Mia.Server.Game

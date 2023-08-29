@@ -1,4 +1,4 @@
-﻿namespace Mia.Server.ConsoleRunner.Configuration
+﻿namespace Mia.Server.ConsoleRunner.Config
 {
     public class AppSettings
     {

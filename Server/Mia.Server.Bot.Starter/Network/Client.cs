@@ -33,6 +33,8 @@ namespace Mia.Server.Bot.Starter.Network
             Thread.Sleep(500);
 
             var client = new NetManager(listener);
+            client.AutoRecycle = true;
+            client.DisconnectTimeout = 60000;
             client.Start(Config.Settings.LocalPort);
             client.Connect(serverAddress, Config.Settings.ServerPort, Config.Settings.ConnectionKey);
 

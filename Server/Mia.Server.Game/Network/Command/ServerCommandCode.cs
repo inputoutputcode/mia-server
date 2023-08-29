@@ -1,4 +1,4 @@
-﻿namespace Mia.Server.Game.Communication.Command
+﻿namespace Mia.Server.Game.Network.Command
 {
     public enum ServerCommandCode
     {

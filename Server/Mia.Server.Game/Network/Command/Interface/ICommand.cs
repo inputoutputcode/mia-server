@@ -1,7 +1,7 @@
 ﻿using LiteNetLib;
 
 
-namespace Mia.Server.Game.Communication.Command.Interface
+namespace Mia.Server.Game.Network.Command.Interface
 {
     public interface ICommand
     {

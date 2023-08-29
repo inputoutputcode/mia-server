@@ -26,12 +26,12 @@ namespace Mia.Server.Bot.Nightmare.Game
             Log.Write(message);
         }
 
-        public void ProcessEvent(string message, NetPeer peer)
+        public void ProcessEvent(string eventMessage, NetPeer peer)
         {
-            string[] messageParts = message.Split(';');
-            string commandText = string.Empty;
-            string token = string.Empty;
-            string dice = string.Empty;
+            string[] messageParts = eventMessage.Split(';');
+            string messageResponse = string.Empty;
+            string token;
+            string dice;
 
             switch (messageParts[0])
             {
@@ -40,25 +40,22 @@ namespace Mia.Server.Bot.Nightmare.Game
 
                 case "ROUND_STARTING":
                     token = messageParts[1];
-                    commandText = "JOIN_ROUND;" + token;
-                    SendEvent(commandText, peer);
+                    messageResponse = "JOIN_ROUND;" + token;
                     break;
 
                 case "YOUR_TURN":
                     token = messageParts[1];
-                    commandText = "ROLL;" + token;
-                    SendEvent(commandText, peer);
+                    messageResponse = "ROLL;" + token;
                     break;
 
                 case "ROLLED":
                     token = messageParts[1];
                     dice = messageParts[2];
-                    commandText = "ANNOUNCE;" + token + ";" + dice;
-                    SendEvent(commandText, peer);
+                    messageResponse = "ANNOUNCE;" + token + ";" + dice;
                     break;
             }
 
-            Log.Write(message);
+            SendEvent(messageResponse, peer);
         }
     }
 }

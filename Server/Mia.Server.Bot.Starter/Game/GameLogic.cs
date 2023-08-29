@@ -1,7 +1,9 @@
-﻿using LiteNetLib;
+﻿using System.Text;
+
 using Mia.Server.Bot.Starter.Configuration;
 using Mia.Server.Bot.Starter.Logging;
-using System.Text;
+
+using LiteNetLib;
 
 
 namespace Mia.Server.Bot.Starter.Game
@@ -16,14 +18,20 @@ namespace Mia.Server.Bot.Starter.Game
             peer.Send(messageBytes, DeliveryMethod.ReliableOrdered);
         }
 
+        public void SendEvent(string message, NetPeer peer)
+        {
+            byte[] messageBytes = Encoding.UTF8.GetBytes(message);
+            peer.Send(messageBytes, DeliveryMethod.ReliableOrdered);
+
+            Log.Write(message);
+        }
+
         public void ProcessEvent(string eventMessage, NetPeer peer)
         {
-            Log.Write(eventMessage);
-
             string[] messageParts = eventMessage.Split(';');
-            string message = string.Empty;
-            string token = string.Empty;
-            string dice = string.Empty;
+            string messageResponse = string.Empty;
+            string token;
+            string dice;
 
             switch (messageParts[0])
             {
@@ -32,23 +40,22 @@ namespace Mia.Server.Bot.Starter.Game
 
                 case "ROUND_STARTING":
                     token = messageParts[1];
-                    message = "JOIN_ROUND;" + token;
+                    messageResponse = "JOIN_ROUND;" + token;
                     break;
 
                 case "YOUR_TURN":
                     token = messageParts[1];
-                    message = "ROLL;" + token;
+                    messageResponse = "ROLL;" + token;
                     break;
 
                 case "ROLLED":
                     token = messageParts[1];
                     dice = messageParts[2];
-                    message = "ANNOUNCE;" + token + ";" + dice;
+                    messageResponse = "ANNOUNCE;" + token + ";" + dice;
                     break;
             }
 
-            byte[] messageBytes = Encoding.UTF8.GetBytes(message);
-            peer.Send(messageBytes, DeliveryMethod.ReliableOrdered);
+            SendEvent(messageResponse, peer);
         }
     }
 }

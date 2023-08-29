@@ -2,9 +2,10 @@
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+
 using Mia.Server.Game.Register;
-using Mia.Server.ConsoleRunner.Monitoring;
-using Mia.Server.ConsoleRunner.Configuration;
+using Mia.Server.ConsoleRunner.Logging;
+
 
 namespace Mia.Server.ConsoleRunner
 {
@@ -16,7 +17,7 @@ namespace Mia.Server.ConsoleRunner
 
             using (var consoleCopy = new ConsoleCopy(string.Format(@"C:\Temp\Maxle_{0}.log", DateTime.Now.Ticks)))
             {
-                var server = new GameManager() { ServerPort = Config.Settings.ServerPort };
+                var server = new GameManager() { ServerPort = Config.Config.Settings.ServerPort };
                 server.Initialize();
             }
 

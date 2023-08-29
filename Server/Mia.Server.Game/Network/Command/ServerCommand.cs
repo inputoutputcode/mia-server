@@ -1,11 +1,11 @@
 ﻿using System.Net;
 using LiteNetLib;
-using Mia.Server.Game.Communication.Command.Interface;
+using Mia.Server.Game.Network.Command.Interface;
 
 
-namespace Mia.Server.Game.Communication.Command
+namespace Mia.Server.Game.Network.Command
 {
-    public class ClientCommand : IClientCommand
+    public class ServerCommand : IServerCommand
     {
         private string command;
         private NetPeer peer;
@@ -20,11 +20,11 @@ namespace Mia.Server.Game.Communication.Command
             get { return peer; }
         }
 
-        public ClientCommand()
+        public ServerCommand()
         {
         }
 
-        public ClientCommand(string command, NetPeer peer)
+        public ServerCommand(string command, NetPeer peer)
         {
             this.command = command;
             this.peer = peer;

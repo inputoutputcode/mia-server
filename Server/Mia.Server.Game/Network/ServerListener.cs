@@ -2,15 +2,15 @@
 using System.Net.Sockets;
 using System.Text;
 
-using Mia.Server.ConsoleRunner.Configuration;
+using Mia.Server.ConsoleRunner.Config;
 using Mia.Server.Game.Register.Interface;
-using Mia.Server.Game.Monitoring;
+using Mia.Server.Game.Logging;
 
 using LiteNetLib;
 using LiteNetLib.Utils;
 
 
-namespace Mia.Server.Game.Communication
+namespace Mia.Server.Game.Network
 {
     public class ServerListener : INetEventListener
     {

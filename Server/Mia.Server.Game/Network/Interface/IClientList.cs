@@ -1,4 +1,4 @@
-﻿namespace Mia.Server.Game.Communication.Interface
+﻿namespace Mia.Server.Game.Network.Interface
 {
     public interface IClientList
     {

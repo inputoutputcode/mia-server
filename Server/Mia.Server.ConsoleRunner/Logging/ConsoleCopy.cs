@@ -3,11 +3,10 @@ using System.IO;
 using System.Text;
 
 
-namespace Mia.Server.ConsoleRunner.Monitoring
+namespace Mia.Server.ConsoleRunner.Logging
 {
     class ConsoleCopy : IDisposable
     {
-
         FileStream fileStream;
         StreamWriter fileWriter;
         TextWriter doubleWriter;
@@ -15,6 +14,7 @@ namespace Mia.Server.ConsoleRunner.Monitoring
 
         class DoubleWriter : TextWriter
         {
+            private object lockObject = new object();
 
             TextWriter one;
             TextWriter two;
@@ -38,8 +38,11 @@ namespace Mia.Server.ConsoleRunner.Monitoring
 
             public override void Write(char value)
             {
-                one.Write(value);
-                two.Write(value);
+                lock (lockObject)
+                {
+                    one.Write(value);
+                    two.Write(value);
+                }
             }
 
         }

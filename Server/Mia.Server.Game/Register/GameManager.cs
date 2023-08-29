@@ -2,22 +2,23 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
-using Mia.Server.Game.Communication.Interface;
+using Mia.Server.Game.Network.Interface;
 using Mia.Server.Game.Interface;
 using Mia.Server.Game.Scoring;
 using Mia.Server.Game.Register.Interface;
-using Mia.Server.Game.Communication;
-using Mia.Server.Game.Communication.Command.Interface;
-using Mia.Server.Game.Communication.Command;
+using Mia.Server.Game.Network;
+using Mia.Server.Game.Network.Command.Interface;
+using Mia.Server.Game.Network.Command;
 using Mia.Server.Game.PlayEngine;
 using Mia.Server.Game.PlayEngine.Move;
 using Mia.Server.Game.PlayEngine.Move.Interface;
-using Mia.Server.Game.Monitoring;
-using Mia.Server.ConsoleRunner.Configuration;
+using Mia.Server.Game.Logging;
+using Mia.Server.ConsoleRunner.Config;
 
 using LiteNetLib;
-using System.Threading.Tasks;
+
 
 namespace Mia.Server.Game.Register
 {
@@ -46,7 +47,7 @@ namespace Mia.Server.Game.Register
 
         public GameManager()
         {
-            this.server = new Communication.Server(this);
+            this.server = new Network.Server(this);
         }
 
         public GameManager(IServer commandServer)

@@ -24,4 +24,8 @@
     <ProjectReference Include="..\Mia.Server.Game\Mia.Server.Game.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Network\" />
+  </ItemGroup>
+
 </Project>

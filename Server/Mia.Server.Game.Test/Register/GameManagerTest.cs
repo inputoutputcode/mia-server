@@ -1,4 +1,5 @@
-using Mia.Server.Game.Communication.Interface;
+using Mia.Server.Game.Network.Interface;
+
 using Moq;
 using Xunit;
 
