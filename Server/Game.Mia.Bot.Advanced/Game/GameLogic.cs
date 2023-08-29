@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Collections.Generic;
+using System.Text;
 
 using Game.Mia.Bot.Advanced.Configuration;
 using Game.Mia.Bot.Advanced.Logging;
@@ -10,6 +11,8 @@ namespace Game.Mia.Bot.Advanced.Game
 {
     public class GameLogic
     {
+        private List<Dicer> diceHistory = new List<Dicer>();
+
         public void SendRegisterClient(NetPeer peer)
         {
             string playerName = Config.Settings.PlayerName;
@@ -50,8 +53,20 @@ namespace Game.Mia.Bot.Advanced.Game
 
                 case "ROLLED":
                     token = messageParts[1];
+
+                    // Beat dice and announce
+                    var lastAnnouncedDice = diceHistory[diceHistory.Count - 1];
+                    var nextDice = Dicer.Beat(lastAnnouncedDice);
+
+                    messageResponse = "ANNOUNCE;" + token + ";" + nextDice;
+                    break;
+
+                case "ANNOUNCED":
                     dice = messageParts[2];
-                    messageResponse = "ANNOUNCE;" + token + ";" + dice;
+
+                    // Track last dice announcement
+                    var announcedDice = Dicer.Parse(dice);
+                    diceHistory.Add(announcedDice);
                     break;
             }
 

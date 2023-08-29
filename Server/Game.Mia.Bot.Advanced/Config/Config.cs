@@ -14,7 +14,7 @@ namespace Game.Mia.Bot.Advanced.Configuration
             {
                 if (config == null)
                 {
-                    string configFileName = "Game.Mia.Bot.Nightmare.Config.json";
+                    string configFileName = "Game.Mia.Bot.Advanced.Config.json";
                     var builder = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile(configFileName, optional: false);
                     config = builder.Build();
                 }

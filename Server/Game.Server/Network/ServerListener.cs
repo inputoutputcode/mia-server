@@ -2,7 +2,6 @@
 using System.Net.Sockets;
 using System.Text;
 
-using Game.Server.Console.Config;
 using Game.Server.Register.Interface;
 using Game.Server.Logging;
 
@@ -73,7 +72,7 @@ namespace Game.Server.Network
             Log.Write($"OnConnectionRequest: {request.RemoteEndPoint.Address}:{request.RemoteEndPoint.Port}");
 
             if (server.ConnectedPeersCount < 10 /* max connections */)
-                request.AcceptIfKey(Config.Settings.ConnectionKey);
+                request.AcceptIfKey(Config.Config.Settings.ConnectionKey);
             else
                 request.Reject();
         }

@@ -2,7 +2,7 @@
 using System.IO;
 
 
-namespace Game.Server.Console.Config
+namespace Game.Server.Config
 {
     public static class Config
     {
@@ -14,7 +14,7 @@ namespace Game.Server.Console.Config
             {
                 if (config == null)
                 {
-                    string configFileName = "Game.Server.Game.Config.json";
+                    string configFileName = "Game.Server.Config.json";
                     var builder = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile(configFileName, optional: false);
                     config = builder.Build();
                 }

@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using Game.Server.Console.Config;
 using Game.Server.Engine.Mia;
 using Game.Server.Engine.Mia.Interface;
 using Game.Server.Engine.Mia.Move;
@@ -67,7 +66,7 @@ namespace Game.Server.Register
             Task.Delay(100);
 
             var scoreMode = ScoreMode.Points;
-            Enum.TryParse(Config.Settings.ScoreMode, out scoreMode);
+            Enum.TryParse(Config.Config.Settings.ScoreMode, out scoreMode);
 
             StartGame(scoreMode);
         }
@@ -93,7 +92,7 @@ namespace Game.Server.Register
         {
             int currentRoundNumber = 0;
 
-            while (currentRoundNumber < Config.Settings.RoundsPerGame)
+            while (currentRoundNumber < Config.Config.Settings.RoundsPerGame)
             {
                 Log.Write($"Start game: {currentRoundNumber}");
 

@@ -14,7 +14,7 @@ namespace Game.Server.Console.Config
             {
                 if (config == null)
                 {
-                    string configFileName = "Game.Server.ConsoleRunner.Config.json";
+                    string configFileName = "Game.Server.Console.Config.json";
                     var builder = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile(configFileName, optional: false);
                     config = builder.Build();
                 }

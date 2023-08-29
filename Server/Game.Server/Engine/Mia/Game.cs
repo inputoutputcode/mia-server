@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-using Game.Server.Console.Config;
+using Game.Server.Config;
 using Game.Server.Engine.Mia.Interface;
 using Game.Server.Engine.Mia.Move;
 using Game.Server.Engine.Mia.Move.Interface;
@@ -73,7 +73,7 @@ namespace Game.Server.Engine.Mia
             this.gameManager = gameManager;
             currentDice = new Dice();
 
-            playerList = new PlayerList(Config.Settings.MaximumActivePlayers, Config.Settings.MaximumSpectactors);
+            playerList = new PlayerList(Config.Config.Settings.MaximumActivePlayers, Config.Config.Settings.MaximumSpectactors);
             token = Guid.NewGuid();
         }
 
@@ -317,19 +317,19 @@ namespace Game.Server.Engine.Mia
 
         private async void HandleNextRoundWaitTimeAsync()
         {
-            await Task.Delay(Config.Settings.RegistrationTimeOut);
+            await Task.Delay(Config.Config.Settings.RegistrationTimeOut);
         }
 
         private async void HandleJoinTimeoutAsync()
         {
-            await Task.Delay(Config.Settings.JoinTimeOut);
+            await Task.Delay(Config.Config.Settings.JoinTimeOut);
 
             RoundStarted();
         }
 
         private async void HandleTurnTimeoutAsync(IPlayer player)
         {
-            await Task.Delay(Config.Settings.TurnTimeOut);
+            await Task.Delay(Config.Config.Settings.TurnTimeOut);
 
             if (player.Name == playerList.Current().Name)
             {
@@ -367,7 +367,7 @@ namespace Game.Server.Engine.Mia
             gameManager.ProcessMove(serverMoveTurn);
             Log.Write($"Send PLAYER_LOST for '{player.Name}'");
 
-            if (playerList.ActivePlayers.Count < Config.Settings.MinimumPlayerCount)
+            if (playerList.ActivePlayers.Count < Config.Config.Settings.MinimumPlayerCount)
             {
                 gameOverCompletion?.TrySetResult(true);
             }

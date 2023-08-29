@@ -1,5 +1,4 @@
-﻿using Game.Server.Console.Config;
-using Game.Server.Engine.Mia.Interface;
+﻿using Game.Server.Engine.Mia.Interface;
 
 
 namespace Game.Server.Scoring
@@ -8,17 +7,17 @@ namespace Game.Server.Scoring
     {
         public override void Looser(IPlayer player)
         {
-            player.Score -= Config.Settings.ScoreDecrement;
+            player.Score -= Config.Config.Settings.ScoreDecrement;
         }
 
         public override void Lost(IPlayer player)
         {
-            player.Score -= Config.Settings.ScoreDecrement / 2;
+            player.Score -= Config.Config.Settings.ScoreDecrement / 2;
         }
 
         public override void Winner(IPlayer player)
         {
-            player.Score += Config.Settings.ScoreIncrement;
+            player.Score += Config.Config.Settings.ScoreIncrement;
         }
     }
 }
