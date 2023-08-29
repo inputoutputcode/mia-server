@@ -14,6 +14,7 @@ namespace Game.Server.Logging
             lock (lockObject)
             {
                 // TODO: Implement logging for multi-tenant
+                Console.WriteLine($"{timeValue} - {message}");
             }
         }
     }

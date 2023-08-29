@@ -13,9 +13,19 @@ namespace Game.Server.Console
     {
         static void Main(string[] args)
         {
-            System.Console.Title = "Mia Server started";
+            System.Console.WriteLine("Mia Server started");
 
-            using (var consoleCopy = new ConsoleCopy(string.Format(@"C:\Temp\Maxle_{0}.log", DateTime.Now.Ticks)))
+            bool logFile = Config.Config.Settings.LogFileCreation;
+
+            if (logFile)
+            {
+                using (var consoleCopy = new ConsoleCopy())
+                {
+                    var server = new GameManager() { ServerPort = Config.Config.Settings.ServerPort };
+                    server.Initialize();
+                }
+            }
+            else
             {
                 var server = new GameManager() { ServerPort = Config.Config.Settings.ServerPort };
                 server.Initialize();

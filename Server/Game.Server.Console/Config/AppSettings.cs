@@ -17,5 +17,9 @@
         public int TurnTimeOut { get; set; }
 
         public string ConnectionKey { get; set; }
+        
+        public bool LogFileCreation { get; set; }
+     
+        public string LogFilePath { get; set; }
     }
 }

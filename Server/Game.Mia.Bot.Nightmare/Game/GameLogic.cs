@@ -75,6 +75,10 @@ namespace Game.Mia.Bot.Nightmare.Game
                     token = messageParts[1];
                     dice = messageParts[2];
 
+                    if (dice.Length == 2)
+                    {
+
+                    }
                     var rolledDice = Dicer.Parse(dice);
                     var lastAnnouncedDice = diceHistory[diceHistory.Count - 1];
 

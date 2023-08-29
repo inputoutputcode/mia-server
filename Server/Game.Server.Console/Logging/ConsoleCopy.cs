@@ -47,13 +47,17 @@ namespace Game.Server.Console.Logging
 
         }
 
-        public ConsoleCopy(string path)
+        public ConsoleCopy()
         {
+            string logFileDirectory = Config.Config.Settings.LogFilePath;
+            Directory.CreateDirectory(logFileDirectory);
+            string logFilePath = string.Format(@$"{logFileDirectory}\Maxle_{0}.log", DateTime.Now.Ticks);
+
             oldOut = System.Console.Out;
 
             try
             {
-                fileStream = File.Create(path);
+                fileStream = File.Create(logFilePath);
 
                 fileWriter = new StreamWriter(fileStream);
                 fileWriter.AutoFlush = true;
