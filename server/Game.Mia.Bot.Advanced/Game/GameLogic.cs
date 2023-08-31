@@ -52,19 +52,20 @@ namespace Game.Mia.Bot.Advanced.Game
                     break;
 
                 case "ROLLED":
-                    token = messageParts[1];
-                    dice = messageParts[2];
+                    token = messageParts[2];
+                    dice = messageParts[1];
 
                     // Beat dice and announce
                     if (diceHistory.Count == 0)
                     {
-                        // Bug: Why is dice token ?
+                        var nextDice = Dicer.Beat(Dicer.Parse(dice));
+                        messageResponse = "ANNOUNCE;" + nextDice + ";" + token;
                     }
                     else if (diceHistory.Count > 0)
                     {
                         var lastAnnouncedDice = diceHistory[diceHistory.Count - 1];
                         var nextDice = Dicer.Beat(lastAnnouncedDice);
-                        messageResponse = "ANNOUNCE;" + token + ";" + nextDice;
+                        messageResponse = "ANNOUNCE;" + nextDice + ";" + token;
                     }
                     
                     break;

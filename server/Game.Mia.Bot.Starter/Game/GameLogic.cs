@@ -49,9 +49,9 @@ namespace Game.Server.Bot.Starter.Game
                     break;
 
                 case "ROLLED":
-                    token = messageParts[1];
-                    dice = messageParts[2];
-                    messageResponse = "ANNOUNCE;" + token + ";" + dice;
+                    token = messageParts[2];
+                    dice = messageParts[1];
+                    messageResponse = "ANNOUNCE;" + dice + ";" + token;
                     break;
             }
 

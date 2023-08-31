@@ -72,15 +72,15 @@ namespace Game.Mia.Bot.Nightmare.Game
                     break;
 
                 case "ROLLED":
-                    token = messageParts[1];
-                    dice = messageParts[2];
+                    token = messageParts[2];
+                    dice = messageParts[1];
 
-                    if (dice.Length == 2)
-                    {
+                    Dicer lastAnnouncedDice = null;
 
-                    }
+                    if (diceHistory.Count > 0)
+                        lastAnnouncedDice = diceHistory[diceHistory.Count - 1];
+
                     var rolledDice = Dicer.Parse(dice);
-                    var lastAnnouncedDice = diceHistory[diceHistory.Count - 1];
 
                     var randomizer = new Random();
                     int randomSecondRoll = randomizer.Next(1, 2);
@@ -95,17 +95,27 @@ namespace Game.Mia.Bot.Nightmare.Game
                             Dicer nextDice = null;
 
                             // Take rolled dice if higher than last one
-                            if (diceHistory.Count > 0 && lastAnnouncedDice.CompareTo(rolledDice) == -1)
+                            if (diceHistory.Count > 0 && lastAnnouncedDice != null && lastAnnouncedDice.CompareTo(rolledDice) == -1)
                             {
                                 nextDice = rolledDice;
                             }
                             // Beat last dice with randomized
                             else
                             {
-                                nextDice = Dicer.Beat(lastAnnouncedDice, true);
+                                if (diceHistory.Count == 0)
+                                {
+                                    int randomOne = randomizer.Next(1, 6);
+                                    int randomTwo = randomizer.Next(1, 6);
+
+                                    lastAnnouncedDice = new Dicer(randomOne, randomTwo);
+                                }
+                                else
+                                {
+                                    nextDice = Dicer.Beat(lastAnnouncedDice, true);
+                                }
                             }
 
-                            messageResponse = "ANNOUNCE;" + token + ";" + nextDice;
+                            messageResponse = "ANNOUNCE;" + nextDice + ";" + token;
                             rollCounter = 0;
 
                             break;

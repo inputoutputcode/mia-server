@@ -80,31 +80,45 @@ namespace Game.Mia.Bot.Advanced.Game
         public static Dicer Beat(Dicer dicer, bool randomize = false)
         {
             Dicer returnDicer = null;
+            var randomizer = new Random();
 
-            if (!dicer.IsMia)
+            if (dicer != null)
             {
-                if (randomize)
+                if (!dicer.IsMia)
                 {
-                    var randomizer = new Random();
-                    int nextDiceOption = randomizer.Next(1, 3);
-
-                    switch (nextDiceOption)
+                    if (randomize)
                     {
-                        case 1:
-                            returnDicer = new Dicer(1, 2);
-                            break;
-                        case 2:
+                        int nextDiceOption = randomizer.Next(1, 3);
 
-                            if (dicer.DiceOne == 6)
+                        switch (nextDiceOption)
+                        {
+                            case 1:
                                 returnDicer = new Dicer(1, 2);
-                            else
-                                returnDicer = new Dicer(dicer.DiceOne + 1, dicer.DiceOne + 1);
-                            break;
-                        case 3:
-                            returnDicer = BeatByOne(dicer);
-                            break;
+                                break;
+                            case 2:
+
+                                if (dicer.DiceOne == 6)
+                                    returnDicer = new Dicer(1, 2);
+                                else
+                                    returnDicer = new Dicer(dicer.DiceOne + 1, dicer.DiceOne + 1);
+                                break;
+                            case 3:
+                                returnDicer = BeatByOne(dicer);
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        returnDicer = BeatByOne(dicer);
                     }
                 }
+            }
+            else
+            {
+                // Only for the case of first dice if bot is faking first rolled dice
+                int randomNumberOne = randomizer.Next(1, 6);
+                int randomNumberTwo = randomizer.Next(1, 6);
+                returnDicer = BeatByOne(new Dicer(randomNumberOne, randomNumberTwo));
             }
 
             return returnDicer;
@@ -148,16 +162,18 @@ namespace Game.Mia.Bot.Advanced.Game
         public static Dicer Parse(string value)
         {
             Dicer returnDicer = null; 
-            string[] diceValues = value.Split(',');
-
             int dieOne;
             int dieTwo;
 
-            int.TryParse(diceValues[0], out dieOne);
-            int.TryParse(diceValues[1], out dieTwo);
+            var diceValues = value.ToCharArray();
+            if (diceValues.Length == 2)
+            {
+                int.TryParse(diceValues[0].ToString(), out dieOne);
+                int.TryParse(diceValues[1].ToString(), out dieTwo);
 
-            if (dieOne > 0 && dieOne < 7 && dieTwo > 0 && dieTwo < 7)
-                returnDicer = new Dicer(dieOne, dieTwo);
+                if (dieOne > 0 && dieOne < 7 && dieTwo > 0 && dieTwo < 7)
+                    returnDicer = new Dicer(dieOne, dieTwo);
+            }
 
             return returnDicer;
         }

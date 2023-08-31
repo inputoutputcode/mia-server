@@ -13,6 +13,7 @@ namespace Game.Server.Console
     {
         static void Main(string[] args)
         {
+            System.Console.Title = "Mia Server";
             System.Console.WriteLine("Mia Server started");
 
             bool logFile = Config.Config.Settings.LogFileCreation;

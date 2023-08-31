@@ -176,7 +176,7 @@ namespace Game.Server.Engine.Mia
                     break;
 
                 case PlayerMoveCode.ROLL:
-                    if (playerMove.Player.Name == playerList.Current().Name && currentTurn.RollCount <= 1)
+                    if (playerMove.Player.Name == playerList.Current().Name && currentTurn.RollCount <= 2)
                     {
                         var serverMoveRolls = new ServerMove(ServerMoveCode.PLAYER_ROLLS, playerMove.Player.Name, ServerFailureReasonCode.None, playerList.RegisteredPlayers.ToArray(), token);
                         gameManager.ProcessMove(serverMoveRolls);
@@ -203,6 +203,12 @@ namespace Game.Server.Engine.Mia
                                 var serverMoveRolled = new ServerMove(ServerMoveCode.ROLLED, currentDice.ToString(), ServerFailureReasonCode.None, currentPlayer, token);
                                 gameManager.ProcessMove(serverMoveRolled);
                             }
+                        }
+                        else if (currentTurn.RollCount == 2)
+                        {
+                            var currentPlayer = new IPlayer[] { playerMove.Player };
+                            var serverMoveRolled = new ServerMove(ServerMoveCode.ROLLED, "", ServerFailureReasonCode.None, currentPlayer, token);
+                            gameManager.ProcessMove(serverMoveRolled);
                         }
 
                         HandleTurnTimeoutAsync(playerMove.Player);
@@ -261,11 +267,10 @@ namespace Game.Server.Engine.Mia
                     break;
 
                 case PlayerMoveCode.ANNOUNCE:
-                    if (playerMove.Player.Name == playerList.Current().Name && currentTurn.RollCount <= 2)
+                    announcedDice = currentDice.Parse(playerMove.Value);
+                    if (playerMove.Player.Name == playerList.Current().Name && currentTurn.RollCount <= 2 && announcedDice != null)
                     {
-                        var announcedDice = currentDice.Parse(playerMove.Value);
-
-                        if (announcedDice.IsMia)
+                        if ( announcedDice.IsMia)
                         {
                             if (currentDice.IsMia)
                             {

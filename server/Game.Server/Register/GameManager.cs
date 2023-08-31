@@ -167,16 +167,19 @@ namespace Game.Server.Register
                 {
                     Guid gameToken;
                     string commandValue = null;
-                    string gameTokenValue;
+                    string gameValue = string.Empty;
+                    string gameTokenValue = string.Empty;
 
-                    if (commandParts.Length > 1)
+                    if (commandParts.Length == 2)
                     {
                         commandValue = commandParts[0];
                         gameTokenValue = commandParts[1];
                     }
-                    else
+                    else if (commandParts.Length == 3)
                     {
-                        gameTokenValue = commandParts[0];
+                        commandValue = commandParts[0];
+                        gameValue = commandParts[1];
+                        gameTokenValue = commandParts[2];
                     }
 
                     if (Guid.TryParse(gameTokenValue, out gameToken))
@@ -190,7 +193,7 @@ namespace Game.Server.Register
                             var player = game.Players.Find(p => p.Name == client.Name);
                             if (player != null)
                             {
-                                var playerMove = new PlayerMove(moveCode, commandValue, player, gameToken);
+                                var playerMove = new PlayerMove(moveCode, gameValue, player, gameToken);
                                 game.Move(playerMove);
                             }
                         }

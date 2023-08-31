@@ -98,18 +98,21 @@ namespace Game.Server.Engine.Mia
 
         public IDice Parse(string value)
         {
-            string[] diceValues = value.Split(',');
-
             int dieOne;
             int dieTwo;
+            Dice returnDice = null;
 
-            int.TryParse(diceValues[0], out dieOne);
-            int.TryParse(diceValues[1], out dieTwo);
+            var diceValues = value.ToCharArray();
+            if (diceValues.Length == 2) 
+            {
+                int.TryParse(diceValues[0].ToString(), out dieOne);
+                int.TryParse(diceValues[1].ToString(), out dieTwo);
 
-            if (dieOne > 0 && dieTwo > 0)
-                return new Dice(dieOne, dieTwo);
+                if (dieOne > 0 && dieTwo > 0)
+                    returnDice = new Dice(dieOne, dieTwo);
+            }
 
-            return null;
+            return returnDice;
         }
 
         public void Shake()
