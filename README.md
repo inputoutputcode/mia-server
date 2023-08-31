@@ -23,7 +23,7 @@ Start reading the [Game Rules](docs/GameRules.md).
 
 ## Bot Starter Kit
 
-All starter bots know the basics like REGISTER, JOIN_ROUND, ROLL, ANNOUNCE. The rest is your job. Basically there is no limit for your creativity, strategies like cheating, data science, practical approaches in terms of knowing the character of your colleague, log for better analysis, hack the server, everything is allowed. Have fun!
+All starter bots know the basics like REGISTER, JOIN_ROUND, ROLL, ANNOUNCE. The rest is your job. Basically there is no limit for your creativity as long as it follows the game rules the server understands. Strategies like cheating, data science runbooks, hacking the gaps of your comptetitors, log for better analysis, hack the server, everything is allowed. Have fun!
 
 - [Python](clients/python-simple-bot/)
 - [JavaScript](clients/javascript-simple-bot/)
