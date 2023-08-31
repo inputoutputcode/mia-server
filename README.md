@@ -7,11 +7,16 @@ The software system is build for team events, where everyone tries to compete wi
 
 ## The Game
 
-The rules a pretty simple. As you can imagine it just needs a dice cup and two dices. The looser needs to drink or whatever. In a team event, it's recommended to play for the high score. The people watch how their bots are performing. It works at it best when a projector shows the result data in real time as diagram. 
+The rules are pretty simple. As you can imagine it just needs a dice cup and two dices. The looser needs to drink, announcing wrong numbers gets more complicated. 
+In a team event, it's recommended to play for the high score. The people watch how their bots are performing on a dashboard. It works at it best when a projector shows the result data in real time. 
 
-One option is to run the server every 30 minutes for 2 minutes, continuous run is also possible. As minimum 1200 moves per minute* is expected, this makes 100 game results per minute.
+### Game Mode
 
-There are three types of score modes. The original game mode is everyone starts with six lives. You wanna see how you loose your money, go with the money mode.
+The option is to run the server every 30 minutes for 2 minutes, or continuous run with live deployments of the bots. As a minimum, 1200 moves per minute* are expected, which makes 100 game results per minute.
+
+### 3 Score Modes
+
+The original game mode is everyone starts with six lives. If you want to see how you lose your money, take the money mode. Or just go with scoring by points, this is perfect for dashboard watching while bots fight.
 
 Start reading the [Game Rules](docs/GameRules.md).
 
