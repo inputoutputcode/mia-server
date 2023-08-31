@@ -8,6 +8,7 @@ The software system is build for team events, where everyone tries to compete wi
 ## The Game
 
 In the bar, the rules are pretty simple. As you can imagine it just needs a dice cup and two dices. The loser has to drink, the announcement of the correct numbers becomes more complicated later in the night. 
+
 With the game server, small teams develop bots to compete. The people watch how their bots are performing live on a dashboard. It works at it best when a projector shows the scoring data in real time. 
 
 ### Game Mode
