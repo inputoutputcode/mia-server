@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This Mia game has a tradition in Germany as drinking game. No worries you don't need to drink alcohol. It's highly motivating to compete just for points or money as well. 
+This Mia game has a tradition in Germany as drinking game. No worries you don't need to drink alcohol. It's highly motivating to compete just for points or prizes. 
 The software system is build for team events, where everyone tries to compete with his own bot against others.
 
 ## The Game
