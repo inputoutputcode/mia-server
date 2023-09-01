@@ -98,6 +98,8 @@ namespace Game.Server.Engine.Mia
 
             Log.Write($"Round '{gameNumber}' starting");
 
+
+            // TODO: ActivePlayers vs. RegisteredPlayers as RoundStarted() handles it
             var players = playerList.ActivePlayers.ToArray();
             if (players.Length > 1)
             {
@@ -176,6 +178,7 @@ namespace Game.Server.Engine.Mia
                     break;
 
                 case PlayerMoveCode.ROLL:
+                    // BUG: currentPlayerIndex not set correctly, causing player lost events
                     if (playerMove.Player.Name == playerList.Current().Name && currentTurn.RollCount <= 2)
                     {
                         var serverMoveRolls = new ServerMove(ServerMoveCode.PLAYER_ROLLS, playerMove.Player.Name, ServerFailureReasonCode.None, playerList.RegisteredPlayers.ToArray(), token);
@@ -262,11 +265,13 @@ namespace Game.Server.Engine.Mia
                     }
                     else
                     {
+                        // BUG: SEE is correct when dice history exists
                         SendPlayerLost(playerMove.Player, ServerFailureReasonCode.INVALID_TURN);
                     }
                     break;
 
                 case PlayerMoveCode.ANNOUNCE:
+                    // BUG: announcing lower dices as announced before should cause player lost event
                     announcedDice = currentDice.Parse(playerMove.Value);
                     if (playerMove.Player.Name == playerList.Current().Name && currentTurn.RollCount <= 2 && announcedDice != null)
                     {

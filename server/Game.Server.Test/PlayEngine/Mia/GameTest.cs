@@ -69,19 +69,19 @@ namespace Game.Server.Test.PlayEngine.Mia
             int rounds = 1;
             var game = new Engine.Mia.Game(rounds, ScoreMode.Points, gameManager.Object);
 
-            var player1 = new Engine.Mia.Player("Player1", true);
+            var player1 = new Engine.Mia.Player("Player1", false);
             game.Register(player1);
             var player2 = new Engine.Mia.Player("Player2", true);
             game.Register(player2);
 
             var joinGamePlayer1 = new PlayerMove(PlayerMoveCode.JOIN_ROUND, player1.Name, player1, game.Token);
-            var joinGamePlayer2 = new PlayerMove(PlayerMoveCode.JOIN_ROUND, player2.Name, player2, game.Token);
 
             // Act
             await game.StartAsync();
             game.Move(joinGamePlayer1);
 
             // Assert
+            //TODO: No server code because round is not starting
             gameManager.Verify(m => m.ProcessMove(It.Is<IServerMove>(x => x.Code == ServerMoveCode.ROUND_CANCELLED)));
         }
 
