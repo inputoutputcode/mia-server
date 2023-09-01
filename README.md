@@ -2,22 +2,28 @@
 
 ## Introduction
 
-This Mia game has a tradition in Germany as drinking game. No worries you don't need to drink alcohol. It's highly motivating to compete just for points or money as well. 
+This Mia game has a tradition in Germany as drinking game. No worries you don't need to drink alcohol. It's highly motivating to compete just for points or prizes. 
 The software system is build for team events, where everyone tries to compete with his own bot against others.
 
 ## The Game
 
-The rules a pretty simple. As you can imagine it just needs a dice cup and two dices. The looser needs to drink or whatever. In a team event, it's recommended to play for the high score. The people watch how their bots are performing. It works at it best when a projector shows the result data in real time as diagram. 
+In the bar, the rules are pretty simple. As you can imagine it just needs a dice cup and two dices. The loser has to drink, the announcement of the correct numbers becomes more complicated later in the night. 
 
-One option is to run the server every 30 minutes for 2 minutes, continuous run is also possible. As minimum 1200 moves per minute* is expected, this makes 100 game results per minute.
+With the game server, small teams develop bots to compete. The people watch how their bots are performing live on a dashboard. It works at it best when a projector shows the scoring data in real time. 
 
-There are three types of score modes. The original game mode is everyone starts with six lives. You wanna see how you loose your money, go with the money mode.
+### Game Mode
+
+The option is to run the server every 30 minutes for 2 minutes, or continuous run with live deployments of the bots. As a minimum, 1200 moves per minute* are expected, which makes 100 game results per minute.
+
+### 3 Score Modes
+
+The original game mode is everyone starts with six lives. If you want to see how you lose your money, take the money mode. Or just go with scoring by points, this is perfect for dashboard watching while bots fight.
 
 Start reading the [Game Rules](docs/GameRules.md).
 
 ## Bot Starter Kit
 
-All starter bots know the basics like REGISTER, JOIN_ROUND, ROLL, ANNOUNCE. The rest is your job. Basically there is no limit for your creativity, strategies like cheating, data science, practical approaches in terms of knowing the character of your colleague, log for better analysis, hack the server, everything is allowed. Have fun!
+All starter bots know the basics like REGISTER, JOIN_ROUND, ROLL, ANNOUNCE. The rest is your job. Basically there is no limit for your creativity as long as it follows the game rules the server understands. Strategies like cheating, data science runbooks, hacking the gaps of your comptetitors, log for better analysis, hack the server, everything is allowed. Have fun!
 
 - [Python](clients/python-simple-bot/)
 - [JavaScript](clients/javascript-simple-bot/)

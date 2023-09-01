@@ -51,12 +51,13 @@
 1. RefreshGameRegisterInSecs = 10
 1. GameReservedInstances = 20
 1. GameDollarMinimum = 10
-1. GameCompeteModeDefault = PlayForPoints
+1. GameCompeteModeDefault = Points
 1. GameRunModeDefault = Continuous
 1. GameDeletionAfterIddleInMins = 5
 1. ResponseTimeoutInMs = 250
 1. MaxGameRoundRuns = 200000
 1. MinimumMoneyAmount = 10
+1. MaxGameLimitPerMinute = 0
 
 ## Minimal design
 1. Gateway - Stateless (InstanceCount=-1) Try InstanceCount=3 with dynamic scaling through GameRegister
