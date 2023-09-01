@@ -98,7 +98,7 @@ namespace Game.Server.Engine.Mia
 
             Log.Write($"Round '{gameNumber}' starting");
 
-            var players = playerList.RegisteredPlayers.ToArray();
+            var players = playerList.ActivePlayers.ToArray();
             if (players.Length > 1)
             {
                 // Send ROUND_STARTING

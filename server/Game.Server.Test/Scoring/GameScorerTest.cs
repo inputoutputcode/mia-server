@@ -1,7 +1,7 @@
 using System;
 using Xunit;
 
-namespace Game.Server.Game.Scoring.Test
+namespace Game.Server.Scoring.Test
 {
     public class CommandServerTest
     {

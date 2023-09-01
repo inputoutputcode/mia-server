@@ -5,7 +5,7 @@ using Game.Server.Engine.Mia;
 using Xunit;
 
 
-namespace Game.Server.Game.PlayEngine.Test
+namespace Game.Server.Test.PlayEngine.Mia
 {
     public class DiceTest
     {
@@ -65,7 +65,7 @@ namespace Game.Server.Game.PlayEngine.Test
             var scores = new List<Dice>();
 
             // Arrange
-            scores.AddRange( new List<Dice>
+            scores.AddRange(new List<Dice>
             {
                 new Dice(3, 1),
                 new Dice(3, 2),
@@ -96,7 +96,7 @@ namespace Game.Server.Game.PlayEngine.Test
 
             for (int j = scores.Count - 1; j > 0; j--)
                 Assert.False(scores[j - 1].IsHigherThan(scores[j]));
-            
+
         }
     }
 }

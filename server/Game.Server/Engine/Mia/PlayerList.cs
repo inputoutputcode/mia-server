@@ -135,7 +135,7 @@ namespace Game.Server.Engine.Mia
 
             for (int i = 0; i < players.Count; i++)
             {
-                if (players[i].Name == player.Name)
+                if (players[i].Name == player.Name && player.CurrentState != PlayerState.Spectator)
                 {
                     players[i].SetActive();
                     operationResult = true;

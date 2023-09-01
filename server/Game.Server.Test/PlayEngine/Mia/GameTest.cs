@@ -7,7 +7,7 @@ using Game.Server.Scoring;
 using Game.Server.Register.Interface;
 
 
-namespace Game.Server.Game.PlayEngine.Test
+namespace Game.Server.Test.PlayEngine.Mia
 {
     public class GameTest
     {
@@ -19,7 +19,27 @@ namespace Game.Server.Game.PlayEngine.Test
             // Arrange
             var gameManager = new Mock<IGameManager>(MockBehavior.Strict);
             gameManager.Setup(m => m.ProcessMove(It.IsAny<IServerMove>()));
-            
+
+
+            int rounds = 1;
+            var game = new Engine.Mia.Game(rounds, ScoreMode.Points, gameManager.Object);
+
+            // Act
+            await game.StartAsync();
+
+            // Assert
+            gameManager.Verify(m => m.ProcessMove(It.Is<IServerMove>(x => x.Code == ServerMoveCode.ROUND_STARTING)), Times.AtMost(2));
+            gameManager.Verify(m => m.ProcessMove(It.Is<IServerMove>(x => x.Code == ServerMoveCode.ROUND_STARTED)), Times.AtMost(2));
+            gameManager.Verify(m => m.ProcessMove(It.Is<IServerMove>(x => x.Code == ServerMoveCode.ROUND_CANCELLED)), Times.AtMost(1));
+        }
+
+        [Fact]
+        public async void Game_Round_Will_Be_Cancelled_Without_ActivePlayers()
+        {
+            // Arrange
+            var gameManager = new Mock<IGameManager>(MockBehavior.Strict);
+            gameManager.Setup(m => m.ProcessMove(It.IsAny<IServerMove>()));
+
 
             int rounds = 1;
             var game = new Engine.Mia.Game(rounds, ScoreMode.Points, gameManager.Object);
@@ -35,7 +55,7 @@ namespace Game.Server.Game.PlayEngine.Test
             // Assert
             gameManager.Verify(m => m.ProcessMove(It.Is<IServerMove>(x => x.Code == ServerMoveCode.ROUND_STARTING)), Times.AtMost(2));
             gameManager.Verify(m => m.ProcessMove(It.Is<IServerMove>(x => x.Code == ServerMoveCode.ROUND_STARTED)), Times.AtMost(2));
-            gameManager.Verify(m => m.ProcessMove(It.Is<IServerMove>(x => x.Code == ServerMoveCode.ANNOUNCED)), Times.AtMost(1));
+            gameManager.Verify(m => m.ProcessMove(It.Is<IServerMove>(x => x.Code == ServerMoveCode.ROUND_CANCELLED)), Times.AtMost(1));
         }
 
         [Fact]

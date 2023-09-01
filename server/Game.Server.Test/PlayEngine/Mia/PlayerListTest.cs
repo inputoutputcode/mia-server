@@ -2,7 +2,7 @@ using System;
 using Xunit;
 
 
-namespace Game.Server.Game.PlayEngine.Test
+namespace Game.Server.Test.PlayEngine.Mia
 {
     public class PlayerListTest
     {

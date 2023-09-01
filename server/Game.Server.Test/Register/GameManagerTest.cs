@@ -5,7 +5,7 @@ using Moq;
 using Xunit;
 
 
-namespace Game.Server.Game.Register.Test
+namespace Game.Server.Register.Test
 {
     public class GameManagerTest
     {
