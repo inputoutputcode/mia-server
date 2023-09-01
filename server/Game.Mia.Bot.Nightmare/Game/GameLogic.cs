@@ -56,7 +56,7 @@ namespace Game.Mia.Bot.Nightmare.Game
                         var lastAnnouncedDice2 = diceHistory[diceHistory.Count - 2];
 
                         // SEE if last dice was not higher than the previous
-                        if (lastAnnouncedDice2.CompareTo(lastAnnouncedDice1) < 1)
+                        if (diceHistory.Count > 0 && lastAnnouncedDice2.CompareTo(lastAnnouncedDice1) < 1)
                         {
                             messageResponse = "SEE;" + token;
                         }
@@ -107,7 +107,7 @@ namespace Game.Mia.Bot.Nightmare.Game
                                     int randomOne = randomizer.Next(1, 6);
                                     int randomTwo = randomizer.Next(1, 6);
 
-                                    lastAnnouncedDice = new Dicer(randomOne, randomTwo);
+                                    nextDice = new Dicer(randomOne, randomTwo);
                                 }
                                 else
                                 {
