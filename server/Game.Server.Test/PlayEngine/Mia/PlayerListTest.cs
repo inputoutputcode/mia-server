@@ -56,16 +56,19 @@ namespace Game.Server.Test.PlayEngine.Mia
             // Arrange
             var playerList = new Engine.Mia.PlayerList();
             var player1 = new Engine.Mia.Player("Player1", false);
-            playerList.Join(player1);
+            playerList.Register(player1);
             var player2 = new Engine.Mia.Player("Player2", false);
-            playerList.Join(player2);
+            playerList.Register(player2);
 
             // Act
             playerList.Permute();
+            var playerListResultOne = playerList.RegisteredPlayers;
+            playerList.Permute();
+            var playerListResultTwo = playerList.RegisteredPlayers;
 
             // Assert
-            Assert.True(playerList.ActivePlayers[0].Name == player1.Name);
-            Assert.True(playerList.ActivePlayers[1].Name == player2.Name);
+            Assert.True(playerListResultOne[0].Name != playerListResultTwo[0].Name);
+            Assert.True(playerListResultOne[1].Name != playerListResultTwo[1].Name);
         }
 
         [Fact]
