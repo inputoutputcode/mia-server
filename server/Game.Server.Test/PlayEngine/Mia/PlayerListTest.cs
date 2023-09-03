@@ -10,44 +10,73 @@ namespace Game.Server.Test.PlayEngine.Mia
         public void Spectators_Should_Not_Be_Active_Players()
         {
             // Arrange
-
-            // Act
-
-            // Assert
-            Assert.True(false);
-        }
-
-        [Fact]
-        public void Pick_The_First_Player()
-        {
             // Arrange
+            var playerList = new Engine.Mia.PlayerList();
+            var player1 = new Engine.Mia.Player("Player1", true);
+            playerList.Register(player1);
+            playerList.Join(player1);
+
+            var player2 = new Engine.Mia.Player("Player2", false);
+            playerList.Register(player2);
+            playerList.Join(player2);
+
+            var player3 = new Engine.Mia.Player("Player3", false);
+            playerList.Register(player3);
+            playerList.Join(player3);
 
             // Act
 
             // Assert
-            Assert.True(false);
+            Assert.True(playerList.ActivePlayers.Count == 2);
         }
 
         [Fact]
         public void Pick_The_Next_Player()
         {
             // Arrange
+            var playerList = new Engine.Mia.PlayerList();
+            var player1 = new Engine.Mia.Player("Player1", false);
+            playerList.Register(player1);
+            playerList.Join(player1);
+
+            var player2 = new Engine.Mia.Player("Player2", false);
+            playerList.Register(player2);
+            playerList.Join(player2);
+
+            var player3 = new Engine.Mia.Player("Player3", false);
+            playerList.Register(player3);
+            playerList.Join(player3);
 
             // Act
+            var player = playerList.First();
+            var nextPlayer = playerList.Next();
 
             // Assert
-            Assert.True(false);
+            Assert.True(nextPlayer.Name == player2.Name);
         }
 
         [Fact]
-        public void Pick_The_Last_Player()
+        public void Pick_The_First_Player()
         {
             // Arrange
+            var playerList = new Engine.Mia.PlayerList();
+            var player1 = new Engine.Mia.Player("Player1", false);
+            playerList.Register(player1);
+            playerList.Join(player1);
+
+            var player2 = new Engine.Mia.Player("Player2", false);
+            playerList.Register(player2);
+            playerList.Join(player2);
+
+            var player3 = new Engine.Mia.Player("Player3", false);
+            playerList.Register(player3);
+            playerList.Join(player3);
 
             // Act
+            var player = playerList.First();
 
             // Assert
-            Assert.True(false);
+            Assert.True(player.Name == player1.Name);
         }
 
         [Fact]
@@ -59,6 +88,8 @@ namespace Game.Server.Test.PlayEngine.Mia
             playerList.Register(player1);
             var player2 = new Engine.Mia.Player("Player2", false);
             playerList.Register(player2);
+            var player3 = new Engine.Mia.Player("Player3", false);
+            playerList.Register(player3);
 
             // Act
             playerList.Permute();
@@ -75,22 +106,29 @@ namespace Game.Server.Test.PlayEngine.Mia
         public void Add_New_Player()
         {
             // Arrange
+            var playerList = new Engine.Mia.PlayerList();
+            var player1 = new Engine.Mia.Player("Player1", false);
 
             // Act
+            playerList.Register(player1);
 
             // Assert
-            Assert.True(false);
+            Assert.True(playerList.RegisteredPlayers.Count == 1);
         }
 
         [Fact]
         public void Add_Existing_Player()
         {
             // Arrange
+            var playerList = new Engine.Mia.PlayerList();
+            var player1 = new Engine.Mia.Player("Player1", false);
 
             // Act
+            playerList.Register(player1);
+            playerList.Register(player1);
 
             // Assert
-            Assert.True(false);
+            Assert.True(playerList.RegisteredPlayers.Count == 1);
         }
 
         [Fact]
