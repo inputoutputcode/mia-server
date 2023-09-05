@@ -213,16 +213,5 @@ namespace Game.Server.Test.PlayEngine.Mia
             // Assert
             Assert.True(false);
         }
-
-        [Fact]
-        public void Template()
-        {
-            // Arrange
-
-            // Act
-
-            // Assert
-            Assert.True(false);
-        }
     }
 }
