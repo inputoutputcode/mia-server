@@ -1,6 +1,6 @@
 ﻿namespace Game.Server.Network.Command.Interface
 {
-    public interface IClientCommand : ICommand
+    public interface IClientEvent : IEvent
     {
     }
 }

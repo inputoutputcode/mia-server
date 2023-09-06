@@ -3,9 +3,9 @@
 
 namespace Game.Server.Network.Command.Interface
 {
-    public interface ICommand
+    public interface IEvent
     {
-        string CommandText { get; }
+        string Message { get; }
 
         NetPeer Peer { get; }
     }

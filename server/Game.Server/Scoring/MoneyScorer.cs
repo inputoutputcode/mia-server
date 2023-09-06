@@ -7,12 +7,11 @@ namespace Game.Server.Scoring
     {
         public override void Looser(IPlayer player)
         {
-            player.Score -= Config.Config.Settings.ScoreDecrement;
         }
 
         public override void Lost(IPlayer player)
         {
-            player.Score -= Config.Config.Settings.ScoreDecrement / 2;
+            player.Score -= Config.Config.Settings.ScoreDecrement;
         }
 
         public override void Winner(IPlayer player)

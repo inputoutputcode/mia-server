@@ -45,10 +45,10 @@ namespace Game.Server.Engine.Mia.Move
             get { return token; }
         }
 
-        public ServerMove(ServerMoveCode commandCode, string commandValue, ServerFailureReasonCode failureCode, IPlayer[] players, Guid token)
+        public ServerMove(ServerMoveCode serverMoveCode, string serverMoveValue, ServerFailureReasonCode failureCode, IPlayer[] players, Guid token)
         {
-            code = commandCode;
-            value = commandValue;
+            code = serverMoveCode;
+            value = serverMoveValue;
             this.failureCode = failureCode;
             this.players = players;
             this.token = token;

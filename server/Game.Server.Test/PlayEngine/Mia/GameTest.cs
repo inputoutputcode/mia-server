@@ -5,7 +5,7 @@ using Game.Server.Engine.Mia.Move;
 using Game.Server.Engine.Mia.Move.Interface;
 using Game.Server.Scoring;
 using Game.Server.Register.Interface;
-
+using Game.Server.Network.Command.Interface;
 
 namespace Game.Server.Test.PlayEngine.Mia
 {
@@ -18,7 +18,7 @@ namespace Game.Server.Test.PlayEngine.Mia
         {
             // Arrange
             var gameManager = new Mock<IGameManager>(MockBehavior.Strict);
-            gameManager.Setup(m => m.ProcessMove(It.IsAny<IServerMove>()));
+            gameManager.Setup(m => m.SendEvent(It.IsAny<IServerMove>()));
 
 
             int rounds = 1;
@@ -28,9 +28,9 @@ namespace Game.Server.Test.PlayEngine.Mia
             await game.StartAsync();
 
             // Assert
-            gameManager.Verify(m => m.ProcessMove(It.Is<IServerMove>(x => x.Code == ServerMoveCode.ROUND_STARTING)), Times.AtMost(2));
-            gameManager.Verify(m => m.ProcessMove(It.Is<IServerMove>(x => x.Code == ServerMoveCode.ROUND_STARTED)), Times.AtMost(2));
-            gameManager.Verify(m => m.ProcessMove(It.Is<IServerMove>(x => x.Code == ServerMoveCode.ROUND_CANCELLED)), Times.AtMost(1));
+            gameManager.Verify(m => m.SendEvent(It.Is<IServerMove>(x => x.Code == ServerMoveCode.ROUND_STARTING)), Times.AtMost(2));
+            gameManager.Verify(m => m.SendEvent(It.Is<IServerMove>(x => x.Code == ServerMoveCode.ROUND_STARTED)), Times.AtMost(2));
+            gameManager.Verify(m => m.SendEvent(It.Is<IServerMove>(x => x.Code == ServerMoveCode.ROUND_CANCELLED)), Times.AtMost(1));
         }
 
         [Fact]
@@ -38,7 +38,7 @@ namespace Game.Server.Test.PlayEngine.Mia
         {
             // Arrange
             var gameManager = new Mock<IGameManager>(MockBehavior.Strict);
-            gameManager.Setup(m => m.ProcessMove(It.IsAny<IServerMove>()));
+            gameManager.Setup(m => m.SendEvent(It.IsAny<IServerMove>()));
 
 
             int rounds = 1;
@@ -53,9 +53,9 @@ namespace Game.Server.Test.PlayEngine.Mia
             await game.StartAsync();
 
             // Assert
-            gameManager.Verify(m => m.ProcessMove(It.Is<IServerMove>(x => x.Code == ServerMoveCode.ROUND_STARTING)), Times.AtMost(2));
-            gameManager.Verify(m => m.ProcessMove(It.Is<IServerMove>(x => x.Code == ServerMoveCode.ROUND_STARTED)), Times.AtMost(2));
-            gameManager.Verify(m => m.ProcessMove(It.Is<IServerMove>(x => x.Code == ServerMoveCode.ROUND_CANCELLED)), Times.AtMost(1));
+            gameManager.Verify(m => m.SendEvent(It.Is<IServerMove>(x => x.Code == ServerMoveCode.ROUND_STARTING)), Times.AtMost(2));
+            gameManager.Verify(m => m.SendEvent(It.Is<IServerMove>(x => x.Code == ServerMoveCode.ROUND_STARTED)), Times.AtMost(2));
+            gameManager.Verify(m => m.SendEvent(It.Is<IServerMove>(x => x.Code == ServerMoveCode.ROUND_CANCELLED)), Times.AtMost(1));
         }
 
         [Fact]
@@ -63,7 +63,7 @@ namespace Game.Server.Test.PlayEngine.Mia
         {
             // Arrange
             var gameManager = new Mock<IGameManager>(MockBehavior.Strict);
-            gameManager.Setup(m => m.ProcessMove(It.IsAny<IServerMove>())).Verifiable();
+            gameManager.Setup(m => m.SendEvent(It.IsAny<IServerMove>())).Verifiable();
 
 
             int rounds = 1;
@@ -82,7 +82,7 @@ namespace Game.Server.Test.PlayEngine.Mia
 
             // Assert
             //TODO: No server code because round is not starting
-            gameManager.Verify(m => m.ProcessMove(It.Is<IServerMove>(x => x.Code == ServerMoveCode.ROUND_CANCELLED)));
+            gameManager.Verify(m => m.SendEvent(It.Is<IServerMove>(x => x.Code == ServerMoveCode.ROUND_CANCELLED)));
         }
 
         [Fact]
@@ -90,7 +90,8 @@ namespace Game.Server.Test.PlayEngine.Mia
         {
             // Arrange
             var gameManager = new Mock<IGameManager>();
-            gameManager.Setup(m => m.ProcessMove(It.IsAny<IServerMove>()));
+            gameManager.Setup(m => m.SendEvent(It.IsAny<IServerMove>()));
+            gameManager.Setup(m => m.ReceiveEvent(It.IsAny<IClientEvent>()));
 
             int rounds = 1;
             var game = new Engine.Mia.Game(rounds, ScoreMode.Points, gameManager.Object);
@@ -107,17 +108,19 @@ namespace Game.Server.Test.PlayEngine.Mia
             await game.StartAsync();
 
             // Assert
-            gameManager.Verify(m => m.ProcessMove(It.Is<IServerMove>(x => x.Code == ServerMoveCode.ROUND_STARTING)));
-            gameManager.Verify(m => m.ProcessMove(It.Is<IServerMove>(x => x.Token != game.Token)));
-            gameManager.Verify(m => m.ProcessMove(It.Is<IServerMove>(x => x.FailureReasonCode == ServerFailureReasonCode.None)));
-            gameManager.Verify(m => m.ProcessMove(It.Is<IServerMove>(x => x.Value == string.Empty)));
-            gameManager.Verify(m => m.ProcessMove(It.Is<IServerMove>(x => x.Players.Length == 2)));
+            gameManager.Verify(m => m.SendEvent(It.Is<IServerMove>(x => x.Code == ServerMoveCode.ROUND_STARTING)));
+            gameManager.Verify(m => m.SendEvent(It.Is<IServerMove>(x => x.Token != game.Token)));
+            gameManager.Verify(m => m.SendEvent(It.Is<IServerMove>(x => x.FailureReasonCode == ServerFailureReasonCode.None)));
+            gameManager.Verify(m => m.SendEvent(It.Is<IServerMove>(x => x.Value == string.Empty)));
+            gameManager.Verify(m => m.SendEvent(It.Is<IServerMove>(x => x.Players.Length == 2)));
         }
 
         [Fact]
         public void See_Should_Raise_Lost_For_Current_Player_If_Dice_Higher_Or_Equal()
         {
             // Arrange
+            var gameManager = new Mock<IGameManager>();
+            gameManager.Setup(m => m.SendEvent(It.IsAny<IServerMove>()));
 
             // Act
 

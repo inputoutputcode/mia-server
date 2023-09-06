@@ -13,8 +13,8 @@ namespace Game.Server.Register.Test
         public void Validate_Player_Name()
         {
             // Arrange
-            var commandServer = new Mock<IServer>();
-            var gameManager = new GameManager(commandServer.Object);
+            var server = new Mock<IServer>();
+            var gameManager = new GameManager(server.Object);
 
             string playerName1 = "ThisNameIsOk12";
             string playerName2 = "ThisNameIsNotOk!";

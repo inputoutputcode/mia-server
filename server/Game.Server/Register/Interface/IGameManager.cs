@@ -15,9 +15,9 @@ namespace Game.Server.Register.Interface
     {
         List<IGameInstance> ActiveGamesInstances { get; }
 
-        void ProcessCommand(IClientCommand command);
+        void ReceiveEvent(IClientEvent clientEvent);
 
-        void ProcessEvent(string eventMessage, NetPeer peer);
+        void ReceiveEventMessage(string eventMessage, NetPeer peer);
 
         IClient FindClient(NetPeer peer);
 
@@ -31,6 +31,6 @@ namespace Game.Server.Register.Interface
 
         bool ValidateName(string playerName);
 
-        void ProcessMove(IServerMove serverMove);
+        void SendEvent(IServerMove serverMove);
     }
 }

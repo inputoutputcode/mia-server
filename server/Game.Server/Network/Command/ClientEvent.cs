@@ -5,14 +5,14 @@ using LiteNetLib;
 
 namespace Game.Server.Network.Command
 {
-    public class ClientCommand : IClientCommand
+    public class ClientEvent : IClientEvent
     {
-        private string command;
+        private string message;
         private NetPeer peer;
 
-        public string CommandText
+        public string Message
         {
-            get { return command; }
+            get { return message; }
         }
 
         public NetPeer Peer
@@ -20,13 +20,13 @@ namespace Game.Server.Network.Command
             get { return peer; }
         }
 
-        public ClientCommand()
+        public ClientEvent()
         {
         }
 
-        public ClientCommand(string command, NetPeer peer)
+        public ClientEvent(string message, NetPeer peer)
         {
-            this.command = command;
+            this.message = message;
             this.peer = peer;
         }
     }

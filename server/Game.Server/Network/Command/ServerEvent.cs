@@ -5,14 +5,14 @@ using Game.Server.Network.Command.Interface;
 
 namespace Game.Server.Network.Command
 {
-    public class ServerCommand : IServerCommand
+    public class ServerEvent : IServerEvent
     {
-        private string command;
+        private string message;
         private NetPeer peer;
 
-        public string CommandText
+        public string Message
         {
-            get { return command; }
+            get { return message; }
         }
 
         public NetPeer Peer
@@ -20,13 +20,13 @@ namespace Game.Server.Network.Command
             get { return peer; }
         }
 
-        public ServerCommand()
+        public ServerEvent()
         {
         }
 
-        public ServerCommand(string command, NetPeer peer)
+        public ServerEvent(string message, NetPeer peer)
         {
-            this.command = command;
+            this.message = message;
             this.peer = peer;
         }
     }

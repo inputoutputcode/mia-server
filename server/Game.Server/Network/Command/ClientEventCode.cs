@@ -1,6 +1,6 @@
 ﻿namespace Game.Server.Network.Command
 {
-    public enum ClientCommandCode
+    public enum ClientEventCode
     {
         None,
         REGISTER,

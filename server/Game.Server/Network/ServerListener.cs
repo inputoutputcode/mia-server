@@ -53,7 +53,7 @@ namespace Game.Server.Network
 
             Log.Write($"OnNetworkReceive: {peer.EndPoint.Address}:{peer.EndPoint.Port} - Message: {eventMessage} - ChannelNumber: {channelNumber} - DeliveryMethod: {deliveryMethod}");
 
-            gameManager.ProcessEvent(eventMessage, peer);
+            gameManager.ReceiveEventMessage(eventMessage, peer);
         }
 
         public void OnNetworkReceiveUnconnected(IPEndPoint remoteEndPoint, NetPacketReader reader, UnconnectedMessageType messageType)

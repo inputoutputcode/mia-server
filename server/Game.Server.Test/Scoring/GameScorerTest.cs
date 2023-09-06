@@ -3,7 +3,7 @@ using Xunit;
 
 namespace Game.Server.Scoring.Test
 {
-    public class CommandServerTest
+    public class GameServerTest
     {
         [Fact]
         public void Should_Have_Points_For_One_Round()

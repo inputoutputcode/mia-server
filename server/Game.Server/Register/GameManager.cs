@@ -17,13 +17,14 @@ using Game.Server.Network.Command;
 using Game.Server.Logging;
 
 using LiteNetLib;
+using System.Net.NetworkInformation;
 
 
 namespace Game.Server.Register
 {
     public class GameManager : IGameManager
     {
-        private IServer server;
+        private IServer serverInstance;
 
         private List<IGameInstance> activeGameInstances;
 
@@ -46,12 +47,12 @@ namespace Game.Server.Register
 
         public GameManager()
         {
-            this.server = new Network.Server(this);
+            this.serverInstance = new Network.Server(this);
         }
 
-        public GameManager(IServer commandServer)
+        public GameManager(IServer serverInstance)
         {
-            this.server = commandServer;
+            this.serverInstance = serverInstance;
         }
 
         public void Initialize()
@@ -60,7 +61,7 @@ namespace Game.Server.Register
             activeGames = new List<IGame>();
             clients = new List<IClient>();
 
-            server.CreateServer(serverPort);
+            serverInstance.CreateServer(serverPort);
 
             // Wait to let clients register to game server
             Task.Delay(100);
@@ -71,16 +72,16 @@ namespace Game.Server.Register
             StartGame(scoreMode);
         }
 
-        public void ProcessEvent(string eventMessage, NetPeer peer)
+        public void ReceiveEventMessage(string eventMessage, NetPeer peer)
         {
-            var clientCommand = new ClientCommand(eventMessage, peer);
-            ProcessCommand(clientCommand);
+            var clientEvent = new ClientEvent(eventMessage, peer);
+            ReceiveEvent(clientEvent);
         }
 
-        public void SendEvent(IServerCommand serverCommand)
+        public void SendEventMessage(string eventMessage, NetPeer peer)
         {
-            byte[] messageBytes = Encoding.UTF8.GetBytes(serverCommand.CommandText);
-            serverCommand.Peer.Send(messageBytes, DeliveryMethod.ReliableOrdered);
+            byte[] messageBytes = Encoding.UTF8.GetBytes(eventMessage);
+            peer.Send(messageBytes, DeliveryMethod.ReliableOrdered);
         }
 
         /// <summary>
@@ -114,38 +115,38 @@ namespace Game.Server.Register
             }
         }
 
-        public void ProcessCommand(IClientCommand command)
+        public void ReceiveEvent(IClientEvent clientEvent)
         {
-            if (string.IsNullOrWhiteSpace(command.CommandText) || command.Peer == null)
+            if (string.IsNullOrWhiteSpace(clientEvent.Message) || clientEvent.Peer == null)
                 return;
 
-            var client = FindClient(command.Peer);
-            string[] commandParts = command.CommandText.Split(';');
+            var client = FindClient(clientEvent.Peer);
+            string[] eventParts = clientEvent.Message.Split(';');
 
-            if (client == null && commandParts.Length > 0)
+            if (client == null && eventParts.Length > 0)
             {
-                string firstPart = commandParts[0];
+                string firstPart = eventParts[0];
 
-                if (firstPart == "REGISTER" && commandParts.Length > 1)
+                if (firstPart == "REGISTER" && eventParts.Length > 1)
                 {
-                    string playerName = commandParts[1];
-                    IClient newClient = new Client(playerName, command.Peer);
+                    string playerName = eventParts[1];
+                    IClient newClient = new Client(playerName, clientEvent.Peer);
                     RegisterClient(newClient);
                 }
             }
-            else if (client != null && commandParts.Length > 1)
+            else if (client != null && eventParts.Length > 1)
             {
-                string firstCommandPart = commandParts[0];
+                string firstEventPart = eventParts[0];
 
-                if (firstCommandPart == "FIND_GAME" && commandParts.Length > 1)
+                if (firstEventPart == "FIND_GAME" && eventParts.Length > 1)
                 {
-                    var gameInstance = FindGameInstance(commandParts[1].ToString());
+                    var gameInstance = FindGameInstance(eventParts[1].ToString());
                     // TODO: only for cluster version
                 }
-                else if (firstCommandPart == "JOIN_ROUND" && commandParts.Length > 1)
+                else if (firstEventPart == "JOIN_ROUND" && eventParts.Length > 1)
                 {
                     Guid gameToken;
-                    bool isParsed = Guid.TryParse(commandParts[1], out gameToken);
+                    bool isParsed = Guid.TryParse(eventParts[1], out gameToken);
                     if (isParsed)
                     {
                         var gameInstance = FindGameInstance(gameToken);
@@ -153,33 +154,33 @@ namespace Game.Server.Register
                             JoinGame(gameInstance, client, false);
                     }
                 }
-                else if (firstCommandPart == "JOIN_SPECTATOR" && commandParts.Length > 1)
+                else if (firstEventPart == "JOIN_SPECTATOR" && eventParts.Length > 1)
                 {
                     Guid gameToken;
-                    bool isParsed = Guid.TryParse(commandParts[1], out gameToken);
+                    bool isParsed = Guid.TryParse(eventParts[1], out gameToken);
                     if (isParsed)
                     {
                         var gameInstance = FindGameInstance(gameToken);
                         JoinGame(gameInstance, client, true);
                     }
                 }
-                else if (commandParts.Length > 1)
+                else if (eventParts.Length > 1)
                 {
                     Guid gameToken;
-                    string commandValue = null;
+                    string eventMessage = null;
                     string gameValue = string.Empty;
                     string gameTokenValue = string.Empty;
 
-                    if (commandParts.Length == 2)
+                    if (eventParts.Length == 2)
                     {
-                        commandValue = commandParts[0];
-                        gameTokenValue = commandParts[1];
+                        eventMessage = eventParts[0];
+                        gameTokenValue = eventParts[1];
                     }
-                    else if (commandParts.Length == 3)
+                    else if (eventParts.Length == 3)
                     {
-                        commandValue = commandParts[0];
-                        gameValue = commandParts[1];
-                        gameTokenValue = commandParts[2];
+                        eventMessage = eventParts[0];
+                        gameValue = eventParts[1];
+                        gameTokenValue = eventParts[2];
                     }
 
                     if (Guid.TryParse(gameTokenValue, out gameToken))
@@ -188,7 +189,7 @@ namespace Game.Server.Register
 
                         // TODO: Move codes should be part of Game domain only (SoC)
                         PlayerMoveCode moveCode;
-                        if (game != null && Enum.TryParse(firstCommandPart, out moveCode))
+                        if (game != null && Enum.TryParse(firstEventPart, out moveCode))
                         {
                             var player = game.Players.Find(p => p.Name == client.Name);
                             if (player != null)
@@ -198,6 +199,30 @@ namespace Game.Server.Register
                             }
                         }
                     }
+                }
+            }
+        }
+
+        public void SendEvent(IServerMove serverMove)
+        {
+            for (int i = 0; i < serverMove.Players.Length; i++)
+            {
+                var client = clients.FirstOrDefault(x => x.Name == serverMove.Players[i].Name);
+                if (client != null)
+                {
+                    // TODO: Domain knowledge of the game (SoC)
+                    string flexibleValuePart = string.Empty;
+
+                    if (!string.IsNullOrEmpty(serverMove.Value))
+                        flexibleValuePart += $"{serverMove.Value};";
+
+                    if (serverMove.FailureReasonCode != ServerFailureReasonCode.None)
+                        flexibleValuePart += $"{serverMove.FailureReasonCode};";
+
+                    string eventMessage = $"{serverMove.Code};{flexibleValuePart}{serverMove.Token}";
+
+                    byte[] messageBytes = Encoding.UTF8.GetBytes(eventMessage);
+                    client.Peer.Send(messageBytes, DeliveryMethod.ReliableOrdered);
                 }
             }
         }
@@ -217,21 +242,21 @@ namespace Game.Server.Register
         public void RegisterClient(IClient client)
         {
             var isRejected = clients.Exists(x => x.Name == client.Name || x.Peer.EndPoint.Address == client.Peer.EndPoint.Address);
-            IServerCommand command;
+            IServerEvent serverEvent;
 
             if (isRejected)
             {
-                command = new ServerCommand(ServerCommandCode.REJECTED.ToString(), client.Peer);
-                Log.Write($"{client.Name} {ServerCommandCode.REJECTED}");
+                serverEvent = new ServerEvent(ServerEventCode.REJECTED.ToString(), client.Peer);
+                Log.Write($"{client.Name} {ServerEventCode.REJECTED}");
             }
             else
             {
                 clients.Add(client);
-                command = new ServerCommand(ServerCommandCode.REGISTERED.ToString(), client.Peer);
-                Log.Write($"{client.Name} {ServerCommandCode.REGISTERED}");
+                serverEvent = new ServerEvent(ServerEventCode.REGISTERED.ToString(), client.Peer);
+                Log.Write($"{client.Name} {ServerEventCode.REGISTERED}");
             }
 
-            SendEvent(command);
+            SendEventMessage(serverEvent.Message, serverEvent.Peer);
         }
 
         public IGameInstance FindGameInstance(Guid gameToken)
@@ -277,30 +302,6 @@ namespace Game.Server.Register
             }
 
             return isValid;
-        }
-
-        public void ProcessMove(IServerMove serverMove)
-        {
-            for (int i = 0; i < serverMove.Players.Length; i++)
-            {
-                var client = clients.FirstOrDefault(x => x.Name == serverMove.Players[i].Name);
-                if (client != null)
-                {
-                    // TODO: Domain knowledge of the game (SoC)
-                    string flexibleValuePart = string.Empty;
-                    
-                    if (!string.IsNullOrEmpty(serverMove.Value))
-                        flexibleValuePart += $"{serverMove.Value};";
-
-                    if (serverMove.FailureReasonCode != ServerFailureReasonCode.None)
-                        flexibleValuePart += $"{serverMove.FailureReasonCode};";
-
-                    string commandMessage = $"{serverMove.Code};{flexibleValuePart}{serverMove.Token}";
-
-                    byte[] messageBytes = Encoding.UTF8.GetBytes(commandMessage);
-                    client.Peer.Send(messageBytes, DeliveryMethod.ReliableOrdered);
-                }
-            }            
         }
     }
 }
