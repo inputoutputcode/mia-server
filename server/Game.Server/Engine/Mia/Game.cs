@@ -275,7 +275,7 @@ namespace Game.Server.Engine.Mia
                     announcedDice = currentDice.Parse(playerMove.Value);
                     if (playerMove.Player.Name == playerList.Current().Name && currentTurn.RollCount <= 2 && announcedDice != null)
                     {
-                        if ( announcedDice.IsMia)
+                        if (announcedDice.IsMia)
                         {
                             if (currentDice.IsMia)
                             {
