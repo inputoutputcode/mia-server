@@ -69,7 +69,7 @@ namespace Game.Server.Engine.Mia
 
         #region Method
 
-        private void SetDices(int diceOne, int diceTwo)
+        public virtual void SetDices(int diceOne, int diceTwo)
         {
             dice[0] = diceOne;
             dice[1] = diceTwo;
@@ -115,7 +115,7 @@ namespace Game.Server.Engine.Mia
             return returnDice;
         }
 
-        public void Shake()
+        public virtual void Shake()
         {
             int diceOne = new Random().Next(1, 6);
             int diceTwo = new Random().Next(1, 6);

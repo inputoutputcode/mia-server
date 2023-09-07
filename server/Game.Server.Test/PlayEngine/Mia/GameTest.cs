@@ -110,40 +110,48 @@ namespace Game.Server.Test.PlayEngine.Mia
         }
 
         [Fact]
-        public void See_Should_Raise_Lost_For_Current_Player_If_Dice_Higher_Or_Equal()
+        public async void See_Should_Raise_Lost_For_Current_Player_If_Dice_Higher_Or_Equal()
+        {
+            
+        }
+
+        [Fact]
+        public async void See_Should_Raise_Win_For_Current_Player_If_Dice_Lower_On_See()
+        {
+            
+        }
+
+
+        [Fact]
+        public async void Server_Should_Raise_Mia_For_Current_Player_If_Dice_Is_Mia_From_First_Roll()
         {
             // Arrange
             var gameManager = new Mock<IGameManager>();
             gameManager.Setup(m => m.SendEvent(It.IsAny<string>(), It.IsAny<IPlayer[]>()));
             gameManager.Setup(m => m.ReceiveEvent(It.IsAny<IClientEvent>()));
 
-            // Act
+            var dice = new Mock<Dice>() { CallBase = true };
+            //dice.Setup(d => d.Shake()).Callback(() => dice.Object.SetDices(1, 2));
 
-            // Assert
-            Assert.True(false);
-        }
+            int rounds = 1;
+            var game = new Mock<Engine.Mia.Game>(rounds, ScoreMode.Points, gameManager.Object, dice.Object, true) { CallBase = true };
+            game.Setup(m => m.SendServerMessage(It.IsAny<IServerMove>()));
 
-        [Fact]
-        public void See_Should_Raise_Win_For_Current_Player_If_Dice_Lower()
-        {
-            // Arrange
-
-            // Act
-
-            // Assert
-            Assert.True(false);
-        }
-
-
-        [Fact]
-        public void See_Should_Raise_Mia_For_Current_Player_If_Dice_Is_Mia()
-        {
-            // Arrange
+            var player1 = new Player("Player1", false);
+            game.Object.Register(player1);
+            var player2 = new Player("Player2", false);
+            game.Object.Register(player2);
 
             // Act
+            await game.Object.StartAsync();
+            game.Object.ReceiveClientEvent(ClientMoveCode.JOIN_ROUND.ToString(), string.Empty, player1, game.Object.Token);
+            game.Object.ReceiveClientEvent(ClientMoveCode.JOIN_ROUND.ToString(), string.Empty, player2, game.Object.Token);
+
+            game.Object.ReceiveClientEvent(ClientMoveCode.ROLL.ToString(), string.Empty, player1, game.Object.Token);
 
             // Assert
-            Assert.True(false);
+            game.Verify(m => m.SendServerMessage(It.Is<IServerMove>(x => x.Code == ServerMoveCode.PLAYER_LOST)), Times.Once);
+            game.Verify(m => m.SendServerMessage(It.Is<IServerMove>(x => x.FailureReasonCode == ServerFailureReasonCode.MIA)), Times.Once);
         }
 
         [Fact]

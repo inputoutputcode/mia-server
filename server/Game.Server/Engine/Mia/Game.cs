@@ -65,12 +65,12 @@ namespace Game.Server.Engine.Mia
 
         #region Constructor
 
-        public Game(int gameNumber, ScoreMode scoreMode, IGameManager gameManager, bool isSimulation = false)
+        public Game(int gameNumber, ScoreMode scoreMode, IGameManager gameManager, IDice dice = null, bool isSimulation = false)
         {
             this.gameNumber = gameNumber;
             gameScorer = GameScoreFactory.Create(scoreMode);
             this.gameManager = gameManager;
-            currentDice = new Dice();
+            currentDice = dice == null ? new Dice() : dice;
 
             playerList = new PlayerList(Config.Config.Settings.MaximumActivePlayers, Config.Config.Settings.MaximumSpectactors);
             token = Guid.NewGuid();
@@ -108,6 +108,8 @@ namespace Game.Server.Engine.Mia
 
                 gameOverCompletion = new TaskCompletionSource<bool>();
                 await gameOverCompletion.Task;
+
+                //GameOver();
             }
             else
             {
