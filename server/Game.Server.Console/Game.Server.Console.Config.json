@@ -4,11 +4,11 @@
     "RoundsPerRun": 5000,
     "MinimumPlayerCount": 2,
     "ServerPort": 1000,
-    "RegistrationTimeOut": 10000,
+    "RegistrationTimeOut": 50000,
     "JoinTimeOut": 2000,
-    "TurnTimeOut": 200000,
+    "TurnTimeOut": 2000,
     "ConnectionKey": "Corp123!",
     "LogFileCreation": false,
-    "LogFilePath":  "C:/Temp/GameLogs"
+    "LogFilePath": "C:/Temp/GameLogs"
   }
 }

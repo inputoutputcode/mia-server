@@ -1,4 +1,4 @@
-﻿namespace Game.Server.Network.Command
+﻿namespace Game.Server.Network.Event
 {
     public enum ClientEventCode
     {

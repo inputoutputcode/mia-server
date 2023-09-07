@@ -97,9 +97,7 @@ namespace Game.Server.Engine.Mia
 
             Log.Write($"Round '{gameNumber}' starting");
 
-
-            // TODO: ActivePlayers vs. RegisteredPlayers as RoundStarted() handles it
-            var players = playerList.ActivePlayers.ToArray();
+            var players = playerList.RegisteredPlayers.ToArray();
             if (players.Length > 1)
             {
                 // Send ROUND_STARTING
@@ -149,6 +147,8 @@ namespace Game.Server.Engine.Mia
                 var serverMove = new ServerMove(ServerMoveCode.ROUND_CANCELLED, string.Empty, failureCode, spectators, token);
                 SendServerMessage(serverMove);
                 Log.Write($"Round '{gameNumber}' cancelled");
+
+                gameOverCompletion?.TrySetResult(true);
             }
             else
             {
@@ -363,9 +363,7 @@ namespace Game.Server.Engine.Mia
 
             if (player.Name == playerList.Current().Name)
             {
-                var nextPlayer = playerList.Next();
                 SendPlayerLost(player, ServerFailureReasonCode.DID_NOT_TAKE_TURN);
-                SendYourTurn(nextPlayer);
             }
         }
 
@@ -400,6 +398,11 @@ namespace Game.Server.Engine.Mia
             if (playerList.ActivePlayers.Count < Config.Config.Settings.MinimumPlayerCount)
             {
                 gameOverCompletion?.TrySetResult(true);
+            }
+            else
+            {
+                var nextPlayer = playerList.Next();
+                SendYourTurn(nextPlayer);
             }
         }
 

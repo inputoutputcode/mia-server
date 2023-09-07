@@ -5,7 +5,7 @@ using Game.Server.Engine.Mia;
 using Game.Server.Engine.Mia.Interface;
 using Game.Server.Engine.Mia.Move;
 using Game.Server.Engine.Mia.Move.Interface;
-using Game.Server.Network.Command.Interface;
+using Game.Server.Network.Event.Interface;
 using Game.Server.Scoring;
 using Game.Server.Register.Interface;
 
@@ -30,14 +30,11 @@ namespace Game.Server.Test.PlayEngine.Mia
             await game.Object.StartAsync();
 
             // Assert
-            game.Verify(m => m.SendServerMessage(It.Is<IServerMove>(x => x.Code == ServerMoveCode.ROUND_STARTING)), Times.AtMost(1));
-            game.Verify(m => m.SendServerMessage(It.Is<IServerMove>(x => x.Code == ServerMoveCode.ROUND_STARTED)), Times.AtMost(1));
-            game.Verify(m => m.SendServerMessage(It.Is<IServerMove>(x => x.Code == ServerMoveCode.ROUND_CANCELLED)), Times.AtMost(1));
+            game.Verify(m => m.SendServerMessage(It.Is<IServerMove>(x => x.Code == ServerMoveCode.ROUND_STARTING)), Times.Never);
         }
 
         [Fact]
         public async void Game_Round_Will_Be_Cancelled_Without_ActivePlayers()
-        
         {
             // Arrange
             var gameManager = new Mock<IGameManager>(MockBehavior.Strict);
@@ -57,9 +54,7 @@ namespace Game.Server.Test.PlayEngine.Mia
             await game.Object.StartAsync();
 
             // Assert
-            game.Verify(m => m.SendServerMessage(It.Is<IServerMove>(x => x.Code == ServerMoveCode.ROUND_STARTING)), Times.AtMost(1));
-            game.Verify(m => m.SendServerMessage(It.Is<IServerMove>(x => x.Code == ServerMoveCode.ROUND_STARTED)), Times.AtMost(1));
-            game.Verify(m => m.SendServerMessage(It.Is<IServerMove>(x => x.Code == ServerMoveCode.ROUND_CANCELLED)), Times.AtMost(1));
+            game.Verify(m => m.SendServerMessage(It.Is<IServerMove>(x => x.Code == ServerMoveCode.ROUND_CANCELLED)), Times.Once);
         }
 
         [Fact]
@@ -85,7 +80,7 @@ namespace Game.Server.Test.PlayEngine.Mia
 
             // Assert
             //TODO: No server code because round is not starting
-            game.Verify(m => m.SendServerMessage(It.Is<IServerMove>(x => x.Code == ServerMoveCode.ROUND_CANCELLED)));
+            game.Verify(m => m.SendServerMessage(It.Is<IServerMove>(x => x.Code == ServerMoveCode.ROUND_CANCELLED)), Times.Once);
         }
 
         [Fact]
@@ -105,18 +100,13 @@ namespace Game.Server.Test.PlayEngine.Mia
             var player2 = new Player("Player2", false);
             game.Object.Register(player2);
 
-            var joinGamePlayer1 = new ClientMove(ClientMoveCode.JOIN_ROUND, string.Empty, player1, game.Object.Token);
-            var joinGamePlayer2 = new ClientMove(ClientMoveCode.JOIN_ROUND, string.Empty, player2, game.Object.Token);
-
             // Act
             await game.Object.StartAsync();
+            game.Object.ReceiveClientEvent(ClientMoveCode.JOIN_ROUND.ToString(), string.Empty, player1, game.Object.Token);
+            game.Object.ReceiveClientEvent(ClientMoveCode.JOIN_ROUND.ToString(), string.Empty, player2, game.Object.Token);
 
             // Assert
-            game.Verify(m => m.SendServerMessage(It.Is<IServerMove>(x => x.Code == ServerMoveCode.ROUND_STARTING)));
-            game.Verify(m => m.SendServerMessage(It.Is<IServerMove>(x => x.Token != game.Object.Token)));
-            game.Verify(m => m.SendServerMessage(It.Is<IServerMove>(x => x.FailureReasonCode == ServerFailureReasonCode.None)));
-            game.Verify(m => m.SendServerMessage(It.Is<IServerMove>(x => x.Value == string.Empty)));
-            game.Verify(m => m.SendServerMessage(It.Is<IServerMove>(x => x.Players.Length == 2)));
+            game.Verify(m => m.SendServerMessage(It.Is<IServerMove>(x => x.Code == ServerMoveCode.YOUR_TURN)), Times.Once);
         }
 
         [Fact]

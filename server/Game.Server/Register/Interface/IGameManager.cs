@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 using Game.Server.Engine.Mia.Interface;
 using Game.Server.Engine.Mia.Move.Interface;
-using Game.Server.Network.Command.Interface;
+using Game.Server.Network.Event.Interface;
 using Game.Server.Network.Interface;
 
 using LiteNetLib;

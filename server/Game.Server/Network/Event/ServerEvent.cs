@@ -2,10 +2,10 @@
 
 using LiteNetLib;
 
-using Game.Server.Network.Command.Interface;
+using Game.Server.Network.Event.Interface;
 
 
-namespace Game.Server.Network.Command
+namespace Game.Server.Network.Event
 {
     public class ServerEvent : IServerEvent
     {

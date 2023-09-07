@@ -1,9 +1,9 @@
-﻿using Game.Server.Network.Command.Interface;
+﻿using Game.Server.Network.Event.Interface;
 
 using LiteNetLib;
 
 
-namespace Game.Server.Network.Command
+namespace Game.Server.Network.Event
 {
     public class ClientEvent : IClientEvent
     {

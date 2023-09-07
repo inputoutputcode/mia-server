@@ -10,8 +10,8 @@ using Game.Server.Network.Interface;
 using Game.Server.Scoring;
 using Game.Server.Register.Interface;
 using Game.Server.Network;
-using Game.Server.Network.Command.Interface;
-using Game.Server.Network.Command;
+using Game.Server.Network.Event.Interface;
+using Game.Server.Network.Event;
 using Game.Server.Logging;
 
 using LiteNetLib;
