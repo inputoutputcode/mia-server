@@ -9,9 +9,9 @@ namespace Game.Server.Engine.Mia.Move
     /// <summary>
     /// 
     /// </summary>
-    public class PlayerMove : IPlayerMove
+    public class ClientMove : IClientMove
     {
-        public PlayerMoveCode code;
+        public ClientMoveCode code;
 
         public string value;
 
@@ -19,7 +19,7 @@ namespace Game.Server.Engine.Mia.Move
 
         public IPlayer player;
 
-        public PlayerMoveCode Code
+        public ClientMoveCode Code
         {
             get { return code; }
         }
@@ -39,12 +39,12 @@ namespace Game.Server.Engine.Mia.Move
             get { return player; }
         }
 
-        public PlayerMove()
+        public ClientMove()
         {
-            code = PlayerMoveCode.None;
+            code = ClientMoveCode.None;
         }
 
-        public PlayerMove(PlayerMoveCode code, string value, IPlayer player, Guid token)
+        public ClientMove(ClientMoveCode code, string value, IPlayer player, Guid token)
         {
             this.code = code;
             this.value = value;

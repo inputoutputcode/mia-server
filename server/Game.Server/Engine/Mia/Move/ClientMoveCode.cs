@@ -1,6 +1,6 @@
 ﻿namespace Game.Server.Engine.Mia.Move
 {
-    public enum PlayerMoveCode
+    public enum ClientMoveCode
     {
         None,
         JOIN_ROUND,

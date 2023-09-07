@@ -31,6 +31,6 @@ namespace Game.Server.Register.Interface
 
         bool ValidateName(string playerName);
 
-        void SendEvent(IServerMove serverMove);
+        void SendEvent(string eventMessage, IPlayer[] players);
     }
 }

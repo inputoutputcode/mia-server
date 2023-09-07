@@ -5,9 +5,9 @@ using Game.Server.Engine.Mia.Move;
 
 namespace Game.Server.Engine.Mia.Move.Interface
 {
-    public interface IPlayerMove
+    public interface IClientMove
     {
-        PlayerMoveCode Code { get; }
+        ClientMoveCode Code { get; }
 
         string Value { get; }
 

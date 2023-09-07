@@ -25,7 +25,9 @@ namespace Game.Server.Engine.Mia.Interface
 
         void RoundStarted();
 
-        void Move(IPlayerMove playerMove);
+        void ReceiveClientEvent(string eventMessage, string eventValue, IPlayer player, Guid token);
+
+        void SendServerMessage(IServerMove serverMove);
 
         List<IPlayer> GetScore();
     }

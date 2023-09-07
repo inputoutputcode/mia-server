@@ -6,8 +6,6 @@ using System.Threading.Tasks;
 
 using Game.Server.Engine.Mia;
 using Game.Server.Engine.Mia.Interface;
-using Game.Server.Engine.Mia.Move;
-using Game.Server.Engine.Mia.Move.Interface;
 using Game.Server.Network.Interface;
 using Game.Server.Scoring;
 using Game.Server.Register.Interface;
@@ -17,7 +15,6 @@ using Game.Server.Network.Command;
 using Game.Server.Logging;
 
 using LiteNetLib;
-using System.Net.NetworkInformation;
 
 
 namespace Game.Server.Register
@@ -168,7 +165,7 @@ namespace Game.Server.Register
                 {
                     Guid gameToken;
                     string eventMessage = null;
-                    string gameValue = string.Empty;
+                    string eventValue = string.Empty;
                     string gameTokenValue = string.Empty;
 
                     if (eventParts.Length == 2)
@@ -179,48 +176,30 @@ namespace Game.Server.Register
                     else if (eventParts.Length == 3)
                     {
                         eventMessage = eventParts[0];
-                        gameValue = eventParts[1];
+                        eventValue = eventParts[1];
                         gameTokenValue = eventParts[2];
                     }
 
                     if (Guid.TryParse(gameTokenValue, out gameToken))
                     {
                         var game = FindGame(gameToken);
-
-                        // TODO: Move codes should be part of Game domain only (SoC)
-                        PlayerMoveCode moveCode;
-                        if (game != null && Enum.TryParse(firstEventPart, out moveCode))
+                        var player = game.Players.Find(p => p.Name == client.Name);
+                        if (game != null && player != null)
                         {
-                            var player = game.Players.Find(p => p.Name == client.Name);
-                            if (player != null)
-                            {
-                                var playerMove = new PlayerMove(moveCode, gameValue, player, gameToken);
-                                game.Move(playerMove);
-                            }
+                            game.ReceiveClientEvent(eventMessage, eventValue, player, gameToken);
                         }
                     }
                 }
             }
         }
 
-        public void SendEvent(IServerMove serverMove)
+        public void SendEvent(string eventMessage, IPlayer[] players)
         {
-            for (int i = 0; i < serverMove.Players.Length; i++)
+            for (int i = 0; i < players.Length; i++)
             {
-                var client = clients.FirstOrDefault(x => x.Name == serverMove.Players[i].Name);
+                var client = clients.FirstOrDefault(x => x.Name == players[i].Name);
                 if (client != null)
                 {
-                    // TODO: Domain knowledge of the game (SoC)
-                    string flexibleValuePart = string.Empty;
-
-                    if (!string.IsNullOrEmpty(serverMove.Value))
-                        flexibleValuePart += $"{serverMove.Value};";
-
-                    if (serverMove.FailureReasonCode != ServerFailureReasonCode.None)
-                        flexibleValuePart += $"{serverMove.FailureReasonCode};";
-
-                    string eventMessage = $"{serverMove.Code};{flexibleValuePart}{serverMove.Token}";
-
                     byte[] messageBytes = Encoding.UTF8.GetBytes(eventMessage);
                     client.Peer.Send(messageBytes, DeliveryMethod.ReliableOrdered);
                 }
