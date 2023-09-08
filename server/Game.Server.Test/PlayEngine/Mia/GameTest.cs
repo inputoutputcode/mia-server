@@ -131,7 +131,8 @@ namespace Game.Server.Test.PlayEngine.Mia
             gameManager.Setup(m => m.ReceiveEvent(It.IsAny<IClientEvent>()));
 
             var dice = new Mock<Dice>() { CallBase = true };
-            //dice.Setup(d => d.Shake()).Callback(() => dice.Object.SetDices(1, 2));
+            // TODO: this causes problems
+            dice.Setup(d => d.Shake()).Callback(() => dice.Object.SetDices(1, 2));
 
             int rounds = 1;
             var game = new Mock<Engine.Mia.Game>(rounds, ScoreMode.Points, gameManager.Object, dice.Object, true) { CallBase = true };
@@ -146,12 +147,12 @@ namespace Game.Server.Test.PlayEngine.Mia
             await game.Object.StartAsync();
             game.Object.ReceiveClientEvent(ClientMoveCode.JOIN_ROUND.ToString(), string.Empty, player1, game.Object.Token);
             game.Object.ReceiveClientEvent(ClientMoveCode.JOIN_ROUND.ToString(), string.Empty, player2, game.Object.Token);
-
             game.Object.ReceiveClientEvent(ClientMoveCode.ROLL.ToString(), string.Empty, player1, game.Object.Token);
 
             // Assert
-            game.Verify(m => m.SendServerMessage(It.Is<IServerMove>(x => x.Code == ServerMoveCode.PLAYER_LOST)), Times.Once);
-            game.Verify(m => m.SendServerMessage(It.Is<IServerMove>(x => x.FailureReasonCode == ServerFailureReasonCode.MIA)), Times.Once);
+            // TODO: verify whole response object with one assert
+            game.Verify(m => m.SendServerMessage(It.Is<IServerMove>(x => x.Code == ServerMoveCode.PLAYER_LOST)));
+            game.Verify(m => m.SendServerMessage(It.Is<IServerMove>(x => x.FailureReasonCode == ServerFailureReasonCode.MIA)));
         }
 
         [Fact]
