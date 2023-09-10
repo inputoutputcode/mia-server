@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 using Game.Server.Engine.Mia.Move.Interface;
 
@@ -21,7 +22,8 @@ namespace Game.Server.Engine.Mia.Move
                 Value = serverMove.Value,
                 SecondValue = serverMove.FailureReasonCode.ToString(),
                 Player = playerNames.TrimEnd(','),
-                Token = serverMove.Token.ToString()
+                Token = serverMove.Token.ToString(),
+                Timestamp = DateTime.Now
             });
         }
 
@@ -32,7 +34,8 @@ namespace Game.Server.Engine.Mia.Move
                 Command = clientMove.Code.ToString(),
                 Value = clientMove.Value,
                 Player = clientMove.Player.Name,
-                Token = clientMove.Token.ToString()
+                Token = clientMove.Token.ToString(),
+                Timestamp = DateTime.Now
             });
         }
     }

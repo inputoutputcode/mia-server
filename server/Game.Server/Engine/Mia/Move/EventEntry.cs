@@ -1,4 +1,6 @@
-﻿using Game.Server.Engine.Mia.Move.Interface;
+﻿using System;
+
+using Game.Server.Engine.Mia.Move.Interface;
 
 
 namespace Game.Server.Engine.Mia.Move
@@ -15,9 +17,11 @@ namespace Game.Server.Engine.Mia.Move
 
         public string Token { get; set; }
 
+        public DateTime Timestamp { get; set; }
+
         public string ToString()
         {
-            return string.Format("Command={0};Value={1};Players={2};Failure={3};Token={4};", Command, Value, Player, SecondValue, Token);
+            return string.Format("Time={5};Command={0};Value={1};Players={2};Failure={3};Token={4};", Command, Value, Player, SecondValue, Token, Timestamp.ToString("mm:fff"));
         }
     }
 }

@@ -127,7 +127,7 @@ namespace Game.Server.Test.PlayEngine.Mia
         {
             // Arrange
             var gameManager = new Mock<IGameManager>();
-            gameManager.Setup(m => m.SendEvent(It.IsAny<string>(), It.IsAny<IPlayer[]>()));
+            //gameManager.Setup(m => m.SendEvent(It.IsAny<string>(), It.IsAny<IPlayer[]>()));
             //gameManager.Setup(m => m.ReceiveEvent(It.IsAny<IClientEvent>()));
 
             var dice = new Mock<Dice>() { CallBase = true };
@@ -135,19 +135,32 @@ namespace Game.Server.Test.PlayEngine.Mia
             dice.Setup(d => d.GetOrdered()).Returns(new int[2] { 2, 1 });
 
             int rounds = 1;
+            int turnCount = 0;
             var game = new Mock<Engine.Mia.Game>(rounds, ScoreMode.Points, gameManager.Object, dice.Object, true) { CallBase = true };
-            game.Setup(m => m.SendServerMessage(It.IsAny<IServerMove>()));
 
             var player1 = new Player("Player1", false);
             game.Object.Register(player1);
             var player2 = new Player("Player2", false);
             game.Object.Register(player2);
 
+            game.Setup(m => m.SendServerMessage(It.IsAny<IServerMove>()))
+                .Callback(new InvocationAction(invocation =>
+                {
+                    var serverMove = (ServerMove)invocation.Arguments[0];
+                    if (ServerMoveCode.ROUND_STARTING == serverMove.Code)
+                    {
+                        game.Object.ReceiveClientEvent(ClientMoveCode.JOIN_ROUND.ToString(), string.Empty, player1, game.Object.Token);
+                        game.Object.ReceiveClientEvent(ClientMoveCode.JOIN_ROUND.ToString(), string.Empty, player2, game.Object.Token);
+                    }
+                    else if (ServerMoveCode.YOUR_TURN == serverMove.Code)
+                    {
+                        game.Object.ReceiveClientEvent(ClientMoveCode.ROLL.ToString(), string.Empty, game.Object.CurrentTurn.Player, game.Object.Token);
+                    }
+                }
+            ));
+
             // Act
             await game.Object.StartAsync();
-            game.Object.ReceiveClientEvent(ClientMoveCode.JOIN_ROUND.ToString(), string.Empty, player1, game.Object.Token);
-            game.Object.ReceiveClientEvent(ClientMoveCode.JOIN_ROUND.ToString(), string.Empty, player2, game.Object.Token);
-            game.Object.ReceiveClientEvent(ClientMoveCode.ROLL.ToString(), string.Empty, player1, game.Object.Token);
 
             // Assert
             // TODO: verify whole response object with one assert
@@ -157,6 +170,17 @@ namespace Game.Server.Test.PlayEngine.Mia
 
         [Fact]
         public void Lie_About_Mia()
+        {
+            // Arrange
+
+            // Act
+
+            // Assert
+            Assert.True(false);
+        }
+
+        [Fact]
+        public void Player_Cannot_Join_When_Round_Not_Started()
         {
             // Arrange
 

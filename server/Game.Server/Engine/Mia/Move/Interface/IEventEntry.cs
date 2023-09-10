@@ -1,4 +1,7 @@
-﻿namespace Game.Server.Engine.Mia.Move.Interface
+﻿using System;
+
+
+namespace Game.Server.Engine.Mia.Move.Interface
 {
     internal interface IEventEntry
     {
@@ -11,5 +14,7 @@
         string Player { get; set; }
 
         string Token { get; set; }
+
+        DateTime Timestamp { get; set; }
     }
 }

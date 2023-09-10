@@ -37,6 +37,12 @@ namespace Game.Server.Engine.Mia
 
         #region Properties
 
+        public ITurn CurrentTurn
+        {
+            get { return currentTurn; }
+            private set { }
+        }
+
         public int TurnCount
         {
             get { return turnCount; }
@@ -105,6 +111,7 @@ namespace Game.Server.Engine.Mia
                 // Send ROUND_STARTING
                 var serverMove = new ServerMove(ServerMoveCode.ROUND_STARTING, string.Empty, ServerFailureReasonCode.None, players, token);
                 SendServerMessage(serverMove);
+                eventHistory.Add(serverMove);
 
                 HandleJoinTimeoutAsync();
 
@@ -387,11 +394,12 @@ namespace Game.Server.Engine.Mia
 
         private void SendYourTurn(IPlayer player)
         {
+            NewTurn(player);
+
             var singlePlayerList = new IPlayer[] { player };
             var serverMove = new ServerMove(ServerMoveCode.YOUR_TURN, string.Empty, ServerFailureReasonCode.None, singlePlayerList, token);
             SendServerMessage(serverMove);
             eventHistory.Add(serverMove);
-            NewTurn(player);
             Log.Write($"Send YOUR_TURN to '{player.Name}'");
 
             // TODO: Send data to spectators
