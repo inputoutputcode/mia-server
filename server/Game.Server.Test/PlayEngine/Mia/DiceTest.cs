@@ -41,6 +41,21 @@ namespace Game.Server.Test.PlayEngine.Mia
             Assert.True(dice3.IsMia);
         }
 
+        // Valid scores: 21 (Mia), 66, 55, 44, 33, 22, 11, 65, 64, 63, 62, 61, 54, 53, 52, 51, 43, 42, 41, 32, 31
+        [Fact]
+        public void Detect_Invalid_Dice()
+        {
+            // Act
+            var dice1 = new Dice(1, 2);
+            var dice2 = new Dice(2, 1);
+
+            // Arrange
+
+            // Assert
+            Assert.False(dice1.IsValid);
+            Assert.True(dice2.IsValid);
+        }
+
         [Fact]
         public void Detect_Double()
         {

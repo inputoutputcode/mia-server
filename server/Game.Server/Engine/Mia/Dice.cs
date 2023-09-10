@@ -49,6 +49,15 @@ namespace Game.Server.Engine.Mia
             }
         }
 
+        public bool IsValid
+        {
+            get
+            {
+                int[] validNumbers = new int[] { 21, 66, 55, 44, 33, 22, 11, 65, 64, 63, 62, 61, 54, 53, 52, 51, 43, 42, 41, 32, 31 };
+                return validNumbers.Contains(int.Parse(ToString()));
+            }
+        }
+
         #endregion Properties
 
 
@@ -61,21 +70,14 @@ namespace Game.Server.Engine.Mia
 
         public Dice(int diceOne, int diceTwo)
         {
-            SetDices(diceOne, diceTwo);
+            dice[0] = diceOne;
+            dice[1] = diceTwo;
         }
 
         #endregion Constructor
 
 
         #region Method
-
-        public virtual void SetDices(int diceOne, int diceTwo)
-        {
-            dice[0] = diceOne;
-            dice[1] = diceTwo;
-
-            dice = dice.OrderByDescending(d => d).ToArray();
-        }
 
         private int Scoring(IDice diceToCompare)
         {
@@ -115,12 +117,21 @@ namespace Game.Server.Engine.Mia
             return returnDice;
         }
 
-        public virtual void Shake()
+        public void Shake()
         {
             int diceOne = new Random().Next(1, 6);
             int diceTwo = new Random().Next(1, 6);
 
-            SetDices(diceOne, diceTwo);
+            dice[0] = diceOne;
+            dice[1] = diceTwo;
+
+            dice = GetOrdered();
+        }
+
+        public virtual int[] GetOrdered()
+        {
+            var newDice = new int[2] { dice[0], dice[1] };
+            return newDice.OrderByDescending(d => d).ToArray();
         }
 
         #endregion Methods

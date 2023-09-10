@@ -128,11 +128,11 @@ namespace Game.Server.Test.PlayEngine.Mia
             // Arrange
             var gameManager = new Mock<IGameManager>();
             gameManager.Setup(m => m.SendEvent(It.IsAny<string>(), It.IsAny<IPlayer[]>()));
-            gameManager.Setup(m => m.ReceiveEvent(It.IsAny<IClientEvent>()));
+            //gameManager.Setup(m => m.ReceiveEvent(It.IsAny<IClientEvent>()));
 
             var dice = new Mock<Dice>() { CallBase = true };
             // TODO: this causes problems
-            dice.Setup(d => d.Shake()).Callback(() => dice.Object.SetDices(1, 2));
+            dice.Setup(d => d.GetOrdered()).Returns(new int[2] { 2, 1 });
 
             int rounds = 1;
             var game = new Mock<Engine.Mia.Game>(rounds, ScoreMode.Points, gameManager.Object, dice.Object, true) { CallBase = true };
@@ -167,7 +167,19 @@ namespace Game.Server.Test.PlayEngine.Mia
         }
 
         [Fact]
-        public void Player_Commanded_Invalid_Turn_Third_Roll()
+        public void Invalid_Turn_Player_Sends_Dice_In_Incorrect_Order()
+        {
+            // Arrange
+
+            // Act
+
+            // Assert
+            // Valid scores: 21 (Mia), 66, 55, 44, 33, 22, 11, 65, 64, 63, 62, 61, 54, 53, 52, 51, 43, 42, 41, 32, 31.
+            Assert.True(false);
+        }
+
+        [Fact]
+        public void Invalid_Turn_Player_Sends_Empty_Dice()
         {
             // Arrange
 
@@ -178,7 +190,7 @@ namespace Game.Server.Test.PlayEngine.Mia
         }
 
         [Fact]
-        public void Player_Commanded_During_Inactive_Turn()
+        public void Invalid_Turn_Player_Sends_Third_Roll()
         {
             // Arrange
 
@@ -189,7 +201,19 @@ namespace Game.Server.Test.PlayEngine.Mia
         }
 
         [Fact]
-        public void Player_Commanded_Announce_After_Second_Roll()
+        public void Invalid_Turn_Player_Sends_Command_As_Non_Current_Player()
+        {
+            // Arrange
+
+            // Act
+
+            // Assert
+            // Should check all commands like ROLL, ANNOUNCE, SEE
+            Assert.True(false);
+        }
+
+        [Fact]
+        public void Invalid_Turn_Player_Announce_After_Second_Roll()
         {
             // Arrange
 
