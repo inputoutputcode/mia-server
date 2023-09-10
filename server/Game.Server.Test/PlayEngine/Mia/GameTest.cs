@@ -8,7 +8,7 @@ using Game.Server.Engine.Mia.Move.Interface;
 using Game.Server.Network.Event.Interface;
 using Game.Server.Scoring;
 using Game.Server.Register.Interface;
-
+using System;
 
 namespace Game.Server.Test.PlayEngine.Mia
 {
@@ -151,8 +151,8 @@ namespace Game.Server.Test.PlayEngine.Mia
 
             // Assert
             // TODO: verify whole response object with one assert
-            game.Verify(m => m.SendServerMessage(It.Is<IServerMove>(x => x.Code == ServerMoveCode.PLAYER_LOST)));
             game.Verify(m => m.SendServerMessage(It.Is<IServerMove>(x => x.FailureReasonCode == ServerFailureReasonCode.MIA)));
+            game.Verify(m => m.SendServerMessage(It.Is<IServerMove>(x => x.Code == ServerMoveCode.PLAYER_LOST)));
         }
 
         [Fact]
