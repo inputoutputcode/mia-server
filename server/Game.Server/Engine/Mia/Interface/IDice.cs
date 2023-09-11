@@ -17,7 +17,5 @@
         IDice Parse(string value);
 
         void Shake();
-
-        int[] GetOrdered();
     }
 }

@@ -19,7 +19,7 @@ namespace Game.Server.Engine.Mia.Move
 
         public DateTime Timestamp { get; set; }
 
-        public string ToString()
+        public override string ToString()
         {
             return string.Format("Time={5};Command={0};Value={1};Players={2};Failure={3};Token={4};", Command, Value, Player, SecondValue, Token, Timestamp.ToString("mm:fff"));
         }

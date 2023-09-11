@@ -8,7 +8,7 @@ using Game.Server.Engine.Mia.Move.Interface;
 using Game.Server.Network.Event.Interface;
 using Game.Server.Scoring;
 using Game.Server.Register.Interface;
-using System;
+using Xunit.Sdk;
 
 namespace Game.Server.Test.PlayEngine.Mia
 {
@@ -110,13 +110,13 @@ namespace Game.Server.Test.PlayEngine.Mia
         }
 
         [Fact]
-        public async void See_Should_Raise_Lost_For_Current_Player_If_Dice_Higher_Or_Equal()
+        public void See_Should_Raise_Lost_For_Current_Player_If_Dice_Higher_Or_Equal()
         {
             
         }
 
         [Fact]
-        public async void See_Should_Raise_Win_For_Current_Player_If_Dice_Lower_On_See()
+        public void See_Should_Raise_Win_For_Current_Player_If_Dice_Lower_On_See()
         {
             
         }
@@ -126,17 +126,19 @@ namespace Game.Server.Test.PlayEngine.Mia
         public async void Server_Should_Raise_Mia_For_Current_Player_If_Dice_Is_Mia_From_First_Roll()
         {
             // Arrange
-            var gameManager = new Mock<IGameManager>();
-            //gameManager.Setup(m => m.SendEvent(It.IsAny<string>(), It.IsAny<IPlayer[]>()));
-            //gameManager.Setup(m => m.ReceiveEvent(It.IsAny<IClientEvent>()));
-
-            var dice = new Mock<Dice>() { CallBase = true };
-            // TODO: this causes problems
-            dice.Setup(d => d.GetOrdered()).Returns(new int[2] { 2, 1 });
-
             int rounds = 1;
-            int turnCount = 0;
+            //int turnCount = 0;
+
+            var gameManager = new Mock<IGameManager>();
+            var dice = new Mock<Dice>() { CallBase = true };
             var game = new Mock<Engine.Mia.Game>(rounds, ScoreMode.Points, gameManager.Object, dice.Object, true) { CallBase = true };
+            dice.SetupProperty(d => d.DiceOne);
+            dice.SetupProperty(d => d.DiceTwo);
+            dice.Setup(d => d.Shake()).Callback(() =>
+            {
+                dice.Object.DiceOne = 2;
+                dice.Object.DiceTwo = 1;
+            });
 
             var player1 = new Player("Player1", false);
             game.Object.Register(player1);

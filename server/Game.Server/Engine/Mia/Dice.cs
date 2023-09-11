@@ -17,19 +17,27 @@ namespace Game.Server.Engine.Mia
 
         #region Properties
 
-        public int DiceOne
+        public virtual int DiceOne
         {
             get
             {
                 return dice[0];
             }
+            set
+            {
+                dice[0] = value;    
+            }
         }
 
-        public int DiceTwo
+        public virtual int DiceTwo
         {
             get
             {
                 return dice[1];
+            }
+            set
+            {
+                dice[1] = value;
             }
         }
 
@@ -117,7 +125,7 @@ namespace Game.Server.Engine.Mia
             return returnDice;
         }
 
-        public void Shake()
+        public virtual void Shake()
         {
             int diceOne = new Random().Next(1, 6);
             int diceTwo = new Random().Next(1, 6);
@@ -125,13 +133,7 @@ namespace Game.Server.Engine.Mia
             dice[0] = diceOne;
             dice[1] = diceTwo;
 
-            dice = GetOrdered();
-        }
-
-        public virtual int[] GetOrdered()
-        {
-            var newDice = new int[2] { dice[0], dice[1] };
-            return newDice.OrderByDescending(d => d).ToArray();
+            dice = dice.OrderByDescending(d => d).ToArray();
         }
 
         #endregion Methods
