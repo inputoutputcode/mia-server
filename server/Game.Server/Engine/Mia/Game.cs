@@ -197,176 +197,179 @@ namespace Game.Server.Engine.Mia
             var playerMove = new ClientMove(moveCode, eventValue, player, token);
             eventHistory.Add(playerMove);
 
-            switch (playerMove.Code)
+            if (player.CurrentState != PlayerState.Spectator)
             {
-                case ClientMoveCode.JOIN_ROUND:
-                    if (gamePhase == GamePhase.Starting)
-                    {
-                        bool operationResult = playerList.Join(playerMove.Player);
+                switch (playerMove.Code)
+                {
+                    case ClientMoveCode.JOIN_ROUND:
+                        if (gamePhase == GamePhase.Starting)
+                        {
+                            bool operationResult = playerList.Join(playerMove.Player);
 
-                        if (!operationResult)
+                            if (!operationResult)
+                            {
+                                SendPlayerLost(playerMove.Player, ServerFailureReasonCode.INVALID_TURN);
+                            }
+                        }
+                        break;
+
+                    case ClientMoveCode.ROLL:
+                        // BUG: currentPlayerIndex not set correctly, causing player lost events
+                        if (playerMove.Player.Name == playerList.Current().Name && currentTurn.RollCount < 2)
+                        {
+                            serverMove = new ServerMove(ServerMoveCode.PLAYER_ROLLS, playerMove.Player.Name, ServerFailureReasonCode.None, playerList.RegisteredPlayers.ToArray(), this.token);
+                            eventHistory.Add(serverMove);
+                            SendServerMessage(serverMove);
+
+                            currentDice.Shake();
+                            currentTurn.AddRollCount();
+
+                            if (currentTurn.RollCount == 1)
+                            {
+                                if (currentDice.IsMia)
+                                {
+                                    var loosingPlayer = playerList.Previous();
+                                    serverMove = new ServerMove(ServerMoveCode.PLAYER_LOST, loosingPlayer.Name, ServerFailureReasonCode.MIA, playerList.RegisteredPlayers.ToArray(), this.token);
+                                    eventHistory.Add(serverMove);
+                                    SendServerMessage(serverMove);
+
+                                    gameScorer.Winner(playerMove.Player);
+                                    gameScorer.Lost(loosingPlayer);
+
+                                    GameOver();
+                                }
+                                else
+                                {
+                                    var currentPlayer = new IPlayer[] { playerMove.Player };
+                                    serverMove = new ServerMove(ServerMoveCode.ROLLED, currentDice.ToString(), ServerFailureReasonCode.None, currentPlayer, this.token);
+                                    eventHistory.Add(serverMove);
+                                    SendServerMessage(serverMove);
+                                }
+                            }
+                            else if (currentTurn.RollCount == 2)
+                            {
+                                var currentPlayer = new IPlayer[] { playerMove.Player };
+                                serverMove = new ServerMove(ServerMoveCode.ROLLED, "", ServerFailureReasonCode.None, currentPlayer, this.token);
+                                eventHistory.Add(serverMove);
+                                SendServerMessage(serverMove);
+                            }
+
+                            HandleTurnTimeoutAsync(playerMove.Player);
+                        }
+                        else
                         {
                             SendPlayerLost(playerMove.Player, ServerFailureReasonCode.INVALID_TURN);
                         }
-                    }
-                    break;
+                        break;
 
-                case ClientMoveCode.ROLL:
-                    // BUG: currentPlayerIndex not set correctly, causing player lost events
-                    if (playerMove.Player.Name == playerList.Current().Name && currentTurn.RollCount < 2)
-                    {
-                        serverMove = new ServerMove(ServerMoveCode.PLAYER_ROLLS, playerMove.Player.Name, ServerFailureReasonCode.None, playerList.RegisteredPlayers.ToArray(), this.token);
-                        eventHistory.Add(serverMove);
-                        SendServerMessage(serverMove);
-
-                        currentDice.Shake();
-                        currentTurn.AddRollCount();
-
-                        if (currentTurn.RollCount == 1)
+                    case ClientMoveCode.SEE:
+                        if (playerMove.Player.Name == playerList.Current().Name)
                         {
-                            if (currentDice.IsMia)
+                            if (announcedDice == null)
                             {
-                                var loosingPlayer = playerList.Previous();
-                                serverMove = new ServerMove(ServerMoveCode.PLAYER_LOST, loosingPlayer.Name, ServerFailureReasonCode.MIA, playerList.RegisteredPlayers.ToArray(), this.token);
-                                eventHistory.Add(serverMove);
-                                SendServerMessage(serverMove);
-
-                                gameScorer.Winner(playerMove.Player);
-                                gameScorer.Lost(loosingPlayer);
-
-                                GameOver();
+                                SendPlayerLost(playerMove.Player, ServerFailureReasonCode.SEE_BEFORE_FIRST_ROLL);
                             }
                             else
                             {
-                                var currentPlayer = new IPlayer[] { playerMove.Player };
-                                serverMove = new ServerMove(ServerMoveCode.ROLLED, currentDice.ToString(), ServerFailureReasonCode.None, currentPlayer, this.token);
+                                serverMove = new ServerMove(ServerMoveCode.PLAYER_WANTS_TO_SEE, playerMove.Player.Name, ServerFailureReasonCode.None, playerList.RegisteredPlayers.ToArray(), this.token);
                                 eventHistory.Add(serverMove);
                                 SendServerMessage(serverMove);
+
+                                serverMove = new ServerMove(ServerMoveCode.ACTUAL_DICE, currentDice.ToString(), ServerFailureReasonCode.None, playerList.RegisteredPlayers.ToArray(), this.token);
+                                eventHistory.Add(serverMove);
+                                SendServerMessage(serverMove);
+
+                                IPlayer looserPlayer;
+                                IPlayer winnerPlayer;
+                                ServerFailureReasonCode reasonCode = ServerFailureReasonCode.None;
+
+                                if (announcedDice.IsHigherThan(currentDice))
+                                {
+                                    looserPlayer = playerList.Previous();
+                                    winnerPlayer = playerMove.Player;
+                                    reasonCode = ServerFailureReasonCode.CAUGHT_BLUFFING;
+                                }
+                                else
+                                {
+                                    looserPlayer = playerMove.Player;
+                                    winnerPlayer = playerList.Previous();
+                                }
+
+                                gameScorer.Lost(looserPlayer);
+                                gameScorer.Winner(winnerPlayer);
+
+                                serverMove = new ServerMove(ServerMoveCode.PLAYER_LOST, looserPlayer.Name, reasonCode, playerList.RegisteredPlayers.ToArray(), this.token);
+                                eventHistory.Add(serverMove);
+                                SendServerMessage(serverMove);
+                                Log.Write($"Send PLAYER_LOST for '{looserPlayer.Name}'");
+
+                                GameOver();
                             }
-                        }
-                        else if (currentTurn.RollCount == 2)
-                        {
-                            var currentPlayer = new IPlayer[] { playerMove.Player };
-                            serverMove = new ServerMove(ServerMoveCode.ROLLED, "", ServerFailureReasonCode.None, currentPlayer, this.token);
-                            eventHistory.Add(serverMove);
-                            SendServerMessage(serverMove);
-                        }
-
-                        HandleTurnTimeoutAsync(playerMove.Player);
-                    }
-                    else
-                    {
-                        SendPlayerLost(playerMove.Player, ServerFailureReasonCode.INVALID_TURN);
-                    }
-                    break;
-
-                case ClientMoveCode.SEE:
-                    if (playerMove.Player.Name == playerList.Current().Name)
-                    {
-                        if (announcedDice == null)
-                        {
-                            SendPlayerLost(playerMove.Player, ServerFailureReasonCode.SEE_BEFORE_FIRST_ROLL);
                         }
                         else
                         {
-                            serverMove = new ServerMove(ServerMoveCode.PLAYER_WANTS_TO_SEE, playerMove.Player.Name, ServerFailureReasonCode.None, playerList.RegisteredPlayers.ToArray(), this.token);
-                            eventHistory.Add(serverMove);
-                            SendServerMessage(serverMove);
-
-                            serverMove = new ServerMove(ServerMoveCode.ACTUAL_DICE, currentDice.ToString(), ServerFailureReasonCode.None, playerList.RegisteredPlayers.ToArray(), this.token);
-                            eventHistory.Add(serverMove);
-                            SendServerMessage(serverMove);
-
-                            IPlayer looserPlayer;
-                            IPlayer winnerPlayer;
-                            ServerFailureReasonCode reasonCode = ServerFailureReasonCode.None;
-
-                            if (announcedDice.IsHigherThan(currentDice))
-                            {
-                                looserPlayer = playerList.Previous();
-                                winnerPlayer = playerMove.Player;
-                                reasonCode = ServerFailureReasonCode.CAUGHT_BLUFFING;
-                            }
-                            else
-                            {
-                                looserPlayer = playerMove.Player;
-                                winnerPlayer = playerList.Previous();
-                            }
-
-                            gameScorer.Lost(looserPlayer);
-                            gameScorer.Winner(winnerPlayer);
-
-                            serverMove = new ServerMove(ServerMoveCode.PLAYER_LOST, looserPlayer.Name, reasonCode, playerList.RegisteredPlayers.ToArray(), this.token);
-                            eventHistory.Add(serverMove);
-                            SendServerMessage(serverMove);
-                            Log.Write($"Send PLAYER_LOST for '{looserPlayer.Name}'");
-
-                            GameOver();
+                            // BUG: SEE is correct when dice history exists
+                            SendPlayerLost(playerMove.Player, ServerFailureReasonCode.INVALID_TURN);
                         }
-                    }
-                    else
-                    {
-                        // BUG: SEE is correct when dice history exists
-                        SendPlayerLost(playerMove.Player, ServerFailureReasonCode.INVALID_TURN);
-                    }
-                    break;
+                        break;
 
-                case ClientMoveCode.ANNOUNCE:
-                    // BUG: announcing lower dices as announced before should cause player lost event
-                    // TODO: anouncing dice numbers in wrong order should send player lost event
-                    announcedDice = currentDice.Parse(playerMove.Value);
-                    if (playerMove.Player.Name == playerList.Current().Name && currentTurn.RollCount <= 2 && announcedDice != null && announcedDice.IsValid)
-                    {
-                        if (announcedDice.IsMia)
+                    case ClientMoveCode.ANNOUNCE:
+                        // BUG: announcing lower dices as announced before should cause player lost event
+                        // TODO: anouncing dice numbers in wrong order should send player lost event
+                        announcedDice = currentDice.Parse(playerMove.Value);
+                        if (playerMove.Player.Name == playerList.Current().Name && currentTurn.RollCount <= 2 && announcedDice != null && announcedDice.IsValid)
                         {
-                            if (currentDice.IsMia)
+                            if (announcedDice.IsMia)
                             {
-                                var loosingPlayer = playerList.Previous();
-                                serverMove = new ServerMove(ServerMoveCode.PLAYER_LOST, loosingPlayer.Name, ServerFailureReasonCode.MIA, playerList.RegisteredPlayers.ToArray(), this.token);
+                                if (currentDice.IsMia)
+                                {
+                                    var loosingPlayer = playerList.Previous();
+                                    serverMove = new ServerMove(ServerMoveCode.PLAYER_LOST, loosingPlayer.Name, ServerFailureReasonCode.MIA, playerList.RegisteredPlayers.ToArray(), this.token);
+                                    eventHistory.Add(serverMove);
+                                    SendServerMessage(serverMove);
+
+                                    gameScorer.Winner(playerMove.Player);
+                                    gameScorer.Lost(loosingPlayer);
+
+                                    GameOver();
+                                }
+                                else
+                                {
+                                    var nextPlayer = playerList.Next();
+                                    serverMove = new ServerMove(ServerMoveCode.PLAYER_LOST, playerMove.Player.Name, ServerFailureReasonCode.LIED_ABOUT_MIA, playerList.RegisteredPlayers.ToArray(), this.token);
+                                    eventHistory.Add(serverMove);
+                                    SendServerMessage(serverMove);
+
+                                    gameScorer.Winner(nextPlayer);
+                                    gameScorer.Lost(playerMove.Player);
+
+                                    GameOver();
+                                }
+                            }
+                            else if (announcedDice.IsHigherThan(currentDice))
+                            {
+                                string broadcastValue = $"{playerMove.Player.Name};{announcedDice}";
+                                serverMove = new ServerMove(ServerMoveCode.ANNOUNCED, broadcastValue, ServerFailureReasonCode.None, playerList.RegisteredPlayers.ToArray(), this.token);
                                 eventHistory.Add(serverMove);
                                 SendServerMessage(serverMove);
 
-                                gameScorer.Winner(playerMove.Player);
-                                gameScorer.Lost(loosingPlayer);
-
-                                GameOver();
-                            }
-                            else
-                            {
                                 var nextPlayer = playerList.Next();
-                                serverMove = new ServerMove(ServerMoveCode.PLAYER_LOST, playerMove.Player.Name, ServerFailureReasonCode.LIED_ABOUT_MIA, playerList.RegisteredPlayers.ToArray(), this.token);
-                                eventHistory.Add(serverMove);
-                                SendServerMessage(serverMove);
-
-                                gameScorer.Winner(nextPlayer);
-                                gameScorer.Lost(playerMove.Player);
-
-                                GameOver();
+                                SendYourTurn(nextPlayer);
                             }
-                        }
-                        else if (announcedDice.IsHigherThan(currentDice))
-                        {
-                            string broadcastValue = $"{playerMove.Player.Name};{announcedDice}";
-                            serverMove = new ServerMove(ServerMoveCode.ANNOUNCED, broadcastValue, ServerFailureReasonCode.None, playerList.RegisteredPlayers.ToArray(), this.token);
-                            eventHistory.Add(serverMove);
-                            SendServerMessage(serverMove);
+                            else
+                            {
+                                SendPlayerLost(playerMove.Player, ServerFailureReasonCode.ANNOUNCED_LOSING_DICE);
 
-                            var nextPlayer = playerList.Next();
-                            SendYourTurn(nextPlayer);
+                                var nextPlayer = playerList.Next();
+                                SendYourTurn(nextPlayer);
+                            }
                         }
                         else
                         {
-                            SendPlayerLost(playerMove.Player, ServerFailureReasonCode.ANNOUNCED_LOSING_DICE);
-
-                            var nextPlayer = playerList.Next();
-                            SendYourTurn(nextPlayer);
+                            SendPlayerLost(playerMove.Player, ServerFailureReasonCode.INVALID_TURN);
                         }
-                    }
-                    else
-                    {
-                        SendPlayerLost(playerMove.Player, ServerFailureReasonCode.INVALID_TURN);
-                    }
-                    break;
+                        break;
+                }
             }
         }
 
