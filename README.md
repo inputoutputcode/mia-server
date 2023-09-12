@@ -13,7 +13,9 @@ With the game server, small teams develop bots to compete. The people watch how 
 
 ### Game Mode
 
-The option is to run the server every 30 minutes for 2 minutes, or continuous run with live deployments of the bots. As a minimum, 1200 moves per minute* are expected, which makes 100 game results per minute.
+One option is to run the server every 30 minutes for 2 minutes. Another is to run it continuously, where every team restarts the process for a new implementation and has to make sure that their process is not crashing. Running the server on Service Fabric allows to use continuous integration in Azure DevOps with the bots running as guest executable. 
+
+As a minimum, 1200 moves per minute* are expected, which makes 100 game results per minute.
 
 ### 3 Score Modes
 
@@ -33,12 +35,12 @@ All starter bots know the basics like REGISTER, JOIN_ROUND, ROLL, ANNOUNCE. The 
 - [Go](clients/go-simple-bot/)
 - [Elixir](clients/elixir-simple-bot/)
  
-In case you are familiar with UDP and another programming language feel free to implement your own bot, it's a fairly simple protocol. 
+In case you are familiar with UDP and another programming language. feel free to implement your own bot. It's a fairly simple protocol. 
 
 Check the [Server Protocol](docs/ServerProtocol.md).
 
 ## How to win the high score?
 
-Once again, everything is allowed. Use bugs to your advantage after you find them.
+Once again, everything is allowed. Use bugs to your advantage after you find them, there is one on purpose.
 
 (*) This was tested locally per game with default timeout configuration for responses. There is room for improvement. The cluster scenario with multiple game instances including WAN brings another complexity to it. 
