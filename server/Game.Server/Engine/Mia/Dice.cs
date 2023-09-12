@@ -89,16 +89,29 @@ namespace Game.Server.Engine.Mia
 
         private int Scoring(IDice diceToCompare)
         {
-            int value = 10 * diceToCompare.DiceOne + diceToCompare.DiceTwo;
-            value += diceToCompare.IsDouble ? 100 : 0;
-            value += diceToCompare.IsMia ? 200 : 0;
+            int value = 0;
+
+            if (diceToCompare != null)
+            {
+                value = 10 * diceToCompare.DiceOne + diceToCompare.DiceTwo;
+                value += diceToCompare.IsDouble ? 100 : 0;
+                value += diceToCompare.IsMia ? 200 : 0;
+            }
 
             return value;
         }
 
         public bool IsHigherThan(IDice otherDice)
         {
-            return Scoring(this) >= Scoring(otherDice);
+            // TODO: double check if equal is correct
+            bool isHigher = false;
+
+            if (otherDice != null)
+            {
+                isHigher = Scoring(this) >= Scoring(otherDice);
+            }
+
+            return isHigher;
         }
 
         public override string ToString()

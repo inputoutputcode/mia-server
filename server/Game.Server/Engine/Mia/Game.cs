@@ -23,6 +23,7 @@ namespace Game.Server.Engine.Mia
         private IGameScorer gameScorer;
         private IDice currentDice;
         private IDice announcedDice;
+        private IDice lastAnnouncedDice;
         private ITurn currentTurn;
         private Guid token;
         private bool isSimulation;
@@ -222,6 +223,7 @@ namespace Game.Server.Engine.Mia
                             SendServerMessage(serverMove);
 
                             currentDice.Shake();
+                            lastAnnouncedDice = announcedDice;
                             currentTurn.AddRollCount();
 
                             if (currentTurn.RollCount == 1)
@@ -263,7 +265,7 @@ namespace Game.Server.Engine.Mia
                         break;
 
                     case ClientMoveCode.SEE:
-                        if (playerMove.Player.Name == playerList.Current().Name)
+                        if (playerMove.Player.Name == playerList.Current().Name && currentTurn.RollCount == 0)
                         {
                             if (announcedDice == null)
                             {
@@ -317,7 +319,10 @@ namespace Game.Server.Engine.Mia
                         // BUG: announcing lower dices as announced before should cause player lost event
                         // TODO: anouncing dice numbers in wrong order should send player lost event
                         announcedDice = currentDice.Parse(playerMove.Value);
-                        if (playerMove.Player.Name == playerList.Current().Name && currentTurn.RollCount <= 2 && announcedDice != null && announcedDice.IsValid)
+                        if (playerMove.Player.Name == playerList.Current().Name && 
+                            currentTurn.RollCount <= 1 && 
+                            announcedDice != null && 
+                            announcedDice.IsValid)
                         {
                             if (announcedDice.IsMia)
                             {
@@ -346,7 +351,12 @@ namespace Game.Server.Engine.Mia
                                     GameOver();
                                 }
                             }
-                            else if (announcedDice.IsHigherThan(currentDice))
+                            else if (TurnCount == 1)
+                            {
+                                var nextPlayer = playerList.Next();
+                                SendYourTurn(nextPlayer);
+                            }
+                            else if (announcedDice.IsHigherThan(lastAnnouncedDice))
                             {
                                 string broadcastValue = $"{playerMove.Player.Name};{announcedDice}";
                                 serverMove = new ServerMove(ServerMoveCode.ANNOUNCED, broadcastValue, ServerFailureReasonCode.None, playerList.RegisteredPlayers.ToArray(), this.token);
@@ -360,8 +370,15 @@ namespace Game.Server.Engine.Mia
                             {
                                 SendPlayerLost(playerMove.Player, ServerFailureReasonCode.ANNOUNCED_LOSING_DICE);
 
-                                var nextPlayer = playerList.Next();
-                                SendYourTurn(nextPlayer);
+                                if (playerList.ActivePlayers.Count > 1)
+                                {
+                                    var nextPlayer = playerList.Next();
+                                    SendYourTurn(nextPlayer);
+                                }
+                                else
+                                {
+                                    gameOverCompletion?.TrySetResult(true);
+                                }
                             }
                         }
                         else
