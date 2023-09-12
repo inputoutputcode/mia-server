@@ -213,7 +213,7 @@ namespace Game.Server.Engine.Mia
 
                 case ClientMoveCode.ROLL:
                     // BUG: currentPlayerIndex not set correctly, causing player lost events
-                    if (playerMove.Player.Name == playerList.Current().Name && currentTurn.RollCount <= 2)
+                    if (playerMove.Player.Name == playerList.Current().Name && currentTurn.RollCount < 2)
                     {
                         serverMove = new ServerMove(ServerMoveCode.PLAYER_ROLLS, playerMove.Player.Name, ServerFailureReasonCode.None, playerList.RegisteredPlayers.ToArray(), this.token);
                         eventHistory.Add(serverMove);

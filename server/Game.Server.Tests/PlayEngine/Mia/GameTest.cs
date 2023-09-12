@@ -446,14 +446,59 @@ namespace Game.Server.Test.PlayEngine.Mia
         }
 
         [Fact]
-        public void Invalid_Turn_Player_Sends_Third_Roll()
+        public async void Invalid_Turn_Player_Sends_Third_Roll()
         {
             // Arrange
+            var gameManager = new Mock<IGameManager>();
+            var dice = new Mock<Dice>() { CallBase = true };
+            var game = new Mock<Engine.Mia.Game>(1, ScoreMode.Points, gameManager.Object, dice.Object, true) { CallBase = true };
+            dice.SetupProperty(d => d.DiceOne);
+            dice.SetupProperty(d => d.DiceTwo);
+            dice.Setup(d => d.Shake()).Callback(() =>
+            {
+                switch (game.Object.TurnCount)
+                {
+                    case 1:
+                        if (game.Object.CurrentTurn.RollCount == 0)
+                        {
+                            dice.Object.DiceOne = 3;
+                            dice.Object.DiceTwo = 1;
+                        }
+                        break;
+                }
+            });
+
+            var player1 = new Player("Player1", false);
+            game.Object.Register(player1);
+            var player2 = new Player("Player2", false);
+            game.Object.Register(player2);
+
+            game.Setup(m => m.SendServerMessage(It.IsAny<IServerMove>()))
+                .Callback(new InvocationAction(invocation =>
+                {
+                    var serverMove = (ServerMove)invocation.Arguments[0];
+                    if (ServerMoveCode.ROUND_STARTING == serverMove.Code)
+                    {
+                        game.Object.ReceiveClientEvent(ClientMoveCode.JOIN_ROUND.ToString(), string.Empty, player1, game.Object.Token);
+                        game.Object.ReceiveClientEvent(ClientMoveCode.JOIN_ROUND.ToString(), string.Empty, player2, game.Object.Token);
+                    }
+                    else if (ServerMoveCode.YOUR_TURN == serverMove.Code && game.Object.Players[0].Name == serverMove.Players[0].Name)
+                    {
+                        game.Object.ReceiveClientEvent(ClientMoveCode.ROLL.ToString(), string.Empty, game.Object.CurrentTurn.Player, game.Object.Token);
+                    }
+                    else if (ServerMoveCode.ROLLED == serverMove.Code)
+                    {
+                        game.Object.ReceiveClientEvent(ClientMoveCode.ROLL.ToString(), "32", game.Object.CurrentTurn.Player, game.Object.Token);
+                    }
+                }
+            ));
 
             // Act
+            await game.Object.StartAsync();
 
             // Assert
-            Assert.True(false);
+            game.Verify(m => m.SendServerMessage(It.Is<IServerMove>(x => x.FailureReasonCode == ServerFailureReasonCode.INVALID_TURN)));
+            game.Verify(m => m.SendServerMessage(It.Is<IServerMove>(x => x.Code == ServerMoveCode.PLAYER_LOST)));
         }
 
         [Fact]
