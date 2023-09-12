@@ -274,14 +274,40 @@ namespace Game.Server.Test.PlayEngine.Mia
         }
 
         [Fact]
-        public void See_As_First_Player_Results_In_Player_Lost()
+        public async void See_As_First_Player_Results_In_Player_Lost()
         {
             // Arrange
+            var gameManager = new Mock<IGameManager>();
+            var dice = new Mock<Dice>() { CallBase = true };
+            var game = new Mock<Engine.Mia.Game>(1, ScoreMode.Points, gameManager.Object, dice.Object, true) { CallBase = true };
+            
+            var player1 = new Player("Player1", false);
+            game.Object.Register(player1);
+            var player2 = new Player("Player2", false);
+            game.Object.Register(player2);
+
+            game.Setup(m => m.SendServerMessage(It.IsAny<IServerMove>()))
+                .Callback(new InvocationAction(invocation =>
+                {
+                    var serverMove = (ServerMove)invocation.Arguments[0];
+                    if (ServerMoveCode.ROUND_STARTING == serverMove.Code)
+                    {
+                        game.Object.ReceiveClientEvent(ClientMoveCode.JOIN_ROUND.ToString(), string.Empty, player1, game.Object.Token);
+                        game.Object.ReceiveClientEvent(ClientMoveCode.JOIN_ROUND.ToString(), string.Empty, player2, game.Object.Token);
+                    }
+                    else if (ServerMoveCode.YOUR_TURN == serverMove.Code && game.Object.Players[0].Name == serverMove.Players[0].Name)
+                    {
+                        game.Object.ReceiveClientEvent(ClientMoveCode.SEE.ToString(), string.Empty, game.Object.CurrentTurn.Player, game.Object.Token);
+                    }
+                }
+            ));
 
             // Act
+            await game.Object.StartAsync();
 
             // Assert
-            Assert.True(false);
+            game.Verify(m => m.SendServerMessage(It.Is<IServerMove>(x => x.FailureReasonCode == ServerFailureReasonCode.SEE_BEFORE_FIRST_ROLL)));
+            game.Verify(m => m.SendServerMessage(It.Is<IServerMove>(x => x.Code == ServerMoveCode.PLAYER_LOST)));
         }
 
         [Fact]
