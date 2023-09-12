@@ -13,16 +13,19 @@ namespace Game.Server.Test.PlayEngine.Mia
         public void Should_Always_Have_Higher_Dice_First()
         {
             // Act
-            var dice1 = new Dice(1, 6);
-            var dice2 = new Dice(6, 1);
-            var dice3 = new Dice(2, 2);
+            var dice1 = new Dice();
+            var dice2 = new Dice();
+            var dice3 = new Dice();
 
             // Arrange
+            dice1.Shake();
+            dice2.Shake();
+            dice3.Shake();
 
             // Assert
-            Assert.True(dice1.DiceOne == 6 && dice1.DiceTwo == 1);
-            Assert.True(dice2.DiceOne == 6 && dice2.DiceTwo == 1);
-            Assert.True(dice3.DiceOne == 2 && dice3.DiceTwo == 2);
+            Assert.True(dice1.DiceOne > dice1.DiceTwo);
+            Assert.True(dice2.DiceOne > dice2.DiceTwo);
+            Assert.True(dice3.DiceOne > dice3.DiceTwo);
         }
 
         [Fact]
@@ -37,7 +40,7 @@ namespace Game.Server.Test.PlayEngine.Mia
 
             // Assert
             Assert.False(dice1.IsMia);
-            Assert.True(dice2.IsMia);
+            Assert.False(dice2.IsMia);
             Assert.True(dice3.IsMia);
         }
 

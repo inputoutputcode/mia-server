@@ -17,8 +17,6 @@ namespace Game.Server.Engine.Mia.Interface
 
         int GameNumber { get; }
 
-        void CreateSimulation(IPlayerList players, ITurn turn, IDice dice);
-
         bool Register(IPlayer player);
 
         Task StartAsync();

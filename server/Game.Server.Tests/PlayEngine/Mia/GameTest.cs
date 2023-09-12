@@ -19,11 +19,8 @@ namespace Game.Server.Test.PlayEngine.Mia
         {
             // Arrange
             var gameManager = new Mock<IGameManager>(MockBehavior.Strict);
-            gameManager.Setup(m => m.SendEvent(It.IsAny<string>(), It.IsAny<IPlayer[]>()));
-
-
-            int rounds = 1;
-            var game = new Mock<Engine.Mia.Game>(rounds, ScoreMode.Points, gameManager.Object, true) { CallBase = true };
+            var dice = new Mock<Dice>() { CallBase = true };
+            var game = new Mock<Engine.Mia.Game>(1, ScoreMode.Points, gameManager.Object, dice.Object) { CallBase = true };
             game.Setup(m => m.SendServerMessage(It.IsAny<IServerMove>()));
 
             // Act
@@ -38,11 +35,8 @@ namespace Game.Server.Test.PlayEngine.Mia
         {
             // Arrange
             var gameManager = new Mock<IGameManager>(MockBehavior.Strict);
-            gameManager.Setup(m => m.ReceiveEvent(It.IsAny<IClientEvent>()));
-            gameManager.Setup(m => m.SendEvent(It.IsAny<string>(), It.IsAny<IPlayer[]>()));
-
-            int rounds = 1;
-            var game = new Mock<Engine.Mia.Game>(rounds, ScoreMode.Points, gameManager.Object, true) { CallBase = true };
+            var dice = new Mock<Dice>() { CallBase = true };
+            var game = new Mock<Engine.Mia.Game>(1, ScoreMode.Points, gameManager.Object, dice.Object) { CallBase = true };
             game.Setup(m => m.SendServerMessage(It.IsAny<IServerMove>()));
 
             var player1 = new Player("Player1", true);
@@ -62,11 +56,8 @@ namespace Game.Server.Test.PlayEngine.Mia
         {
             // Arrange
             var gameManager = new Mock<IGameManager>(MockBehavior.Strict);
-            gameManager.Setup(m => m.ReceiveEvent(It.IsAny<IClientEvent>()));
-            gameManager.Setup(m => m.SendEvent(It.IsAny<string>(), It.IsAny<IPlayer[]>()));
-
-            int rounds = 1;
-            var game = new Mock<Engine.Mia.Game>(rounds, ScoreMode.Points, gameManager.Object, true) { CallBase = true };
+            var dice = new Mock<Dice>() { CallBase = true };
+            var game = new Mock<Engine.Mia.Game>(1, ScoreMode.Points, gameManager.Object, dice.Object) { CallBase = true };
             game.Setup(m => m.SendServerMessage(It.IsAny<IServerMove>()));
 
             var player1 = new Player("Player1", false);
@@ -88,11 +79,9 @@ namespace Game.Server.Test.PlayEngine.Mia
         {
             // Arrange
             var gameManager = new Mock<IGameManager>();
-            gameManager.Setup(m => m.SendEvent(It.IsAny<string>(), It.IsAny<IPlayer[]>()));
-            gameManager.Setup(m => m.ReceiveEvent(It.IsAny<IClientEvent>()));
+            var dice = new Mock<Dice>() { CallBase = true };
 
-            int rounds = 1;
-            var game = new Mock<Engine.Mia.Game>(rounds, ScoreMode.Points, gameManager.Object, true) { CallBase = true };
+            var game = new Mock<Engine.Mia.Game>(1, ScoreMode.Points, gameManager.Object, dice.Object) { CallBase = true };
             game.Setup(m => m.SendServerMessage(It.IsAny<IServerMove>()));
 
             var player1 = new Player("Player1", false);
@@ -115,7 +104,7 @@ namespace Game.Server.Test.PlayEngine.Mia
             // Arrange
             var gameManager = new Mock<IGameManager>();
             var dice = new Mock<Dice>() { CallBase = true };
-            var game = new Mock<Engine.Mia.Game>(1, ScoreMode.Points, gameManager.Object, dice.Object, true) { CallBase = true };
+            var game = new Mock<Engine.Mia.Game>(1, ScoreMode.Points, gameManager.Object, dice.Object) { CallBase = true };
             dice.SetupProperty(d => d.DiceOne);
             dice.SetupProperty(d => d.DiceTwo);
             dice.Setup(d => d.Shake()).Callback(() =>
@@ -174,7 +163,7 @@ namespace Game.Server.Test.PlayEngine.Mia
             // Arrange
             var gameManager = new Mock<IGameManager>();
             var dice = new Mock<Dice>() { CallBase = true };
-            var game = new Mock<Engine.Mia.Game>(1, ScoreMode.Points, gameManager.Object, dice.Object, true) { CallBase = true };
+            var game = new Mock<Engine.Mia.Game>(1, ScoreMode.Points, gameManager.Object, dice.Object) { CallBase = true };
             dice.SetupProperty(d => d.DiceOne);
             dice.SetupProperty(d => d.DiceTwo);
             dice.Setup(d => d.Shake()).Callback(() =>
@@ -234,7 +223,7 @@ namespace Game.Server.Test.PlayEngine.Mia
             // Arrange
             var gameManager = new Mock<IGameManager>();
             var dice = new Mock<Dice>() { CallBase = true };
-            var game = new Mock<Engine.Mia.Game>(1, ScoreMode.Points, gameManager.Object, dice.Object, true) { CallBase = true };
+            var game = new Mock<Engine.Mia.Game>(1, ScoreMode.Points, gameManager.Object, dice.Object) { CallBase = true };
             dice.SetupProperty(d => d.DiceOne);
             dice.SetupProperty(d => d.DiceTwo);
             dice.Setup(d => d.Shake()).Callback(() =>
@@ -279,7 +268,7 @@ namespace Game.Server.Test.PlayEngine.Mia
             // Arrange
             var gameManager = new Mock<IGameManager>();
             var dice = new Mock<Dice>() { CallBase = true };
-            var game = new Mock<Engine.Mia.Game>(1, ScoreMode.Points, gameManager.Object, dice.Object, true) { CallBase = true };
+            var game = new Mock<Engine.Mia.Game>(1, ScoreMode.Points, gameManager.Object, dice.Object) { CallBase = true };
             dice.SetupProperty(d => d.DiceOne);
             dice.SetupProperty(d => d.DiceTwo);
             dice.Setup(d => d.Shake()).Callback(() =>
@@ -335,7 +324,7 @@ namespace Game.Server.Test.PlayEngine.Mia
             // Arrange
             var gameManager = new Mock<IGameManager>();
             var dice = new Mock<Dice>() { CallBase = true };
-            var game = new Mock<Engine.Mia.Game>(1, ScoreMode.Points, gameManager.Object, dice.Object, true) { CallBase = true };
+            var game = new Mock<Engine.Mia.Game>(1, ScoreMode.Points, gameManager.Object, dice.Object) { CallBase = true };
 
             var player1 = new Player("Player1");
             game.Object.Register(player1);
@@ -375,7 +364,7 @@ namespace Game.Server.Test.PlayEngine.Mia
             // Arrange
             var gameManager = new Mock<IGameManager>();
             var dice = new Mock<Dice>() { CallBase = true };
-            var game = new Mock<Engine.Mia.Game>(1, ScoreMode.Points, gameManager.Object, dice.Object, true) { CallBase = true };
+            var game = new Mock<Engine.Mia.Game>(1, ScoreMode.Points, gameManager.Object, dice.Object) { CallBase = true };
             dice.SetupProperty(d => d.DiceOne);
             dice.SetupProperty(d => d.DiceTwo);
             dice.Setup(d => d.Shake()).Callback(() =>
@@ -431,7 +420,7 @@ namespace Game.Server.Test.PlayEngine.Mia
             // Arrange
             var gameManager = new Mock<IGameManager>();
             var dice = new Mock<Dice>() { CallBase = true };
-            var game = new Mock<Engine.Mia.Game>(1, ScoreMode.Points, gameManager.Object, dice.Object, true) { CallBase = true };
+            var game = new Mock<Engine.Mia.Game>(1, ScoreMode.Points, gameManager.Object, dice.Object) { CallBase = true };
             dice.SetupProperty(d => d.DiceOne);
             dice.SetupProperty(d => d.DiceTwo);
             dice.Setup(d => d.Shake()).Callback(() =>
@@ -487,7 +476,7 @@ namespace Game.Server.Test.PlayEngine.Mia
             // Arrange
             var gameManager = new Mock<IGameManager>();
             var dice = new Mock<Dice>() { CallBase = true };
-            var game = new Mock<Engine.Mia.Game>(1, ScoreMode.Points, gameManager.Object, dice.Object, true) { CallBase = true };
+            var game = new Mock<Engine.Mia.Game>(1, ScoreMode.Points, gameManager.Object, dice.Object) { CallBase = true };
             dice.SetupProperty(d => d.DiceOne);
             dice.SetupProperty(d => d.DiceTwo);
             dice.Setup(d => d.Shake()).Callback(() =>
@@ -543,7 +532,7 @@ namespace Game.Server.Test.PlayEngine.Mia
             // Arrange
             var gameManager = new Mock<IGameManager>();
             var dice = new Mock<Dice>() { CallBase = true };
-            var game = new Mock<Engine.Mia.Game>(1, ScoreMode.Points, gameManager.Object, dice.Object, true) { CallBase = true };
+            var game = new Mock<Engine.Mia.Game>(1, ScoreMode.Points, gameManager.Object, dice.Object) { CallBase = true };
             dice.SetupProperty(d => d.DiceOne);
             dice.SetupProperty(d => d.DiceTwo);
             dice.Setup(d => d.Shake()).Callback(() =>
@@ -596,7 +585,7 @@ namespace Game.Server.Test.PlayEngine.Mia
             // Arrange
             var gameManager = new Mock<IGameManager>();
             var dice = new Mock<Dice>() { CallBase = true };
-            var game = new Mock<Engine.Mia.Game>(1, ScoreMode.Points, gameManager.Object, dice.Object, true) { CallBase = true };
+            var game = new Mock<Engine.Mia.Game>(1, ScoreMode.Points, gameManager.Object, dice.Object) { CallBase = true };
             dice.SetupProperty(d => d.DiceOne);
             dice.SetupProperty(d => d.DiceTwo);
             dice.Setup(d => d.Shake()).Callback(() =>
@@ -664,7 +653,7 @@ namespace Game.Server.Test.PlayEngine.Mia
             // Arrange
             var gameManager = new Mock<IGameManager>();
             var dice = new Mock<Dice>() { CallBase = true };
-            var game = new Mock<Engine.Mia.Game>(1, ScoreMode.Points, gameManager.Object, dice.Object, true) { CallBase = true };
+            var game = new Mock<Engine.Mia.Game>(1, ScoreMode.Points, gameManager.Object, dice.Object) { CallBase = true };
 
             var player1 = new Player("Player1", false);
             game.Object.Register(player1);
@@ -701,7 +690,7 @@ namespace Game.Server.Test.PlayEngine.Mia
             // Arrange
             var gameManager = new Mock<IGameManager>();
             var dice = new Mock<Dice>() { CallBase = true };
-            var game = new Mock<Engine.Mia.Game>(1, ScoreMode.Points, gameManager.Object, dice.Object, true) { CallBase = true };
+            var game = new Mock<Engine.Mia.Game>(1, ScoreMode.Points, gameManager.Object, dice.Object) { CallBase = true };
             dice.SetupProperty(d => d.DiceOne);
             dice.SetupProperty(d => d.DiceTwo);
             dice.Setup(d => d.Shake()).Callback(() =>

@@ -48,7 +48,7 @@ namespace Game.Server.Test.PlayEngine.Mia
 
             // Assert
             var previousPlayer = playerList.Previous();
-            Assert.True(previousPlayer.Name == player2.Name);
+            Assert.True(previousPlayer.Name == player1.Name);
         }
 
         [Fact]

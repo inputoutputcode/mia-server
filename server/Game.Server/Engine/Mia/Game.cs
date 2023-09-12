@@ -26,7 +26,6 @@ namespace Game.Server.Engine.Mia
         private IDice lastAnnouncedDice;
         private ITurn currentTurn;
         private Guid token;
-        private bool isSimulation;
         private IGameManager gameManager;
         private GamePhase gamePhase;
         private TaskCompletionSource<bool> gameOverCompletion = null;
@@ -59,11 +58,6 @@ namespace Game.Server.Engine.Mia
             get { return token; }
         }
 
-        public bool IsSimulation
-        {
-            get { return isSimulation; }
-        }
-
         public int GameNumber
         {
             get { return gameNumber; }
@@ -74,7 +68,7 @@ namespace Game.Server.Engine.Mia
 
         #region Constructor
 
-        public Game(int gameNumber, ScoreMode scoreMode, IGameManager gameManager, IDice dice = null, bool isSimulation = false)
+        public Game(int gameNumber, ScoreMode scoreMode, IGameManager gameManager, IDice dice = null)
         {
             this.gameNumber = gameNumber;
             gameScorer = GameScoreFactory.Create(scoreMode);
@@ -87,12 +81,6 @@ namespace Game.Server.Engine.Mia
 
         #endregion
 
-        public void CreateSimulation(IPlayerList players, ITurn turn, IDice dice)
-        {
-            playerList = players;
-            currentTurn = turn;
-            currentDice = dice;
-        }
 
         #region Methods
 
@@ -180,12 +168,12 @@ namespace Game.Server.Engine.Mia
             string flexibleValuePart = string.Empty;
 
             if (!string.IsNullOrEmpty(serverMove.Value))
-                flexibleValuePart += $"{serverMove.Value}";
+                flexibleValuePart += $"{serverMove.Value};";
 
             if (serverMove.FailureReasonCode != ServerFailureReasonCode.None)
-                flexibleValuePart += $";{serverMove.FailureReasonCode}";
+                flexibleValuePart += $"{serverMove.FailureReasonCode};";
 
-            string eventMessage = $"{serverMove.Code};{flexibleValuePart};{serverMove.Token}";
+            string eventMessage = $"{serverMove.Code};{flexibleValuePart}{serverMove.Token}";
 
             gameManager.SendEvent(eventMessage, serverMove.Players);
         }
@@ -301,9 +289,9 @@ namespace Game.Server.Engine.Mia
                                 gameScorer.Winner(winnerPlayer);
 
                                 serverMove = new ServerMove(ServerMoveCode.PLAYER_LOST, looserPlayer.Name, reasonCode, playerList.RegisteredPlayers.ToArray(), this.token);
+                                Log.Write($"Send PLAYER_LOST for '{looserPlayer.Name}'");
                                 eventHistory.Add(serverMove);
                                 SendServerMessage(serverMove);
-                                Log.Write($"Send PLAYER_LOST for '{looserPlayer.Name}'");
 
                                 GameOver();
                             }
@@ -411,7 +399,7 @@ namespace Game.Server.Engine.Mia
         {
             int turnTimeOut = Config.Config.Settings.TurnTimeOut;
 #if DEBUG
-            turnTimeOut = 1000;
+            turnTimeOut = 2000;
 #endif
             await Task.Delay(turnTimeOut);
 
@@ -448,9 +436,9 @@ namespace Game.Server.Engine.Mia
             player.Kick();
 
             var serverMove = new ServerMove(ServerMoveCode.PLAYER_LOST, player.Name, reasonCode, playerList.RegisteredPlayers.ToArray(), token);
+            Log.Write($"Send PLAYER_LOST for '{player.Name}'");
             eventHistory.Add(serverMove);
             SendServerMessage(serverMove);
-            Log.Write($"Send PLAYER_LOST for '{player.Name}'");
 
             if (playerList.ActivePlayers.Count < Config.Config.Settings.MinimumPlayerCount)
             {
