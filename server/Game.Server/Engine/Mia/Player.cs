@@ -36,7 +36,7 @@ namespace Game.Server.Engine.Mia
 
         #region Constructor
 
-        public Player(string name, bool isSpectator, int score = 0)
+        public Player(string name, bool isSpectator = false, int score = 0)
         {
             this.name = name;
             currentState = isSpectator ? PlayerState.Spectator : PlayerState.Inactive;

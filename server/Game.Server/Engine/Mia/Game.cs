@@ -179,12 +179,12 @@ namespace Game.Server.Engine.Mia
             string flexibleValuePart = string.Empty;
 
             if (!string.IsNullOrEmpty(serverMove.Value))
-                flexibleValuePart += $"{serverMove.Value};";
+                flexibleValuePart += $"{serverMove.Value}";
 
             if (serverMove.FailureReasonCode != ServerFailureReasonCode.None)
-                flexibleValuePart += $"{serverMove.FailureReasonCode};";
+                flexibleValuePart += $";{serverMove.FailureReasonCode}";
 
-            string eventMessage = $"{serverMove.Code};{flexibleValuePart}{serverMove.Token}";
+            string eventMessage = $"{serverMove.Code};{flexibleValuePart};{serverMove.Token}";
 
             gameManager.SendEvent(eventMessage, serverMove.Players);
         }
@@ -283,14 +283,14 @@ namespace Game.Server.Engine.Mia
 
                             if (announcedDice.IsHigherThan(currentDice))
                             {
-                                looserPlayer = playerMove.Player;
-                                winnerPlayer = playerList.Previous();
-                            }
-                            else
-                            {
                                 looserPlayer = playerList.Previous();
                                 winnerPlayer = playerMove.Player;
                                 reasonCode = ServerFailureReasonCode.CAUGHT_BLUFFING;
+                            }
+                            else
+                            {
+                                looserPlayer = playerMove.Player;
+                                winnerPlayer = playerList.Previous();
                             }
 
                             gameScorer.Lost(looserPlayer);

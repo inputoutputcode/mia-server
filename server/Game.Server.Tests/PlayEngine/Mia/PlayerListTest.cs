@@ -10,7 +10,6 @@ namespace Game.Server.Test.PlayEngine.Mia
         public void Spectators_Should_Not_Be_Active_Players()
         {
             // Arrange
-            // Arrange
             var playerList = new Engine.Mia.PlayerList();
             var player1 = new Engine.Mia.Player("Player1", true);
             playerList.Register(player1);
@@ -28,6 +27,28 @@ namespace Game.Server.Test.PlayEngine.Mia
 
             // Assert
             Assert.True(playerList.ActivePlayers.Count == 2);
+        }
+
+        [Fact]
+        public void Pick_Previous_Player_After_First_Round_With_2_Active_Players()
+        {
+            // Arrange
+            var playerList = new Engine.Mia.PlayerList();
+            var player1 = new Engine.Mia.Player("Player1");
+            playerList.Register(player1);
+            playerList.Join(player1);
+
+            var player2 = new Engine.Mia.Player("Player2");
+            playerList.Register(player2);
+            playerList.Join(player2);
+
+            // Act
+            playerList.First();
+            playerList.Next();
+
+            // Assert
+            var previousPlayer = playerList.Previous();
+            Assert.True(previousPlayer.Name == player2.Name);
         }
 
         [Fact]

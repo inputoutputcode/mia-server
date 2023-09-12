@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+
 using Game.Server.Engine.Mia.Interface;
+
 
 namespace Game.Server.Engine.Mia
 {
@@ -174,7 +176,7 @@ namespace Game.Server.Engine.Mia
         {
             int lastPlayerIndex;
 
-            if (currentPlayerIndex > 0 && currentPlayerIndex < PlayerCount - 1)
+            if (currentPlayerIndex > 0 && currentPlayerIndex <= PlayerCount - 1)
             {
                 lastPlayerIndex = currentPlayerIndex - 1;
             }

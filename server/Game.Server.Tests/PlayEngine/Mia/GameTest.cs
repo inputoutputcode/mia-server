@@ -116,22 +116,73 @@ namespace Game.Server.Test.PlayEngine.Mia
         }
 
         [Fact]
-        public void See_Should_Raise_Win_For_Current_Player_If_Dice_Lower_On_See()
+        public async void See_Should_Raise_Win_For_Current_Player_If_Dice_Lower_On_See()
         {
-            
-        }
+            // Arrange
+            var gameManager = new Mock<IGameManager>();
+            var dice = new Mock<Dice>() { CallBase = true };
+            var game = new Mock<Engine.Mia.Game>(1, ScoreMode.Points, gameManager.Object, dice.Object, true) { CallBase = true };
+            dice.SetupProperty(d => d.DiceOne);
+            dice.SetupProperty(d => d.DiceTwo);
+            dice.Setup(d => d.Shake()).Callback(() =>
+            {           
+                switch (game.Object.TurnCount)
+                {
+                    case 1:
+                        if (game.Object.CurrentTurn.RollCount == 0)
+                        {
+                            dice.Object.DiceOne = 3;
+                            dice.Object.DiceTwo = 1;
+                        }
+                        break;
+                }
+            });
 
+            var player1 = new Player("Player1", false);
+            game.Object.Register(player1);
+            var player2 = new Player("Player2", false);
+            game.Object.Register(player2);
+
+            game.Setup(m => m.SendServerMessage(It.IsAny<IServerMove>()))
+                .Callback(new InvocationAction(invocation =>
+                {
+                    var serverMove = (ServerMove)invocation.Arguments[0];
+                    if (ServerMoveCode.ROUND_STARTING == serverMove.Code)
+                    {
+                        game.Object.ReceiveClientEvent(ClientMoveCode.JOIN_ROUND.ToString(), string.Empty, player1, game.Object.Token);
+                        game.Object.ReceiveClientEvent(ClientMoveCode.JOIN_ROUND.ToString(), string.Empty, player2, game.Object.Token);
+                    }
+                    else if (ServerMoveCode.YOUR_TURN == serverMove.Code && game.Object.Players[0].Name == serverMove.Players[0].Name)
+                    {
+                        game.Object.ReceiveClientEvent(ClientMoveCode.ROLL.ToString(), string.Empty, game.Object.CurrentTurn.Player, game.Object.Token);
+                    }
+                    else if (ServerMoveCode.ROLLED == serverMove.Code)
+                    {
+                        game.Object.ReceiveClientEvent(ClientMoveCode.ANNOUNCE.ToString(), "41", game.Object.CurrentTurn.Player, game.Object.Token);
+                    }
+                    else if (ServerMoveCode.YOUR_TURN == serverMove.Code && game.Object.Players[1].Name == serverMove.Players[0].Name)
+                    {
+                        game.Object.ReceiveClientEvent(ClientMoveCode.SEE.ToString(), string.Empty, game.Object.CurrentTurn.Player, game.Object.Token);
+                    }
+                }
+            ));
+
+            // Act
+            await game.Object.StartAsync();
+
+            // Assert
+            // TODO: verify whole response object with one assert
+            game.Verify(m => m.SendServerMessage(It.Is<IServerMove>(x => x.FailureReasonCode == ServerFailureReasonCode.CAUGHT_BLUFFING)));
+            game.Verify(m => m.SendServerMessage(It.Is<IServerMove>(x => x.Code == ServerMoveCode.PLAYER_LOST)));
+        }
 
         [Fact]
         public async void Server_Should_Raise_Mia_For_Current_Player_If_Dice_Is_Mia_From_First_Roll()
         {
             // Arrange
-            int rounds = 1;
-            //int turnCount = 0;
-
             var gameManager = new Mock<IGameManager>();
             var dice = new Mock<Dice>() { CallBase = true };
-            var game = new Mock<Engine.Mia.Game>(rounds, ScoreMode.Points, gameManager.Object, dice.Object, true) { CallBase = true };
+            var game = new Mock<Engine.Mia.Game>(1, ScoreMode.Points, gameManager.Object, dice.Object, true) { CallBase = true };
             dice.SetupProperty(d => d.DiceOne);
             dice.SetupProperty(d => d.DiceTwo);
             dice.Setup(d => d.Shake()).Callback(() =>
@@ -168,6 +219,17 @@ namespace Game.Server.Test.PlayEngine.Mia
             // TODO: verify whole response object with one assert
             game.Verify(m => m.SendServerMessage(It.Is<IServerMove>(x => x.FailureReasonCode == ServerFailureReasonCode.MIA)));
             game.Verify(m => m.SendServerMessage(It.Is<IServerMove>(x => x.Code == ServerMoveCode.PLAYER_LOST)));
+        }
+
+        [Fact]
+        public void See_As_First_Player_Results_In_Player_Lost()
+        {
+            // Arrange
+
+            // Act
+
+            // Assert
+            Assert.True(false);
         }
 
         [Fact]
