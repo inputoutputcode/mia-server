@@ -79,7 +79,8 @@ namespace Game.Mia.Bot.Advanced.Game
                     break;
             }
 
-            SendEvent(messageResponse, peer);
+            if (!string.IsNullOrEmpty(messageResponse))
+                SendEvent(messageResponse, peer);
         }
     }
 }

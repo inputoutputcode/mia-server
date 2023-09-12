@@ -134,7 +134,7 @@ namespace Game.Server.Engine.Mia
             bool isRegistered = playerList.Register(player);
             isRegistered = playerList.Join(player);
 
-            Log.Write($"Player '{player.Name}' registered for the game.");
+            Log.Write($"Player '{player.Name}' joining the game.");
 
             return isRegistered;
         }
@@ -397,14 +397,23 @@ namespace Game.Server.Engine.Mia
 
         private async void HandleJoinTimeoutAsync()
         {
-            await Task.Delay(Config.Config.Settings.JoinTimeOut);
+            int joinTimeOut = Config.Config.Settings.JoinTimeOut;
+#if DEBUG
+            joinTimeOut = 5000;
+#endif
+
+            await Task.Delay(joinTimeOut);
 
             RoundStarted();
         }
 
         private async void HandleTurnTimeoutAsync(IPlayer player)
         {
-            await Task.Delay(Config.Config.Settings.TurnTimeOut);
+            int turnTimeOut = Config.Config.Settings.TurnTimeOut;
+#if DEBUG
+            turnTimeOut = 1000;
+#endif
+            await Task.Delay(turnTimeOut);
 
             if (player.Name == playerList.Current().Name)
             {

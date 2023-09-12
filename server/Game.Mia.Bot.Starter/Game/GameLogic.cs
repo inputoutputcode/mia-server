@@ -55,7 +55,8 @@ namespace Game.Server.Bot.Starter.Game
                     break;
             }
 
-            SendEvent(messageResponse, peer);
+            if (!string.IsNullOrEmpty(messageResponse))
+                SendEvent(messageResponse, peer);
         }
     }
 }

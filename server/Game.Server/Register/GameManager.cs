@@ -61,7 +61,7 @@ namespace Game.Server.Register
             serverInstance.CreateServer(serverPort);
 
             // Wait to let clients register to game server
-            Task.Delay(100);
+            Task.Delay(Config.Config.Settings.InitializeDelayTime);
 
             var scoreMode = ScoreMode.Points;
             Enum.TryParse(Config.Config.Settings.ScoreMode, out scoreMode);

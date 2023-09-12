@@ -16,6 +16,8 @@
 
         public int TurnTimeOut { get; set; }
 
+        public int InitializeDelayTime { get; set; }
+
         public string ConnectionKey { get; set; }
         
         public bool LogFileCreation { get; set; }

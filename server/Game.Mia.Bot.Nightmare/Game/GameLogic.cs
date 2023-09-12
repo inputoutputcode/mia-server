@@ -139,7 +139,8 @@ namespace Game.Mia.Bot.Nightmare.Game
                     break;
             }
 
-            SendEvent(messageResponse, peer);
+            if (!string.IsNullOrEmpty(messageResponse))
+                SendEvent(messageResponse, peer);
         }
     }
 }
