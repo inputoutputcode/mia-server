@@ -1,7 +1,5 @@
 # Server protocol
 
-![Game Start Procedure](./images/GameStartProcedure.png)
-
 ## Preliminaries
 1. Client and server communicate via UDP (using UTF-8 encoded strings)
 1. Server opens a known port
@@ -81,3 +79,5 @@ At the end of each game:
 1. MIA: Mia was announced
 
 Have fun!
+
+![Game Start Procedure](./images/GameStartProcedure.png)
