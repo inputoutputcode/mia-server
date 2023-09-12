@@ -754,6 +754,17 @@ namespace Game.Server.Test.PlayEngine.Mia
         }
 
         [Fact]
+        public void Only_One_Turn_After_Kicking_One_Player_Out_Of_Three()
+        {
+            // Arrange
+
+            // Act
+
+            // Assert
+            Assert.True(false);
+        }
+
+        [Fact]
         public void Unregistered_Player_Sends_Command_Will_Be_Ignored()
         {
             // Arrange

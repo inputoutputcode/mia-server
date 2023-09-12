@@ -186,6 +186,8 @@ namespace Game.Server.Engine.Mia
             var playerMove = new ClientMove(moveCode, eventValue, player, token);
             eventHistory.Add(playerMove);
 
+            // TODO: Validate token, consider implementing turn token
+
             if (player.CurrentState != PlayerState.Spectator)
             {
                 switch (playerMove.Code)
@@ -415,9 +417,9 @@ namespace Game.Server.Engine.Mia
 
             var singlePlayerList = new IPlayer[] { player };
             var serverMove = new ServerMove(ServerMoveCode.YOUR_TURN, string.Empty, ServerFailureReasonCode.None, singlePlayerList, token);
+            Log.Write($"Send YOUR_TURN to '{player.Name}'");
             eventHistory.Add(serverMove);
             SendServerMessage(serverMove);
-            Log.Write($"Send YOUR_TURN to '{player.Name}'");
 
             // TODO: Send data to spectators
 

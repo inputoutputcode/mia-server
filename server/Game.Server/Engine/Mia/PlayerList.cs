@@ -196,7 +196,7 @@ namespace Game.Server.Engine.Mia
         {
             IPlayer nextPlayer = null;
 
-            if (currentPlayerIndex >= 0 && currentPlayerIndex < PlayerCount - 1)
+            if (currentPlayerIndex >= 0 && currentPlayerIndex < ActivePlayers.Count - 1)
             {
                 currentPlayerIndex++;
             }
