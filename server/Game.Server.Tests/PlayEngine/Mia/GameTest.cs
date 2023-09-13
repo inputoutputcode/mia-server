@@ -765,6 +765,28 @@ namespace Game.Server.Test.PlayEngine.Mia
         }
 
         [Fact]
+        public void Passing_Value_Without_Roll_Keeps_Last_Rolled_Dice()
+        {
+            // Arrange
+
+            // Act
+
+            // Assert
+            Assert.True(false);
+        }
+
+        [Fact]
+        public void See_For_Announced_Mia_Cost_Twice_As_No_See()
+        {
+            // Arrange
+
+            // Act
+
+            // Assert
+            Assert.True(false);
+        }
+
+        [Fact]
         public void Unregistered_Player_Sends_Command_Will_Be_Ignored()
         {
             // Arrange
