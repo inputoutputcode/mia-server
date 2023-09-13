@@ -787,6 +787,17 @@ namespace Game.Server.Test.PlayEngine.Mia
         }
 
         [Fact]
+        public void Make_Sure_That_Shuffling_The_Player_List_Is_Reflected_In_Server_To_Client_Events()
+        {
+            // Arrange
+
+            // Act
+
+            // Assert
+            Assert.True(false);
+        }
+
+        [Fact]
         public void Unregistered_Player_Sends_Command_Will_Be_Ignored()
         {
             // Arrange
