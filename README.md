@@ -13,7 +13,7 @@ With the game server, small teams develop bots to compete. The people watch how 
 
 ### Game Mode
 
-One option is to run the server every 30 minutes for 2 minutes. Another is to run it continuously, where every team restarts the process for a new implementation and has to make sure that their process is not crashing. Running the server on Service Fabric allows to use continuous integration in Azure DevOps with the bots running as guest executable. 
+One option is to run the server every 30 minutes for 5 minutes. Another is to run it continuously, where every team restarts the process for a new implementation and has to make sure that their process is not crashing. Running the server on Service Fabric allows to use continuous integration in Azure DevOps with the bots running as guest executable or from local developer machine against cluster in Azure.
 
 As a minimum, 1200 moves per minute* are expected, which makes 100 game results per minute.
 
