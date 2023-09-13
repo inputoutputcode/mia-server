@@ -290,8 +290,8 @@ namespace Game.Server.Engine.Mia
                                 gameScorer.Lost(looserPlayer);
                                 gameScorer.Winner(winnerPlayer);
 
-                                serverMove = new ServerMove(ServerMoveCode.PLAYER_LOST, looserPlayer.Name, reasonCode, playerList.RegisteredPlayers.ToArray(), this.token);
-                                Log.Write($"Send PLAYER_LOST for '{looserPlayer.Name}'");
+                                Log.Write($"Send PLAYER_LOST for '{looserPlayer.Name}' (Reason: {reasonCode})");
+                                serverMove = new ServerMove(ServerMoveCode.PLAYER_LOST, looserPlayer.Name + ":8", reasonCode, playerList.RegisteredPlayers.ToArray(), this.token);
                                 eventHistory.Add(serverMove);
                                 SendServerMessage(serverMove);
 
@@ -319,7 +319,10 @@ namespace Game.Server.Engine.Mia
                                 if (currentDice.IsMia)
                                 {
                                     var loosingPlayer = playerList.Previous();
-                                    serverMove = new ServerMove(ServerMoveCode.PLAYER_LOST, loosingPlayer.Name, ServerFailureReasonCode.MIA, playerList.RegisteredPlayers.ToArray(), this.token);
+
+                                    var failureReasonCode = ServerFailureReasonCode.MIA;
+                                    Log.Write($"Send PLAYER_LOST for '{loosingPlayer.Name}' (Reason: {failureReasonCode})");
+                                    serverMove = new ServerMove(ServerMoveCode.PLAYER_LOST, loosingPlayer.Name + ":9", failureReasonCode, playerList.RegisteredPlayers.ToArray(), this.token);
                                     eventHistory.Add(serverMove);
                                     SendServerMessage(serverMove);
 
@@ -331,7 +334,10 @@ namespace Game.Server.Engine.Mia
                                 else
                                 {
                                     var nextPlayer = playerList.Next();
-                                    serverMove = new ServerMove(ServerMoveCode.PLAYER_LOST, playerMove.Player.Name, ServerFailureReasonCode.LIED_ABOUT_MIA, playerList.RegisteredPlayers.ToArray(), this.token);
+
+                                    var failureReasonCode = ServerFailureReasonCode.LIED_ABOUT_MIA;
+                                    Log.Write($"Send PLAYER_LOST for '{playerMove.Player.Name}' (Reason: {failureReasonCode})");
+                                    serverMove = new ServerMove(ServerMoveCode.PLAYER_LOST, playerMove.Player.Name + ":10", failureReasonCode, playerList.RegisteredPlayers.ToArray(), this.token);
                                     eventHistory.Add(serverMove);
                                     SendServerMessage(serverMove);
 
@@ -359,16 +365,6 @@ namespace Game.Server.Engine.Mia
                             else
                             {
                                 SendPlayerLost(playerMove.Player, ServerFailureReasonCode.ANNOUNCED_LOSING_DICE);
-
-                                if (playerList.ActivePlayers.Count > 1)
-                                {
-                                    var nextPlayer = playerList.Next();
-                                    SendYourTurn(nextPlayer);
-                                }
-                                else
-                                {
-                                    gameOverCompletion?.TrySetResult(true);
-                                }
                             }
                         }
                         else
@@ -389,7 +385,7 @@ namespace Game.Server.Engine.Mia
         {
             int joinTimeOut = Config.Config.Settings.JoinTimeOut;
 #if DEBUG
-            joinTimeOut = 5000;
+            joinTimeOut = 1000;
 #endif
 
             await Task.Delay(joinTimeOut);
@@ -401,7 +397,7 @@ namespace Game.Server.Engine.Mia
         {
             int turnTimeOut = Config.Config.Settings.TurnTimeOut;
 #if DEBUG
-            turnTimeOut = 2000;
+            turnTimeOut = 20000;
 #endif
             await Task.Delay(turnTimeOut);
 
@@ -434,11 +430,12 @@ namespace Game.Server.Engine.Mia
 
         private void SendPlayerLost(IPlayer player, ServerFailureReasonCode reasonCode)
         {
+            // BUG: Timing issues(?) causes multiple PLAYER_LOST events
             gameScorer.Lost(player);
             player.Kick();
 
             var serverMove = new ServerMove(ServerMoveCode.PLAYER_LOST, player.Name, reasonCode, playerList.RegisteredPlayers.ToArray(), token);
-            Log.Write($"Send PLAYER_LOST for '{player.Name}'");
+            Log.Write($"Send PLAYER_LOST for '{player.Name}' (Reason: {reasonCode})");
             eventHistory.Add(serverMove);
             SendServerMessage(serverMove);
 
@@ -460,10 +457,11 @@ namespace Game.Server.Engine.Mia
 
         public void GameOver()
         {
-            var serverMove = new ServerMove(ServerMoveCode.SCORE, gameScorer.GetScoreValues(), ServerFailureReasonCode.None, playerList.RegisteredPlayers.ToArray(), token);
+            var scoreValues = gameScorer.GetScoreValues();
+            var serverMove = new ServerMove(ServerMoveCode.SCORE, scoreValues, ServerFailureReasonCode.None, playerList.RegisteredPlayers.ToArray(), token);
             eventHistory.Add(serverMove);
             SendServerMessage(serverMove);
-            Log.Write($"Send SCORE");
+            Log.Write($"Send SCORE {scoreValues}");
 
             gameOverCompletion?.TrySetResult(true);
         }

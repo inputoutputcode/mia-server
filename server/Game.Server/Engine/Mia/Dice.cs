@@ -108,7 +108,7 @@ namespace Game.Server.Engine.Mia
 
             if (otherDice != null)
             {
-                isHigher = Scoring(this) >= Scoring(otherDice);
+                isHigher = Scoring(this) > Scoring(otherDice);
             }
 
             return isHigher;

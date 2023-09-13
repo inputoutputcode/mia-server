@@ -9,7 +9,7 @@
     "JoinTimeOut": 2000,
     "TurnTimeOut": 2000,
     "ConnectionKey": "Corp123!",
-    "LogFileCreation": false,
+    "LogFileCreation": true,
     "LogFilePath": "C:/Temp/GameLogs"
   }
 }

@@ -205,12 +205,7 @@ namespace Game.Server.Engine.Mia
                 currentPlayerIndex = 0;
             }
 
-            if (ActivePlayers.Count >= currentPlayerIndex)
-            {
-                nextPlayer = ActivePlayers[currentPlayerIndex];
-            }
-
-            return nextPlayer;
+            return ActivePlayers[currentPlayerIndex];
         }
 
         /// <summary>

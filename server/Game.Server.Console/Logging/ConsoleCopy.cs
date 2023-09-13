@@ -14,8 +14,6 @@ namespace Game.Server.Console.Logging
 
         class DoubleWriter : TextWriter
         {
-            private object lockObject = new object();
-
             TextWriter one;
             TextWriter two;
 
@@ -38,30 +36,31 @@ namespace Game.Server.Console.Logging
 
             public override void Write(char value)
             {
-                lock (lockObject)
+                try
                 {
                     one.Write(value);
                     two.Write(value);
                 }
+                catch (ObjectDisposedException ex)
+                {
+                    // BUG (it might be easier to keep the data in memory per game round)
+                    System.Console.WriteLine(ex.Message);
+                }
             }
-
         }
 
         public ConsoleCopy()
         {
             string logFileDirectory = Config.Config.Settings.LogFilePath;
             Directory.CreateDirectory(logFileDirectory);
-            string logFilePath = string.Format(@$"{logFileDirectory}\Maxle_{0}.log", DateTime.Now.Ticks);
+            string logFilePath = string.Format(@$"{logFileDirectory}\Maxle_{0}.log", DateTime.Now.Ticks.ToString());
 
             oldOut = System.Console.Out;
 
             try
             {
                 fileStream = File.Create(logFilePath);
-
-                fileWriter = new StreamWriter(fileStream);
-                fileWriter.AutoFlush = true;
-
+                fileWriter = new StreamWriter(fileStream) { AutoFlush = true };
                 doubleWriter = new DoubleWriter(fileWriter, oldOut);
             }
             catch (Exception e)

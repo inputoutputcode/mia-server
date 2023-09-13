@@ -56,20 +56,20 @@ namespace Game.Server.Test.PlayEngine.Mia
         {
             // Arrange
             var playerList = new Engine.Mia.PlayerList();
-            var player1 = new Engine.Mia.Player("Player1", false);
+            var player1 = new Engine.Mia.Player("Player1");
             playerList.Register(player1);
             playerList.Join(player1);
 
-            var player2 = new Engine.Mia.Player("Player2", false);
+            var player2 = new Engine.Mia.Player("Player2");
             playerList.Register(player2);
             playerList.Join(player2);
 
-            var player3 = new Engine.Mia.Player("Player3", false);
+            var player3 = new Engine.Mia.Player("Player3");
             playerList.Register(player3);
             playerList.Join(player3);
 
             // Act
-            var player = playerList.First();
+            playerList.First();
             var nextPlayer = playerList.Next();
 
             // Assert
@@ -77,19 +77,45 @@ namespace Game.Server.Test.PlayEngine.Mia
         }
 
         [Fact]
+        public void Pick_The_Next_Player_Last_Out_Of_Three()
+        {
+            // Arrange
+            var playerList = new Engine.Mia.PlayerList();
+            var player1 = new Engine.Mia.Player("Player1");
+            playerList.Register(player1);
+            playerList.Join(player1);
+
+            var player2 = new Engine.Mia.Player("Player2");
+            playerList.Register(player2);
+            playerList.Join(player2);
+
+            var player3 = new Engine.Mia.Player("Player3");
+            playerList.Register(player3);
+            playerList.Join(player3);
+
+            // Act
+            playerList.First();
+            playerList.Next();
+            var nextPlayer = playerList.Next();
+
+            // Assert
+            Assert.True(nextPlayer.Name == player3.Name);
+        }
+
+        [Fact]
         public void Pick_The_First_Player()
         {
             // Arrange
             var playerList = new Engine.Mia.PlayerList();
-            var player1 = new Engine.Mia.Player("Player1", false);
+            var player1 = new Engine.Mia.Player("Player1");
             playerList.Register(player1);
             playerList.Join(player1);
 
-            var player2 = new Engine.Mia.Player("Player2", false);
+            var player2 = new Engine.Mia.Player("Player2");
             playerList.Register(player2);
             playerList.Join(player2);
 
-            var player3 = new Engine.Mia.Player("Player3", false);
+            var player3 = new Engine.Mia.Player("Player3");
             playerList.Register(player3);
             playerList.Join(player3);
 

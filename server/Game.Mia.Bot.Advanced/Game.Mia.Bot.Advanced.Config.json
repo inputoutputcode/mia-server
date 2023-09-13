@@ -1,7 +1,7 @@
 ﻿{
   "appSettings": {
     "PlayerName": "AdvancedBot",
-    "ServerAddress": "10.10.4.6",
+    "ServerAddress": "127.0.0.1",
     "ServerPort": 1000,
     "LocalPort": 1003,
     "ConnectionKey": "Corp123!"

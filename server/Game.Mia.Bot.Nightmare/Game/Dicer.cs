@@ -93,12 +93,13 @@ namespace Game.Mia.Bot.Nightmare.Game
                         switch (nextDiceOption)
                         {
                             case 1:
-                                returnDicer = new Dicer(1, 2);
+                                // TODO: Do not announce mia, roll again
+                                returnDicer = new Dicer(2, 1);
                                 break;
                             case 2:
-
+                                // TODO: increase by one is not a good strategy
                                 if (dicer.DiceOne == 6)
-                                    returnDicer = new Dicer(1, 2);
+                                    returnDicer = new Dicer(2, 1);
                                 else
                                     returnDicer = new Dicer(dicer.DiceOne + 1, dicer.DiceOne + 1);
                                 break;
@@ -125,7 +126,7 @@ namespace Game.Mia.Bot.Nightmare.Game
             return returnDicer;
         }
 
-        private static Dicer BeatByOne(Dicer dicer)
+        public static Dicer BeatByOne(Dicer dicer)
         {
             Dicer returnDicer = null;
 
