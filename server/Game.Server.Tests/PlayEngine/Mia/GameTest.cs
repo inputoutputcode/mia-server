@@ -8,7 +8,8 @@ using Game.Server.Engine.Mia.Move.Interface;
 using Game.Server.Network.Event.Interface;
 using Game.Server.Scoring;
 using Game.Server.Register.Interface;
-
+using System.Linq;
+using System;
 
 namespace Game.Server.Test.PlayEngine.Mia
 {
@@ -530,6 +531,9 @@ namespace Game.Server.Test.PlayEngine.Mia
         public async void Invalid_Turn_Player_Sends_Command_As_Non_Current_Player()
         {
             // Arrange
+            string lastPlayerName = string.Empty;
+            Guid turnToken = Guid.Empty;
+
             var gameManager = new Mock<IGameManager>();
             var dice = new Mock<Dice>() { CallBase = true };
             var game = new Mock<Engine.Mia.Game>(1, ScoreMode.Points, gameManager.Object, dice.Object) { CallBase = true };
@@ -565,6 +569,9 @@ namespace Game.Server.Test.PlayEngine.Mia
                     }
                     else if (ServerMoveCode.YOUR_TURN == serverMove.Code && game.Object.Players[0].Name == serverMove.Players[0].Name)
                     {
+                        lastPlayerName = game.Object.Players[1].Name;
+                        turnToken = game.Object.Token;
+
                         game.Object.ReceiveClientEvent(ClientMoveCode.ROLL.ToString(), string.Empty, game.Object.Players[1], game.Object.Token);
                     }
                 }
@@ -574,9 +581,13 @@ namespace Game.Server.Test.PlayEngine.Mia
             await game.Object.StartAsync();
 
             // Assert
-            game.Verify(m => m.SendServerMessage(It.Is<IServerMove>(x => x.FailureReasonCode == ServerFailureReasonCode.INVALID_TURN)));
-            game.Verify(m => m.SendServerMessage(It.Is<IServerMove>(x => x.Code == ServerMoveCode.PLAYER_LOST)));
             // TODO: Should check all commands like ROLL, ANNOUNCE, SEE
+            game.Verify(m => m.SendServerMessage(It.Is<IServerMove>(x => 
+                x.FailureReasonCode == ServerFailureReasonCode.INVALID_TURN &&
+                x.Code == ServerMoveCode.PLAYER_LOST &&
+                x.Value == lastPlayerName &&
+                x.Token == turnToken
+            )), Times.Once);
         }
 
         [Fact]
