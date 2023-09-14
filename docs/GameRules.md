@@ -6,7 +6,7 @@ All players start with six lives. Usually the players use a die to keep track of
 The first player rolls the dice and keeps their value concealed from the other players. The player then has three choices:
 
 - Tell the truth and announce what has been rolled.
-- Lie and announce a greater value than that rolled.
+- Lie and announce a greater value than rolled.
 - Lie and announce a lesser value, but high enough to beat the previous.
 
 The concealed dice are then passed to the next player in a clockwise fashion. The receiving player now has two options:
