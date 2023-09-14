@@ -1,8 +1,0 @@
-﻿{
-  "appSettings": {
-    "PlayerName": "Nightmare Bot",
-    "ServerAddress": "10.10.4.6",
-    "ServerPort": 1000,
-    "LocalPort": 1002
-  }
-}

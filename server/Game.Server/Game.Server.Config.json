@@ -1,0 +1,22 @@
+﻿{
+  "appSettings": {
+<<<<<<< HEAD:Server/Mia.Server.Game/Mia.Server.Game.Config.json
+    "RoundsPerGame": 10000,
+    "MinimumPlayerCount": 2,
+    "RegistrationTimeOut": 100000,
+=======
+    "RoundsPerGame": 100,
+    "MinimumPlayerCount": 2,
+    "RegistrationTimeOut": 5000,
+>>>>>>> main:server/Game.Server/Game.Server.Config.json
+    "JoinTimeOut": 2000,
+    "TurnTimeOut": 2000,
+    "InitializeDelayTime": 1000,
+    "MaximumActivePlayers": 20,
+    "MaximumSpectators": 20,
+    "ScoreMode": "Points",
+    "ScoreIncrement": 5,
+    "ScoreDecrement": 10,
+    "ConnectionKey": "Corp123!"
+  }
+}

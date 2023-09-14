@@ -1,0 +1,9 @@
+﻿{
+  "appSettings": {
+    "PlayerName": "NightmareBot",
+    "ServerAddress": "127.0.0.1",
+    "ServerPort": 1000,
+    "LocalPort": 1002,
+    "ConnectionKey": "Corp123!"
+  }
+}
