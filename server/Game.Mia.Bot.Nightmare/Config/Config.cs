@@ -2,11 +2,7 @@
 using System.IO;
 
 
-<<<<<<< HEAD:Server/Mia.Server.Game/Configuration/Config.cs
-namespace Mia.Server.Game.Configuration
-=======
 namespace Game.Mia.Bot.Nightmare.Config
->>>>>>> main:server/Game.Mia.Bot.Nightmare/Config/Config.cs
 {
     public static class Config
     {

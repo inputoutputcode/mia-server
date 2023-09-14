@@ -1,8 +1,4 @@
-<<<<<<< HEAD:Server/Mia.Server.Game/Configuration/AppSettings.cs
-﻿namespace Mia.Server.Game.Configuration
-=======
-﻿namespace Game.Server.Config
->>>>>>> main:server/Game.Server/Config/AppSettings.cs
+namespace Game.Server.Config
 {
     public class AppSettings
     {
