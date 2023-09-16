@@ -374,15 +374,8 @@ namespace Game.Server.Test.PlayEngine.Mia
             await game.Object.StartAsync();
 
             // Assert
-<<<<<<< HEAD
-            game.Verify(m => m.SendServerMessage(It.Is<IServerMove>(x => x.FailureReasonCode == ServerFailureReasonCode.LIED_ABOUT_MIA)));
-            game.Verify(m => m.SendServerMessage(It.Is<IServerMove>(x => x.Code == ServerMoveCode.PLAYER_LOST)));
-            game.Verify(m => m.SendServerMessage(It.Is<IServerMove>(x =>
-                x.FailureReasonCode == ServerFailureReasonCode.DID_NOT_TAKE_TURN &&
-=======
             game.Verify(m => m.SendServerMessage(It.Is<IServerMove>(x =>
                 x.FailureReasonCode == ServerFailureReasonCode.LIED_ABOUT_MIA &&
->>>>>>> ff8cd11f00967592a4bb3e14e1f881357cf23e88
                 x.Code == ServerMoveCode.PLAYER_LOST &&
                 x.Value == lastPlayerName &&
                 x.Token == turnToken
@@ -419,14 +412,9 @@ namespace Game.Server.Test.PlayEngine.Mia
                     }
                     else if (ServerMoveCode.YOUR_TURN == serverMove.Code && game.Object.Players[0].Name == serverMove.Players[0].Name)
                     {
-<<<<<<< HEAD
                         lastPlayerName = spectator1.Name;
                         turnToken = game.Object.Token;
 
-=======
-                        lastPlayerName = game.Object.CurrentTurn.Player.Name;
-                        turnToken = game.Object.Token;
->>>>>>> ff8cd11f00967592a4bb3e14e1f881357cf23e88
                         game.Object.ReceiveClientEvent(ClientMoveCode.ANNOUNCE.ToString(), "21", spectator1, game.Object.Token);
                     }
                 }
@@ -436,11 +424,6 @@ namespace Game.Server.Test.PlayEngine.Mia
             await game.Object.StartAsync();
 
             // Assert
-<<<<<<< HEAD
-            game.Verify(m => m.SendServerMessage(It.Is<IServerMove>(x => x.FailureReasonCode == ServerFailureReasonCode.DID_NOT_TAKE_TURN)));
-            game.Verify(m => m.SendServerMessage(It.Is<IServerMove>(x => x.Code == ServerMoveCode.PLAYER_LOST)));
-=======
->>>>>>> ff8cd11f00967592a4bb3e14e1f881357cf23e88
             game.Verify(m => m.SendServerMessage(It.Is<IServerMove>(x =>
                 x.FailureReasonCode == ServerFailureReasonCode.DID_NOT_TAKE_TURN &&
                 x.Code == ServerMoveCode.PLAYER_LOST &&
@@ -497,10 +480,7 @@ namespace Game.Server.Test.PlayEngine.Mia
                     {
                         lastPlayerName = game.Object.CurrentTurn.Player.Name;
                         turnToken = game.Object.Token;
-<<<<<<< HEAD
 
-=======
->>>>>>> ff8cd11f00967592a4bb3e14e1f881357cf23e88
                         game.Object.ReceiveClientEvent(ClientMoveCode.ANNOUNCE.ToString(), "13", game.Object.CurrentTurn.Player, game.Object.Token);
                     }
                 }
@@ -566,10 +546,7 @@ namespace Game.Server.Test.PlayEngine.Mia
                     {
                         lastPlayerName = game.Object.CurrentTurn.Player.Name;
                         turnToken = game.Object.Token;
-<<<<<<< HEAD
 
-=======
->>>>>>> ff8cd11f00967592a4bb3e14e1f881357cf23e88
                         game.Object.ReceiveClientEvent(ClientMoveCode.ANNOUNCE.ToString(), "", game.Object.CurrentTurn.Player, game.Object.Token);
                     }
                 }
@@ -635,10 +612,7 @@ namespace Game.Server.Test.PlayEngine.Mia
                     {
                         lastPlayerName = game.Object.CurrentTurn.Player.Name;
                         turnToken = game.Object.Token;
-<<<<<<< HEAD
 
-=======
->>>>>>> ff8cd11f00967592a4bb3e14e1f881357cf23e88
                         game.Object.ReceiveClientEvent(ClientMoveCode.ROLL.ToString(), "32", game.Object.CurrentTurn.Player, game.Object.Token);
                     }
                 }
@@ -648,11 +622,7 @@ namespace Game.Server.Test.PlayEngine.Mia
             await game.Object.StartAsync();
 
             // Assert
-<<<<<<< HEAD
-            game.Verify(m => m.SendServerMessage(It.Is<IServerMove>(x =>
-=======
             game.Verify(m => m.SendServerMessage(It.Is<IServerMove>(x => 
->>>>>>> ff8cd11f00967592a4bb3e14e1f881357cf23e88
                 x.FailureReasonCode == ServerFailureReasonCode.INVALID_TURN &&
                 x.Code == ServerMoveCode.PLAYER_LOST &&
                 x.Value == lastPlayerName &&
