@@ -95,7 +95,7 @@ namespace Game.Server.Engine.Mia
             Log.Write($"Round '{gameNumber}' starting");
 
             var players = playerList.RegisteredPlayers.ToArray();
-            if (players.Length > 1)
+            if (players.Length >= 1)
             {
                 // Send ROUND_STARTING
                 var serverMove = new ServerMove(ServerMoveCode.ROUND_STARTING, string.Empty, ServerFailureReasonCode.None, players, token);
@@ -291,7 +291,7 @@ namespace Game.Server.Engine.Mia
                                 gameScorer.Winner(winnerPlayer);
 
                                 Log.Write($"Send PLAYER_LOST for '{looserPlayer.Name}' (Reason: {reasonCode})");
-                                serverMove = new ServerMove(ServerMoveCode.PLAYER_LOST, looserPlayer.Name + ":8", reasonCode, playerList.RegisteredPlayers.ToArray(), this.token);
+                                serverMove = new ServerMove(ServerMoveCode.PLAYER_LOST, looserPlayer.Name, reasonCode, playerList.RegisteredPlayers.ToArray(), this.token);
                                 eventHistory.Add(serverMove);
                                 SendServerMessage(serverMove);
 
@@ -322,7 +322,7 @@ namespace Game.Server.Engine.Mia
 
                                     var failureReasonCode = ServerFailureReasonCode.MIA;
                                     Log.Write($"Send PLAYER_LOST for '{loosingPlayer.Name}' (Reason: {failureReasonCode})");
-                                    serverMove = new ServerMove(ServerMoveCode.PLAYER_LOST, loosingPlayer.Name + ":9", failureReasonCode, playerList.RegisteredPlayers.ToArray(), this.token);
+                                    serverMove = new ServerMove(ServerMoveCode.PLAYER_LOST, loosingPlayer.Name, failureReasonCode, playerList.RegisteredPlayers.ToArray(), this.token);
                                     eventHistory.Add(serverMove);
                                     SendServerMessage(serverMove);
 
@@ -337,7 +337,7 @@ namespace Game.Server.Engine.Mia
 
                                     var failureReasonCode = ServerFailureReasonCode.LIED_ABOUT_MIA;
                                     Log.Write($"Send PLAYER_LOST for '{playerMove.Player.Name}' (Reason: {failureReasonCode})");
-                                    serverMove = new ServerMove(ServerMoveCode.PLAYER_LOST, playerMove.Player.Name + ":10", failureReasonCode, playerList.RegisteredPlayers.ToArray(), this.token);
+                                    serverMove = new ServerMove(ServerMoveCode.PLAYER_LOST, playerMove.Player.Name, failureReasonCode, playerList.RegisteredPlayers.ToArray(), this.token);
                                     eventHistory.Add(serverMove);
                                     SendServerMessage(serverMove);
 
