@@ -267,6 +267,9 @@ namespace Game.Server.Test.PlayEngine.Mia
         public async void Lie_About_Mia_Results_In_Player_Lost()
         {
             // Arrange
+            string lastPlayerName = string.Empty;
+            Guid turnToken = Guid.Empty;
+
             var gameManager = new Mock<IGameManager>();
             var dice = new Mock<Dice>() { CallBase = true };
             var game = new Mock<Engine.Mia.Game>(1, ScoreMode.Points, gameManager.Object, dice.Object) { CallBase = true };
@@ -317,12 +320,21 @@ namespace Game.Server.Test.PlayEngine.Mia
             // Assert
             game.Verify(m => m.SendServerMessage(It.Is<IServerMove>(x => x.FailureReasonCode == ServerFailureReasonCode.LIED_ABOUT_MIA)));
             game.Verify(m => m.SendServerMessage(It.Is<IServerMove>(x => x.Code == ServerMoveCode.PLAYER_LOST)));
+            game.Verify(m => m.SendServerMessage(It.Is<IServerMove>(x =>
+                x.FailureReasonCode == ServerFailureReasonCode.DID_NOT_TAKE_TURN &&
+                x.Code == ServerMoveCode.PLAYER_LOST &&
+                x.Value == lastPlayerName &&
+                x.Token == turnToken
+            )), Times.Once);
         }
 
         [Fact]
         public async void Spectator_Sends_Command_Will_Be_Ignored()
         {
             // Arrange
+            string lastPlayerName = string.Empty;
+            Guid turnToken = Guid.Empty;
+
             var gameManager = new Mock<IGameManager>();
             var dice = new Mock<Dice>() { CallBase = true };
             var game = new Mock<Engine.Mia.Game>(1, ScoreMode.Points, gameManager.Object, dice.Object) { CallBase = true };
@@ -346,6 +358,9 @@ namespace Game.Server.Test.PlayEngine.Mia
                     }
                     else if (ServerMoveCode.YOUR_TURN == serverMove.Code && game.Object.Players[0].Name == serverMove.Players[0].Name)
                     {
+                        lastPlayerName = spectator1.Name;
+                        turnToken = game.Object.Token;
+
                         game.Object.ReceiveClientEvent(ClientMoveCode.ANNOUNCE.ToString(), "21", spectator1, game.Object.Token);
                     }
                 }
@@ -357,12 +372,21 @@ namespace Game.Server.Test.PlayEngine.Mia
             // Assert
             game.Verify(m => m.SendServerMessage(It.Is<IServerMove>(x => x.FailureReasonCode == ServerFailureReasonCode.DID_NOT_TAKE_TURN)));
             game.Verify(m => m.SendServerMessage(It.Is<IServerMove>(x => x.Code == ServerMoveCode.PLAYER_LOST)));
+            game.Verify(m => m.SendServerMessage(It.Is<IServerMove>(x =>
+                x.FailureReasonCode == ServerFailureReasonCode.DID_NOT_TAKE_TURN &&
+                x.Code == ServerMoveCode.PLAYER_LOST &&
+                x.Value == lastPlayerName &&
+                x.Token == turnToken
+            )), Times.Once);
         }
 
         [Fact]
         public async void Invalid_Turn_Player_Sends_Dice_In_Incorrect_Order()
         {
             // Arrange
+            string lastPlayerName = string.Empty;
+            Guid turnToken = Guid.Empty;
+
             var gameManager = new Mock<IGameManager>();
             var dice = new Mock<Dice>() { CallBase = true };
             var game = new Mock<Engine.Mia.Game>(1, ScoreMode.Points, gameManager.Object, dice.Object) { CallBase = true };
@@ -402,6 +426,9 @@ namespace Game.Server.Test.PlayEngine.Mia
                     }
                     else if (ServerMoveCode.ROLLED == serverMove.Code)
                     {
+                        lastPlayerName = game.Object.CurrentTurn.Player.Name;
+                        turnToken = game.Object.Token;
+
                         game.Object.ReceiveClientEvent(ClientMoveCode.ANNOUNCE.ToString(), "13", game.Object.CurrentTurn.Player, game.Object.Token);
                     }
                 }
@@ -411,14 +438,21 @@ namespace Game.Server.Test.PlayEngine.Mia
             await game.Object.StartAsync();
 
             // Assert
-            game.Verify(m => m.SendServerMessage(It.Is<IServerMove>(x => x.FailureReasonCode == ServerFailureReasonCode.INVALID_TURN)));
-            game.Verify(m => m.SendServerMessage(It.Is<IServerMove>(x => x.Code == ServerMoveCode.PLAYER_LOST)));
+            game.Verify(m => m.SendServerMessage(It.Is<IServerMove>(x =>
+                x.FailureReasonCode == ServerFailureReasonCode.INVALID_TURN &&
+                x.Code == ServerMoveCode.PLAYER_LOST &&
+                x.Value == lastPlayerName &&
+                x.Token == turnToken
+            )), Times.Once);
         }
 
         [Fact]
         public async void Invalid_Turn_Player_Sends_Empty_Dice()
         {
             // Arrange
+            string lastPlayerName = string.Empty;
+            Guid turnToken = Guid.Empty;
+
             var gameManager = new Mock<IGameManager>();
             var dice = new Mock<Dice>() { CallBase = true };
             var game = new Mock<Engine.Mia.Game>(1, ScoreMode.Points, gameManager.Object, dice.Object) { CallBase = true };
@@ -458,6 +492,9 @@ namespace Game.Server.Test.PlayEngine.Mia
                     }
                     else if (ServerMoveCode.ROLLED == serverMove.Code)
                     {
+                        lastPlayerName = game.Object.CurrentTurn.Player.Name;
+                        turnToken = game.Object.Token;
+
                         game.Object.ReceiveClientEvent(ClientMoveCode.ANNOUNCE.ToString(), "", game.Object.CurrentTurn.Player, game.Object.Token);
                     }
                 }
@@ -467,14 +504,21 @@ namespace Game.Server.Test.PlayEngine.Mia
             await game.Object.StartAsync();
 
             // Assert
-            game.Verify(m => m.SendServerMessage(It.Is<IServerMove>(x => x.FailureReasonCode == ServerFailureReasonCode.INVALID_TURN)));
-            game.Verify(m => m.SendServerMessage(It.Is<IServerMove>(x => x.Code == ServerMoveCode.PLAYER_LOST)));
+            game.Verify(m => m.SendServerMessage(It.Is<IServerMove>(x =>
+                x.FailureReasonCode == ServerFailureReasonCode.INVALID_TURN &&
+                x.Code == ServerMoveCode.PLAYER_LOST &&
+                x.Value == lastPlayerName &&
+                x.Token == turnToken
+            )), Times.Once);
         }
 
         [Fact]
         public async void Invalid_Turn_Player_Sends_Third_Roll()
         {
             // Arrange
+            string lastPlayerName = string.Empty;
+            Guid turnToken = Guid.Empty;
+
             var gameManager = new Mock<IGameManager>();
             var dice = new Mock<Dice>() { CallBase = true };
             var game = new Mock<Engine.Mia.Game>(1, ScoreMode.Points, gameManager.Object, dice.Object) { CallBase = true };
@@ -514,6 +558,9 @@ namespace Game.Server.Test.PlayEngine.Mia
                     }
                     else if (ServerMoveCode.ROLLED == serverMove.Code)
                     {
+                        lastPlayerName = game.Object.CurrentTurn.Player.Name;
+                        turnToken = game.Object.Token;
+
                         game.Object.ReceiveClientEvent(ClientMoveCode.ROLL.ToString(), "32", game.Object.CurrentTurn.Player, game.Object.Token);
                     }
                 }
@@ -523,8 +570,12 @@ namespace Game.Server.Test.PlayEngine.Mia
             await game.Object.StartAsync();
 
             // Assert
-            game.Verify(m => m.SendServerMessage(It.Is<IServerMove>(x => x.FailureReasonCode == ServerFailureReasonCode.INVALID_TURN)));
-            game.Verify(m => m.SendServerMessage(It.Is<IServerMove>(x => x.Code == ServerMoveCode.PLAYER_LOST)));
+            game.Verify(m => m.SendServerMessage(It.Is<IServerMove>(x =>
+                x.FailureReasonCode == ServerFailureReasonCode.INVALID_TURN &&
+                x.Code == ServerMoveCode.PLAYER_LOST &&
+                x.Value == lastPlayerName &&
+                x.Token == turnToken
+            )), Times.Once);
         }
 
         [Fact]
