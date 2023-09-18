@@ -43,6 +43,4 @@ Check the [Server Protocol](docs/ServerProtocol.md).
 
 Once again, everything is allowed. Use bugs to your advantage after you find them, there is one on purpose.
 
-Start reading the [Game Rules](docs/GameRules.md).
-
 (*) This was tested locally per game with default timeout configuration for responses. There is room for improvement. The cluster scenario with multiple game instances including WAN brings another complexity to it. 
