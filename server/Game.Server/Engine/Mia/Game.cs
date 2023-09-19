@@ -445,7 +445,7 @@ namespace Game.Server.Engine.Mia
             }
             else
             {
-                var nextPlayer = playerList.Next();
+                var nextPlayer = playerList.Current();
                 SendYourTurn(nextPlayer);
             }
         }

@@ -5,7 +5,7 @@ using Game.Server.Engine.Mia;
 using Xunit;
 
 
-namespace Game.Server.Test.PlayEngine.Mia
+namespace Game.Server.Tests.PlayEngine.Mia
 {
     public class DiceTest
     {

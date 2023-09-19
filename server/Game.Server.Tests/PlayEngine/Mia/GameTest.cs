@@ -8,9 +8,9 @@ using Game.Server.Engine.Mia.Move;
 using Game.Server.Engine.Mia.Move.Interface;
 using Game.Server.Scoring;
 using Game.Server.Register.Interface;
+using System.Linq;
 
-
-namespace Game.Server.Test.PlayEngine.Mia
+namespace Game.Server.Tests.PlayEngine.Mia
 {
     public class GameTest
     {
@@ -902,6 +902,20 @@ namespace Game.Server.Test.PlayEngine.Mia
                             dice.Object.DiceTwo = 1;
                         }
                         break;
+                    default:
+                        int diceOne = new Random().Next(1, 6);
+                        int diceTwo = new Random().Next(1, 6);
+
+                        int[] testDice = new int[2];
+                        testDice[0] = diceOne;
+                        testDice[1] = diceTwo;
+
+                        testDice = testDice.OrderByDescending(d => d).ToArray();
+
+                        dice.Object.DiceOne = testDice[0];
+                        dice.Object.DiceTwo = testDice[1];
+
+                        break;
                 }
             });
 
@@ -920,24 +934,34 @@ namespace Game.Server.Test.PlayEngine.Mia
                     {
                         game.Object.ReceiveClientEvent(ClientMoveCode.JOIN_ROUND.ToString(), string.Empty, player1, game.Object.Token);
                         game.Object.ReceiveClientEvent(ClientMoveCode.JOIN_ROUND.ToString(), string.Empty, player2, game.Object.Token);
+                        game.Object.ReceiveClientEvent(ClientMoveCode.JOIN_ROUND.ToString(), string.Empty, player3, game.Object.Token);
                     }
-                    else if (ServerMoveCode.YOUR_TURN == serverMove.Code && game.Object.Players[0].Name == serverMove.Players[0].Name)
+                    else if (ServerMoveCode.YOUR_TURN == serverMove.Code && game.Object.Players[0].Name == serverMove.Players[0].Name && game.Object.TurnCount == 1)
                     {
                         game.Object.ReceiveClientEvent(ClientMoveCode.ROLL.ToString(), string.Empty, game.Object.Players[0], game.Object.Token);
                     }
-                    else if (ServerMoveCode.ROLLED == serverMove.Code && game.Object.Players[0].Name == serverMove.Players[0].Name)
+                    else if (ServerMoveCode.ROLLED == serverMove.Code && game.Object.Players[0].Name == serverMove.Players[0].Name && game.Object.TurnCount == 1)
                     {
                         game.Object.ReceiveClientEvent(ClientMoveCode.ANNOUNCE.ToString(), "32", game.Object.Players[0], game.Object.Token);
                     }
-                    else if (ServerMoveCode.YOUR_TURN == serverMove.Code && game.Object.Players[1].Name == serverMove.Players[1].Name)
+                    else if (ServerMoveCode.YOUR_TURN == serverMove.Code && game.Object.Players[1].Name == serverMove.Players[0].Name && game.Object.TurnCount == 2)
                     {
                         game.Object.ReceiveClientEvent(ClientMoveCode.ROLL.ToString(), string.Empty, game.Object.Players[1], game.Object.Token);
                     }
-                    else if (ServerMoveCode.ROLLED == serverMove.Code && game.Object.Players[1].Name == serverMove.Players[0].Name)
+                    else if (ServerMoveCode.ROLLED == serverMove.Code && game.Object.Players[1].Name == serverMove.Players[0].Name && game.Object.TurnCount == 2)
                     {
                         kickedPlayerName = game.Object.Players[1].Name;
-                        remainingPlayerName = game.Object.Players[2].Name;
+                        nextTurnPlayerName = game.Object.Players[2].Name;
+                        remainingPlayerName = game.Object.Players[0].Name;
                         game.Object.ReceiveClientEvent(ClientMoveCode.ANNOUNCE.ToString(), "31", game.Object.Players[1], game.Object.Token);
+                    }
+                    else if (ServerMoveCode.YOUR_TURN == serverMove.Code && game.Object.Players[1].Name == serverMove.Players[0].Name && game.Object.TurnCount == 3)
+                    {
+                        game.Object.ReceiveClientEvent(ClientMoveCode.ROLL.ToString(), string.Empty, game.Object.Players[1], game.Object.Token);
+                    }
+                    else if (ServerMoveCode.ROLLED == serverMove.Code && game.Object.Players[1].Name == serverMove.Players[0].Name && game.Object.TurnCount == 3)
+                    {
+                        game.Object.ReceiveClientEvent(ClientMoveCode.ANNOUNCE.ToString(), "21", game.Object.Players[1], game.Object.Token);
                     }
                 }
             ));
@@ -951,16 +975,11 @@ namespace Game.Server.Test.PlayEngine.Mia
                 x.Code == ServerMoveCode.PLAYER_LOST &&
                 x.Value == kickedPlayerName
             )), Times.Once);
-            game.Verify(m => m.SendServerMessage(It.Is<IServerMove>(x =>
+           game.Verify(m => m.SendServerMessage(It.Is<IServerMove>(x =>
                 x.FailureReasonCode == ServerFailureReasonCode.None &&
                 x.Code == ServerMoveCode.YOUR_TURN &&
                 x.Value == nextTurnPlayerName
             )), Times.Once);
-            game.Verify(m => m.SendServerMessage(It.Is<IServerMove>(x =>
-                x.FailureReasonCode == ServerFailureReasonCode.None &&
-                x.Code == ServerMoveCode.YOUR_TURN &&
-                x.Value == remainingPlayerName
-            )), Times.Never);
         }
 
         [Fact]

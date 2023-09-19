@@ -169,7 +169,7 @@ namespace Game.Server.Engine.Mia
 
         public IPlayer Current()
         {
-            return players[currentPlayerIndex];
+            return ActivePlayers[currentPlayerIndex];
         }
 
         public IPlayer Previous()
@@ -182,7 +182,7 @@ namespace Game.Server.Engine.Mia
             }
             else
             {
-                lastPlayerIndex = PlayerCount - 1;
+                lastPlayerIndex = ActivePlayers.Count - 1;
             }
 
             return ActivePlayers[lastPlayerIndex];
@@ -194,8 +194,6 @@ namespace Game.Server.Engine.Mia
         /// <returns></returns>
         public IPlayer Next()
         {
-            IPlayer nextPlayer = null;
-
             if (currentPlayerIndex >= 0 && currentPlayerIndex < ActivePlayers.Count - 1)
             {
                 currentPlayerIndex++;
