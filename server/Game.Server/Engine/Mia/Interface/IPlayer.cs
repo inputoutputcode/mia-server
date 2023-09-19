@@ -4,12 +4,8 @@
     {
         string Name { get; }
 
-        PlayerState CurrentState { get; }
+        PlayerState CurrentState { get; set; }
 
         int Score { get; set; }
-
-        void SetActive();
-
-        void Kick();
     }
 }

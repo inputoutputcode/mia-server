@@ -401,7 +401,7 @@ namespace Game.Server.Engine.Mia
 #endif
             await Task.Delay(turnTimeOut);
 
-            if (player.Name == playerList.Current().Name)
+            if (playerList.Current() != null && player.Name == playerList.Current().Name)
             {
                 SendPlayerLost(player, ServerFailureReasonCode.DID_NOT_TAKE_TURN);
             }
@@ -432,19 +432,18 @@ namespace Game.Server.Engine.Mia
         {
             // BUG: Timing issues(?) causes multiple PLAYER_LOST events
             gameScorer.Lost(player);
-            player.Kick();
-
             var serverMove = new ServerMove(ServerMoveCode.PLAYER_LOST, player.Name, reasonCode, playerList.RegisteredPlayers.ToArray(), token);
             Log.Write($"Send PLAYER_LOST for '{player.Name}' (Reason: {reasonCode})");
             eventHistory.Add(serverMove);
             SendServerMessage(serverMove);
 
-            if (playerList.ActivePlayers.Count < Config.Config.Settings.MinimumPlayerCount)
+            if (playerList.ActivePlayers.Count == Config.Config.Settings.MinimumPlayerCount)
             {
-                gameOverCompletion?.TrySetResult(true);
+                GameOver();
             }
             else
             {
+                playerList.Kick(player);
                 var nextPlayer = playerList.Current();
                 SendYourTurn(nextPlayer);
             }
@@ -457,6 +456,7 @@ namespace Game.Server.Engine.Mia
 
         public void GameOver()
         {
+            playerList.RoundReset();
             var scoreValues = gameScorer.GetScoreValues();
             var serverMove = new ServerMove(ServerMoveCode.SCORE, scoreValues, ServerFailureReasonCode.None, playerList.RegisteredPlayers.ToArray(), token);
             eventHistory.Add(serverMove);

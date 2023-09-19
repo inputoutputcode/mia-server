@@ -31,6 +31,8 @@ namespace Game.Server.Engine.Mia.Interface
 
         void Permute();
 
+        void Kick(IPlayer player);
+
         void RoundReset();
     }
 }

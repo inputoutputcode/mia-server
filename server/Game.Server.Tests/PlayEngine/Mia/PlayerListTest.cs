@@ -179,6 +179,119 @@ namespace Game.Server.Tests.PlayEngine.Mia
         }
 
         [Fact]
+        public void Current_Player_After_Kick_Second()
+        {
+            // Arrange
+            var playerList = new Engine.Mia.PlayerList();
+
+            var player1 = new Engine.Mia.Player("Player1");
+            playerList.Register(player1);
+            playerList.Join(player1);
+
+            var player2 = new Engine.Mia.Player("Player2");
+            playerList.Register(player2);
+            playerList.Join(player2);
+
+            var player3 = new Engine.Mia.Player("Player3");
+            playerList.Register(player3);
+            playerList.Join(player3);
+
+            // Act
+            playerList.First();
+            var secondPlayer = playerList.Next();
+            playerList.Kick(secondPlayer);
+            var currentPlayer = playerList.Current();
+
+            // Assert
+            Assert.True(currentPlayer.Name == player3.Name);
+        }
+
+        [Fact]
+        public void Current_Player_After_Kick_First()
+        {
+            // Arrange
+            var playerList = new Engine.Mia.PlayerList();
+
+            var player1 = new Engine.Mia.Player("Player1");
+            playerList.Register(player1);
+            playerList.Join(player1);
+
+            var player2 = new Engine.Mia.Player("Player2");
+            playerList.Register(player2);
+            playerList.Join(player2);
+
+            var player3 = new Engine.Mia.Player("Player3");
+            playerList.Register(player3);
+            playerList.Join(player3);
+
+            // Act
+            var firstPlayer = playerList.First();
+            playerList.Kick(firstPlayer);
+            var currentPlayer = playerList.Current();
+
+            // Assert
+            Assert.True(currentPlayer.Name == player2.Name);
+        }
+
+        [Fact]
+        public void Current_Player_After_Kick_Last()
+        {
+            // Arrange
+            var playerList = new Engine.Mia.PlayerList();
+
+            var player1 = new Engine.Mia.Player("Player1");
+            playerList.Register(player1);
+            playerList.Join(player1);
+
+            var player2 = new Engine.Mia.Player("Player2");
+            playerList.Register(player2);
+            playerList.Join(player2);
+
+            var player3 = new Engine.Mia.Player("Player3");
+            playerList.Register(player3);
+            playerList.Join(player3);
+
+            // Act
+            playerList.First();
+            playerList.Next();
+            var thirdPlayer = playerList.Next();
+            playerList.Kick(thirdPlayer);
+            var currentPlayer = playerList.Current();
+
+            // Assert
+            Assert.True(currentPlayer.Name == player1.Name);
+        }
+
+        [Fact]
+        public void Reset_Round()
+        {
+            // Arrange
+            var playerList = new Engine.Mia.PlayerList();
+
+            var player1 = new Engine.Mia.Player("Player1");
+            playerList.Register(player1);
+            playerList.Join(player1);
+
+            var player2 = new Engine.Mia.Player("Player2");
+            playerList.Register(player2);
+            playerList.Join(player2);
+
+            var player3 = new Engine.Mia.Player("Player3");
+            playerList.Register(player3);
+            playerList.Join(player3);
+
+            // Act
+            playerList.First();
+            playerList.Next();
+            var thirdPlayer = playerList.Next();
+            playerList.Kick(thirdPlayer);
+            playerList.RoundReset();
+
+            // Assert
+            Assert.True(playerList.ActivePlayers.Count == 0);
+        }
+
+        [Fact]
         public void Do_Not_Manipulate_Internal_Player_List()
         {
             // Arrange

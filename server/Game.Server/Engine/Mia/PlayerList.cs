@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-
+using System.Net.WebSockets;
 using Game.Server.Engine.Mia.Interface;
 
 
@@ -29,14 +29,6 @@ namespace Game.Server.Engine.Mia
             get
             {
                 return ActivePlayers.Count;
-            }
-        }
-
-        public bool IsEmpty
-        {
-            get
-            {
-                return PlayerCount == 0;
             }
         }
 
@@ -139,7 +131,7 @@ namespace Game.Server.Engine.Mia
             {
                 if (players[i].Name == player.Name && player.CurrentState != PlayerState.Spectator)
                 {
-                    players[i].SetActive();
+                    players[i].CurrentState = PlayerState.Active;
                     operationResult = true;
                 }
             }
@@ -169,7 +161,12 @@ namespace Game.Server.Engine.Mia
 
         public IPlayer Current()
         {
-            return ActivePlayers[currentPlayerIndex];
+            IPlayer currentPlayer = null;
+
+            if (ActivePlayers.Count > 0)
+                currentPlayer = ActivePlayers[currentPlayerIndex];
+
+            return currentPlayer;
         }
 
         public IPlayer Previous()
@@ -214,12 +211,23 @@ namespace Game.Server.Engine.Mia
             players = players.OrderBy(p => Guid.NewGuid()).ToList();
         }
 
+        public void Kick(IPlayer player)
+        {
+            var previousPlayer = Previous();
+            currentPlayerIndex = ActivePlayers.IndexOf(previousPlayer);
+
+            player.CurrentState = PlayerState.Inactive;
+
+            if (ActivePlayers.Count > 0)
+                Next();
+        }
+
         /// <summary>
         /// Shake the order in player list
         /// </summary>
         public void RoundReset()
         {
-            ActivePlayers.ForEach(p => p.Kick());
+            ActivePlayers.ForEach(p => Kick(p));
         }
 
         #endregion Methods

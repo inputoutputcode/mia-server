@@ -1,5 +1,6 @@
 ﻿using Game.Server.Engine.Mia.Interface;
 
+
 namespace Game.Server.Engine.Mia
 {
     public class Player : IPlayer
@@ -18,6 +19,7 @@ namespace Game.Server.Engine.Mia
         public PlayerState CurrentState
         {
             get { return currentState; }
+            set { currentState = value; }
         }
 
         public string Name
@@ -47,20 +49,6 @@ namespace Game.Server.Engine.Mia
 
 
         #region Methods
-
-        /// <summary>
-        /// Only for Active or Inactive, Spectator must register again.
-        /// </summary>
-        /// <param name="state"></param>
-        public void SetActive()
-        {
-            currentState = PlayerState.Active;
-        }
-
-        public void Kick()
-        {
-            currentState = PlayerState.Inactive;
-        }
 
         public string GetDebuggerDisplay()
         {

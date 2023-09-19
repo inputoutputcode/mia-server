@@ -10,6 +10,11 @@ namespace Game.Server.Engine.Mia.Move
     {
         private List<IEventEntry> events = new List<IEventEntry>();
 
+        public List<IEventEntry> Events
+        {
+            get { return events; }
+        }
+
         public void Add(IServerMove serverMove)
         {
             string playerNames = string.Empty;
