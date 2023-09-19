@@ -896,6 +896,7 @@ namespace Game.Server.Tests.PlayEngine.Mia
                 switch (game.Object.TurnCount)
                 {
                     case 1:
+                    case 2:
                         if (game.Object.CurrentTurn.RollCount == 0)
                         {
                             dice.Object.DiceOne = 3;
@@ -978,7 +979,7 @@ namespace Game.Server.Tests.PlayEngine.Mia
            game.Verify(m => m.SendServerMessage(It.Is<IServerMove>(x =>
                 x.FailureReasonCode == ServerFailureReasonCode.None &&
                 x.Code == ServerMoveCode.YOUR_TURN &&
-                x.Value == nextTurnPlayerName
+                x.Players[0].Name == nextTurnPlayerName
             )), Times.Once);
         }
 
