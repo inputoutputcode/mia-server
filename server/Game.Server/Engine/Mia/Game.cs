@@ -188,7 +188,7 @@ namespace Game.Server.Engine.Mia
 
             // TODO: Validate token, consider implementing turn token
 
-            if (player.CurrentState != PlayerState.Spectator)
+            if (player.CurrentState == PlayerState.Active)
             {
                 switch (playerMove.Code)
                 {
@@ -384,10 +384,6 @@ namespace Game.Server.Engine.Mia
         private async void HandleJoinTimeoutAsync()
         {
             int joinTimeOut = Config.Config.Settings.JoinTimeOut;
-#if DEBUG
-            joinTimeOut = 1000;
-#endif
-
             await Task.Delay(joinTimeOut);
 
             RoundStarted();
@@ -396,9 +392,6 @@ namespace Game.Server.Engine.Mia
         private async void HandleTurnTimeoutAsync(IPlayer player)
         {
             int turnTimeOut = Config.Config.Settings.TurnTimeOut;
-#if DEBUG
-            turnTimeOut = 20000;
-#endif
             await Task.Delay(turnTimeOut);
 
             if (playerList.Current() != null && player.Name == playerList.Current().Name)
@@ -437,13 +430,13 @@ namespace Game.Server.Engine.Mia
             eventHistory.Add(serverMove);
             SendServerMessage(serverMove);
 
-            if (playerList.ActivePlayers.Count == Config.Config.Settings.MinimumPlayerCount)
+            playerList.Kick(player);
+            if (playerList.ActivePlayers.Count >= Config.Config.Settings.MinimumPlayerCount)
             {
                 GameOver();
             }
             else
             {
-                playerList.Kick(player);
                 var nextPlayer = playerList.Current();
                 SendYourTurn(nextPlayer);
             }

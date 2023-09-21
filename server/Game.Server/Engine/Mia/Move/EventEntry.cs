@@ -7,6 +7,8 @@ namespace Game.Server.Engine.Mia.Move
 {
     internal class EventEntry : IEventEntry
     {
+        public EventType Type { get; set; }
+
         public string Command { get; set; }
 
         public string Value { get; set; }
@@ -21,7 +23,7 @@ namespace Game.Server.Engine.Mia.Move
 
         public override string ToString()
         {
-            return string.Format("Time={5};Command={0};Value={1};Players={2};Failure={3};Token={4};", Command, Value, Player, SecondValue, Token, Timestamp.ToString("mm:fff"));
+            return string.Format("Time={5};{6}={0};Value={1};Players={2};Failure={3};Token={4};", Command, Value, Player, SecondValue, Token, Timestamp.ToString("mm:fff"), this.Type.ToString());
         }
     }
 }

@@ -23,6 +23,7 @@ namespace Game.Server.Engine.Mia.Move
 
             events.Add(new EventEntry()
             {
+                Type = EventType.Server,
                 Command = serverMove.Code.ToString(),
                 Value = serverMove.Value,
                 SecondValue = serverMove.FailureReasonCode.ToString(),
@@ -36,6 +37,7 @@ namespace Game.Server.Engine.Mia.Move
         {
             events.Add(new EventEntry()
             {
+                Type = EventType.Client,
                 Command = clientMove.Code.ToString(),
                 Value = clientMove.Value,
                 Player = clientMove.Player.Name,
