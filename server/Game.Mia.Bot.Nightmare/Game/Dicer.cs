@@ -56,12 +56,6 @@ namespace Game.Mia.Bot.Nightmare.Game
         public Dicer(int diceOne, int diceTwo)
         {
             SetDices(diceOne, diceTwo);
-            
-            if(!Validate())
-            {
-                dice[0] = 0;
-                dice[1] = 0;
-            }
         }
 
         #endregion
@@ -82,37 +76,9 @@ namespace Game.Mia.Bot.Nightmare.Game
             Dicer returnDicer = null;
             var randomizer = new Random();
 
-            if (dicer != null)
+            if (dicer != null && !dicer.IsMia)
             {
-                if (!dicer.IsMia)
-                {
-                    if (randomize)
-                    {
-                        int nextDiceOption = randomizer.Next(1, 3);
-
-                        switch (nextDiceOption)
-                        {
-                            case 1:
-                                // TODO: Do not announce mia, roll again
-                                returnDicer = new Dicer(2, 1);
-                                break;
-                            case 2:
-                                // TODO: increase by one is not a good strategy
-                                if (dicer.DiceOne == 6)
-                                    returnDicer = new Dicer(2, 1);
-                                else
-                                    returnDicer = new Dicer(dicer.DiceOne + 1, dicer.DiceOne + 1);
-                                break;
-                            case 3:
-                                returnDicer = BeatByOne(dicer);
-                                break;
-                        }
-                    }
-                    else
-                    {
-                        returnDicer = BeatByOne(dicer);
-                    }
-                }
+                returnDicer = BeatByOne(dicer);
             }
             else
             {
@@ -121,7 +87,6 @@ namespace Game.Mia.Bot.Nightmare.Game
                 int randomNumberTwo = randomizer.Next(1, 6);
                 returnDicer = BeatByOne(new Dicer(randomNumberOne, randomNumberTwo));
             }
-            
 
             return returnDicer;
         }

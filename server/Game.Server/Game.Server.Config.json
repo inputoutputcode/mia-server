@@ -1,11 +1,11 @@
 ﻿{
   "appSettings": {
-    "RoundsPerGame": 100,
+    "RoundsPerGame": 10000,
     "MinimumPlayerCount": 2,
-    "RegistrationTimeOut": 5000,
-    "JoinTimeOut": 2000,
-    "TurnTimeOut": 2000,
-    "InitializeDelayTime": 1000,
+    "RegistrationTimeOut": 1000,
+    "JoinTimeOut": 100,
+    "TurnTimeOut": 100,
+    "InitializeDelayTime": 100,
     "MaximumActivePlayers": 20,
     "MaximumSpectators": 20,
     "ScoreMode": "Points",

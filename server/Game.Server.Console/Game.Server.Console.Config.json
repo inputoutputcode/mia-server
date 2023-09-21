@@ -6,8 +6,8 @@
     "ServerPort": 1000,
     "InitializeDelayTime" :  1000,
     "RegistrationTimeOut": 5000,
-    "JoinTimeOut": 2000,
-    "TurnTimeOut": 2000,
+    "JoinTimeOut": 1000,
+    "TurnTimeOut": 200,
     "ConnectionKey": "Corp123!",
     "LogFileCreation": true,
     "LogFilePath": "C:/Temp/GameLogs"

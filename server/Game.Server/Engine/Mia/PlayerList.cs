@@ -171,9 +171,10 @@ namespace Game.Server.Engine.Mia
 
         public IPlayer Previous()
         {
+            IPlayer previousPlayer = null;
             int lastPlayerIndex;
 
-            if (currentPlayerIndex > 0 && currentPlayerIndex <= PlayerCount - 1)
+            if (currentPlayerIndex > 0 && currentPlayerIndex <= ActivePlayers.Count - 1)
             {
                 lastPlayerIndex = currentPlayerIndex - 1;
             }
@@ -182,7 +183,10 @@ namespace Game.Server.Engine.Mia
                 lastPlayerIndex = ActivePlayers.Count - 1;
             }
 
-            return ActivePlayers[lastPlayerIndex];
+            if (ActivePlayers.Count > currentPlayerIndex)
+                previousPlayer = ActivePlayers[lastPlayerIndex];
+
+            return previousPlayer;
         }
 
         /// <summary>
@@ -191,6 +195,7 @@ namespace Game.Server.Engine.Mia
         /// <returns></returns>
         public IPlayer Next()
         {
+            IPlayer nextPlayer = null;
             if (currentPlayerIndex >= 0 && currentPlayerIndex < ActivePlayers.Count - 1)
             {
                 currentPlayerIndex++;
@@ -200,7 +205,10 @@ namespace Game.Server.Engine.Mia
                 currentPlayerIndex = 0;
             }
 
-            return ActivePlayers[currentPlayerIndex];
+            if (ActivePlayers.Count > currentPlayerIndex)
+                nextPlayer = ActivePlayers[currentPlayerIndex];
+
+            return nextPlayer;
         }
 
         /// <summary>

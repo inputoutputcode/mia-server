@@ -111,7 +111,7 @@ namespace Game.Mia.Bot.Nightmare.Game
                                 }
                                 else
                                 {
-                                    nextDice = Dicer.Beat(lastAnnouncedDice, true);
+                                    nextDice = Dicer.Beat(lastAnnouncedDice);
                                 }
                             }
 

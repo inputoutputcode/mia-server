@@ -13,6 +13,7 @@ namespace Game.Server.Config
         public int TurnTimeOut { get; set; }
 
         public int InitializeDelayTime { get; set; }
+
         public string ScoreMode { get; set; }
 
         public int MaximumActivePlayers { get; set; }
