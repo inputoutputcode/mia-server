@@ -394,7 +394,8 @@ namespace Game.Server.Engine.Mia
             int turnTimeOut = Config.Config.Settings.TurnTimeOut;
             await Task.Delay(turnTimeOut);
 
-            if (playerList.Current() != null && player.Name == playerList.Current().Name)
+            var currentPlayer = playerList.Current();
+            if (currentPlayer != null && player.Name == currentPlayer.Name)
             {
                 SendPlayerLost(player, ServerFailureReasonCode.DID_NOT_TAKE_TURN);
             }
