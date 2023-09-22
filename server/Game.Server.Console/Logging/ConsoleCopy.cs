@@ -60,7 +60,7 @@ namespace Game.Server.Console.Logging
             try
             {
                 fileStream = File.Create(logFilePath);
-                fileWriter = new StreamWriter(fileStream) { AutoFlush = true };
+                fileWriter = new StreamWriter(fileStream) { AutoFlush = false };
                 doubleWriter = new DoubleWriter(fileWriter, oldOut);
             }
             catch (Exception e)
