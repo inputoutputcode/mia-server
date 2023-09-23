@@ -312,7 +312,7 @@ namespace Game.Server.Engine.Mia
                             // TODO: anouncing dice numbers in wrong order should send player lost event
                             announcedDice = currentDice.Parse(playerMove.Value);
                             if (playerMove.Player.Name == playerList.Current().Name &&
-                                currentTurn.RollCount <= 1 &&
+                                currentTurn.RollCount <= 2 &&
                                 announcedDice != null &&
                                 announcedDice.IsValid)
                             {
@@ -349,12 +349,12 @@ namespace Game.Server.Engine.Mia
                                         GameOver();
                                     }
                                 }
-                                else if (TurnCount == 1)
+                                else if (lastAnnouncedDice == null)
                                 {
                                     var nextPlayer = playerList.Next();
                                     SendYourTurn(nextPlayer);
                                 }
-                                else if (announcedDice.IsHigherThan(lastAnnouncedDice))
+                                else  if (announcedDice.IsHigherThan(lastAnnouncedDice))
                                 {
                                     string broadcastValue = $"{playerMove.Player.Name};{announcedDice}";
                                     serverMove = new ServerMove(ServerMoveCode.ANNOUNCED, broadcastValue, ServerFailureReasonCode.None, playerList.RegisteredPlayers.ToArray(), this.token);
@@ -398,7 +398,7 @@ namespace Game.Server.Engine.Mia
             await Task.Delay(turnTimeOut);
 
             var currentPlayer = playerList.Current();
-            if (currentPlayer != null && player.Name == currentPlayer.Name)
+            if (currentPlayer != null && player.Name == currentPlayer.Name && player.CurrentState == PlayerState.Active)
             {
                 SendPlayerLost(player, ServerFailureReasonCode.DID_NOT_TAKE_TURN);
             }
@@ -435,7 +435,7 @@ namespace Game.Server.Engine.Mia
             SendServerMessage(serverMove);
 
             playerList.Kick(player);
-            if (playerList.ActivePlayers.Count >= Config.Config.Settings.MinimumPlayerCount)
+            if (playerList.ActivePlayers.Count < Config.Config.Settings.MinimumPlayerCount)
             {
                 GameOver();
             }

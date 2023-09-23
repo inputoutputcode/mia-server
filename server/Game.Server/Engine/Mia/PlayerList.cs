@@ -183,7 +183,7 @@ namespace Game.Server.Engine.Mia
                 lastPlayerIndex = ActivePlayers.Count - 1;
             }
 
-            if (ActivePlayers.Count > currentPlayerIndex)
+            if (ActivePlayers.Count > currentPlayerIndex && lastPlayerIndex >= 0)
                 previousPlayer = ActivePlayers[lastPlayerIndex];
 
             return previousPlayer;

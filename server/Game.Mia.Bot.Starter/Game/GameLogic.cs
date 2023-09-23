@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 
 using Game.Server.Bot.Starter.Configuration;
 using Game.Server.Bot.Starter.Logging;
@@ -49,8 +50,8 @@ namespace Game.Server.Bot.Starter.Game
                     break;
 
                 case "ROLLED":
-                    token = messageParts[2];
                     dice = messageParts[1];
+                    token = messageParts[2];
                     messageResponse = "ANNOUNCE;" + dice + ";" + token;
                     break;
             }

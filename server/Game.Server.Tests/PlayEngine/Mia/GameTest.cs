@@ -740,11 +740,11 @@ namespace Game.Server.Tests.PlayEngine.Mia
                     {
                         if (game.Object.CurrentTurn.RollCount == 1)
                         {
-                            game.Object.ReceiveClientEvent(ClientMoveCode.ROLL.ToString(), "32", game.Object.Players[0], game.Object.Token);
+                            game.Object.ReceiveClientEvent(ClientMoveCode.ROLL.ToString(), string.Empty, game.Object.Players[0], game.Object.Token);
                         }
                         else if (game.Object.CurrentTurn.RollCount == 2)
                         {
-                            lastPlayerName = game.Object.Players[0].Name;
+                            lastPlayerName = game.Object.Players[1].Name;
                             turnToken = game.Object.Token;
                             game.Object.ReceiveClientEvent(ClientMoveCode.ANNOUNCE.ToString(), "32", game.Object.Players[0], game.Object.Token);
                         }
@@ -757,7 +757,7 @@ namespace Game.Server.Tests.PlayEngine.Mia
 
             // Assert
             game.Verify(m => m.SendServerMessage(It.Is<IServerMove>(x => 
-                x.FailureReasonCode == ServerFailureReasonCode.INVALID_TURN &&
+                x.FailureReasonCode == ServerFailureReasonCode.DID_NOT_TAKE_TURN &&
                 x.Code == ServerMoveCode.PLAYER_LOST &&
                 x.Value == lastPlayerName &&
                 x.Token == turnToken

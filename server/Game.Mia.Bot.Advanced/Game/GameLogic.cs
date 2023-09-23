@@ -67,7 +67,6 @@ namespace Game.Mia.Bot.Advanced.Game
                         var nextDice = Dicer.Beat(lastAnnouncedDice);
                         messageResponse = "ANNOUNCE;" + nextDice + ";" + token;
                     }
-                    
                     break;
 
                 case "ANNOUNCED":
