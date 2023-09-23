@@ -25,5 +25,7 @@ namespace Game.Server.Config
         public int ScoreDecrement { get; set; }
 
         public string ConnectionKey { get; set; }
+
+        public bool UniqueIpAddressPerClientRequired { get; set; }
     }
 }

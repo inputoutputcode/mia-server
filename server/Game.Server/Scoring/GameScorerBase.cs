@@ -21,7 +21,13 @@ namespace Game.Server.Scoring
         {
             foreach (var player in playerList)
             {
-                var existingPlayer = scoredPlayers.FirstOrDefault(p => p.Name == player.Name || p.IPAddress == player.IPAddress);
+                IPlayer existingPlayer = null;
+                bool uniqueIp = Config.Config.Settings.UniqueIpAddressPerClientRequired;
+
+                if (uniqueIp) 
+                    existingPlayer = scoredPlayers.FirstOrDefault(p => p.Name == player.Name || p.IPAddress == player.IPAddress);
+                else
+                    existingPlayer = scoredPlayers.FirstOrDefault(p => p.Name == player.Name);
 
                 // new player
                 if (existingPlayer == null)
