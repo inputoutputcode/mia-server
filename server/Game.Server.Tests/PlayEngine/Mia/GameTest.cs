@@ -429,7 +429,7 @@ namespace Game.Server.Tests.PlayEngine.Mia
                 x.Code == ServerMoveCode.PLAYER_LOST &&
                 x.Value == lastPlayerName &&
                 x.Token == turnToken
-            )), Times.Once);
+            )), Times.Never);
         }
 
         [Fact]
