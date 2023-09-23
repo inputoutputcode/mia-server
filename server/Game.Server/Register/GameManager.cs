@@ -89,12 +89,13 @@ namespace Game.Server.Register
         private async void StartGame(ScoreMode scoreMode)
         {
             int currentRoundNumber = 0;
+            var gameScorer = GameScoreFactory.Create(scoreMode);
 
             while (currentRoundNumber < Config.Config.Settings.RoundsPerGame)
             {
                 Log.Write($"Start game: {currentRoundNumber}");
 
-                var game = new Engine.Mia.Game(currentRoundNumber, scoreMode, this);
+                var game = new Engine.Mia.Game(currentRoundNumber, scoreMode, this, null, gameScorer);
                 var gameInstance = new GameInstance(game.GameNumber.ToString(), game.Token);
 
                 activeGameInstances.Add(gameInstance);
@@ -102,7 +103,7 @@ namespace Game.Server.Register
 
                 for(int i = 0; i < clients.Count; i++)
                 {
-                    game.Register(new Player(clients[i].Name, false));
+                    game.Register(new Player(clients[i].Name, false, clients[i].Peer.EndPoint.Address.ToString()));
                 }
 
                 await game.StartAsync();
@@ -258,7 +259,7 @@ namespace Game.Server.Register
             var game = activeGames.FirstOrDefault(x => x.Token == gameInstance.GameToken);
             if (game != null)
             {
-                var player = new Player(client.Name, isSpectator);
+                var player = new Player(client.Name, isSpectator, client.Peer.EndPoint.Address.ToString());
                 game.Register(player);
             }
         }

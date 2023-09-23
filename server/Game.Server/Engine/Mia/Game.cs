@@ -69,10 +69,10 @@ namespace Game.Server.Engine.Mia
 
         #region Constructor
 
-        public Game(int gameNumber, ScoreMode scoreMode, IGameManager gameManager, IDice dice = null)
+        public Game(int gameNumber, ScoreMode scoreMode, IGameManager gameManager, IDice dice = null, IGameScorer gameScorer = null)
         {
             this.gameNumber = gameNumber;
-            gameScorer = GameScoreFactory.Create(scoreMode);
+            this.gameScorer = gameScorer ?? GameScoreFactory.Create(scoreMode);
             this.gameManager = gameManager;
             currentDice = dice == null ? new Dice() : dice;
 

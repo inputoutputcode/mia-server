@@ -7,5 +7,7 @@
         PlayerState CurrentState { get; set; }
 
         int Score { get; set; }
+
+        string IPAddress { get; }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Game.Server.Engine.Mia.Interface;
+﻿using Game.Server.Engine.Mia;
+using Game.Server.Engine.Mia.Interface;
 
 
 namespace Game.Server.Scoring
@@ -11,12 +12,16 @@ namespace Game.Server.Scoring
 
         public override void Lost(IPlayer player)
         {
-            player.Score -= Config.Config.Settings.ScoreDecrement;
+            var scoredPlayer = FindPlayer(player.Name, player.IPAddress);
+            if (scoredPlayer != null && scoredPlayer.CurrentState == PlayerState.Active)
+                scoredPlayer.Score -= Config.Config.Settings.ScoreDecrement;
         }
 
         public override void Winner(IPlayer player)
         {
-            player.Score += Config.Config.Settings.ScoreIncrement;
+            var scoredPlayer = FindPlayer(player.Name, player.IPAddress);
+            if (scoredPlayer != null && scoredPlayer.CurrentState == PlayerState.Active)
+                scoredPlayer.Score += Config.Config.Settings.ScoreIncrement;
         }
     }
 }

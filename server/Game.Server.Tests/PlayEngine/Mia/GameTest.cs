@@ -995,6 +995,17 @@ namespace Game.Server.Tests.PlayEngine.Mia
         }
 
         [Fact]
+        public void Dice_Accepted_After_First_Player_Missed_The_Turn()
+        {
+            // Arrange
+
+            // Act
+
+            // Assert
+            Assert.True(false);
+        }
+
+        [Fact]
         public void See_For_Announced_Mia_Cost_Twice_As_No_See()
         {
             // Arrange

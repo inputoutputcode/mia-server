@@ -10,7 +10,7 @@
     "MaximumSpectators": 20,
     "ScoreMode": "Points",
     "ScoreIncrement": 5,
-    "ScoreDecrement": 10,
+    "ScoreDecrement": 5,
     "ConnectionKey": "Corp123!"
   }
 }

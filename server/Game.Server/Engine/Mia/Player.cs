@@ -10,6 +10,7 @@ namespace Game.Server.Engine.Mia
         private PlayerState currentState;
         private string name;
         private int score;
+        private string ipAddress;
 
         #endregion Members
 
@@ -33,16 +34,19 @@ namespace Game.Server.Engine.Mia
             set { score = value; }
         }
 
+        public string IPAddress => ipAddress;
+
         #endregion Properties
 
 
         #region Constructor
 
-        public Player(string name, bool isSpectator = false, int score = 0)
+        public Player(string name, bool isSpectator = false, string ipAddress = "", int score = 0)
         {
             this.name = name;
             currentState = isSpectator ? PlayerState.Spectator : PlayerState.Inactive;
             this.score = score;
+            this.ipAddress = ipAddress;
         }
 
         #endregion Constructor

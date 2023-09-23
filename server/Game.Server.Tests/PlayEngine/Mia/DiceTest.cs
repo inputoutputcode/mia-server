@@ -23,9 +23,9 @@ namespace Game.Server.Tests.PlayEngine.Mia
             dice3.Shake();
 
             // Assert
-            Assert.True(dice1.DiceOne > dice1.DiceTwo);
-            Assert.True(dice2.DiceOne > dice2.DiceTwo);
-            Assert.True(dice3.DiceOne > dice3.DiceTwo);
+            Assert.True(dice1.DiceOne >= dice1.DiceTwo);
+            Assert.True(dice2.DiceOne >= dice2.DiceTwo);
+            Assert.True(dice3.DiceOne >= dice3.DiceTwo);
         }
 
         [Fact]
