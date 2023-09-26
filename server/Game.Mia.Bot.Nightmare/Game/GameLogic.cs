@@ -45,6 +45,7 @@ namespace Game.Mia.Bot.Nightmare.Game
                 case "ROUND_STARTING":
                     token = messageParts[1];
                     messageResponse = "JOIN_ROUND;" + token;
+                    diceHistory.Clear();
                     break;
 
                 case "YOUR_TURN":
@@ -72,22 +73,26 @@ namespace Game.Mia.Bot.Nightmare.Game
                     break;
 
                 case "ROLLED":
-                    token = messageParts[2];
-                    dice = messageParts[1];
-
                     Dicer lastAnnouncedDice = null;
+                    Dicer rolledDice = null;
+                    var randomizer = new Random();
+                    int randomSecondRoll = randomizer.Next(1, 2);
 
                     if (diceHistory.Count > 0)
                         lastAnnouncedDice = diceHistory[diceHistory.Count - 1];
 
-                    var rolledDice = Dicer.Parse(dice);
-
-                    var randomizer = new Random();
-                    int randomSecondRoll = randomizer.Next(1, 2);
-
                     // Reset to announce if already second ROLL
                     if (rollCounter == 2)
+                    {
+                        token = messageParts[1];
                         randomSecondRoll = 1;
+                    }
+                    else
+                    {
+                        dice = messageParts[1];
+                        token = messageParts[2];
+                        rolledDice = Dicer.Parse(dice);
+                    }
 
                     switch(randomSecondRoll)
                     {
@@ -95,7 +100,7 @@ namespace Game.Mia.Bot.Nightmare.Game
                             Dicer nextDice = null;
 
                             // Take rolled dice if higher than last one
-                            if (diceHistory.Count > 0 && lastAnnouncedDice != null && lastAnnouncedDice.CompareTo(rolledDice) == -1)
+                            if (diceHistory.Count > 0 && lastAnnouncedDice != null && rolledDice != null && lastAnnouncedDice.CompareTo(rolledDice) == -1)
                             {
                                 nextDice = rolledDice;
                             }
