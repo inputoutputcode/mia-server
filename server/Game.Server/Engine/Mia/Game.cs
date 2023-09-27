@@ -112,8 +112,6 @@ namespace Game.Server.Engine.Mia
             }
             else
             {
-                Log.Write($"Not enough players, wait till next round.");
-
                 HandleNextRoundWaitTimeAsync();
             }
         }
@@ -381,6 +379,8 @@ namespace Game.Server.Engine.Mia
 
         private async void HandleNextRoundWaitTimeAsync()
         {
+            Log.Write($"Not enough players, wait till next round (wait time: {Config.Config.Settings.RegistrationTimeOut}).");
+
             await Task.Delay(Config.Config.Settings.RegistrationTimeOut);
         }
 
@@ -406,11 +406,12 @@ namespace Game.Server.Engine.Mia
 
         private void SendYourTurn(IPlayer player)
         {
+            Log.Write($"Send YOUR_TURN to '{player.Name}'");
+
             NewTurn(player);
 
             var singlePlayerList = new IPlayer[] { player };
             var serverMove = new ServerMove(ServerMoveCode.YOUR_TURN, string.Empty, ServerFailureReasonCode.None, singlePlayerList, token);
-            Log.Write($"Send YOUR_TURN to '{player.Name}'");
             eventHistory.Add(serverMove);
             SendServerMessage(serverMove);
 
@@ -427,10 +428,11 @@ namespace Game.Server.Engine.Mia
 
         private void SendPlayerLost(IPlayer player, ServerFailureReasonCode reasonCode)
         {
+            Log.Write($"Send PLAYER_LOST for '{player.Name}' (Reason: {reasonCode})");
+
             // BUG: Timing issues(?) causes multiple PLAYER_LOST events
             gameScorer.Lost(player);
             var serverMove = new ServerMove(ServerMoveCode.PLAYER_LOST, player.Name, reasonCode, playerList.RegisteredPlayers.ToArray(), token);
-            Log.Write($"Send PLAYER_LOST for '{player.Name}' (Reason: {reasonCode})");
             eventHistory.Add(serverMove);
             SendServerMessage(serverMove);
 
@@ -455,10 +457,12 @@ namespace Game.Server.Engine.Mia
         {
             playerList.RoundReset();
             var scoreValues = gameScorer.GetScoreValues();
+
+            Log.Write($"Round ended - game scores: {scoreValues}");
+
             var serverMove = new ServerMove(ServerMoveCode.SCORE, scoreValues, ServerFailureReasonCode.None, playerList.RegisteredPlayers.ToArray(), token);
             eventHistory.Add(serverMove);
             SendServerMessage(serverMove);
-            Log.Write($"Send SCORE {scoreValues}");
 
             gameOverCompletion?.TrySetResult(true);
         }

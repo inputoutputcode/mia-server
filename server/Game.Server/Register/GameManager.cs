@@ -187,6 +187,8 @@ namespace Game.Server.Register
                         var player = game.Players.Find(p => p.Name == client.Name);
                         if (game != null && player != null)
                         {
+                            Log.Write($"{player.Name}: {eventMessage};{eventValue};{gameToken}");
+
                             game.ReceiveClientEvent(eventMessage, eventValue, player, gameToken);
                         }
                     }
@@ -196,6 +198,8 @@ namespace Game.Server.Register
 
         public void SendEvent(string eventMessage, IPlayer[] players)
         {
+            Log.Write($"{eventMessage} - {string.Concat(players.Select(p => p.Name))}");
+
             for (int i = 0; i < players.Length; i++)
             {
                 var client = clients.FirstOrDefault(x => x.Name == players[i].Name);
@@ -226,14 +230,14 @@ namespace Game.Server.Register
 
             if (isRejected)
             {
-                serverEvent = new ServerEvent(ServerEventCode.REJECTED.ToString(), client.Peer);
                 Log.Write($"{client.Name} {ServerEventCode.REJECTED}");
+                serverEvent = new ServerEvent(ServerEventCode.REJECTED.ToString(), client.Peer);
             }
             else
             {
+                Log.Write($"{client.Name} {ServerEventCode.REGISTERED}");
                 clients.Add(client);
                 serverEvent = new ServerEvent(ServerEventCode.REGISTERED.ToString(), client.Peer);
-                Log.Write($"{client.Name} {ServerEventCode.REGISTERED}");
             }
 
             SendEventMessage(serverEvent.Message, serverEvent.Peer);

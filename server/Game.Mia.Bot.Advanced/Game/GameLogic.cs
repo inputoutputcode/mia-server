@@ -44,6 +44,7 @@ namespace Game.Mia.Bot.Advanced.Game
                 case "ROUND_STARTING":
                     token = messageParts[1];
                     messageResponse = "JOIN_ROUND;" + token;
+                    diceHistory.Clear();
                     break;
 
                 case "YOUR_TURN":
