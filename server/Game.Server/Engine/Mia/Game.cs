@@ -421,6 +421,7 @@ namespace Game.Server.Engine.Mia
         {
             currentTurn = new Turn(player);
             turnCount += 1;
+            token = Guid.NewGuid();
         }
 
         private void SendPlayerLost(IPlayer player, ServerFailureReasonCode reasonCode)
