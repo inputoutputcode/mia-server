@@ -118,10 +118,14 @@ namespace Game.Server.Engine.Mia
 
         public bool Register(IPlayer player)
         {
-            bool isRegistered = playerList.Register(player);
-            isRegistered = playerList.Join(player);
-
-            Log.Write($"Player '{player.Name}' joining the game.");
+            bool isRegistered = false;
+            
+            // TODO: Fix join procedure
+            //if (gamePhase == GamePhase.Starting)
+            {
+                playerList.Register(player);
+                isRegistered = playerList.Join(player);
+            }
 
             return isRegistered;
         }
@@ -146,7 +150,6 @@ namespace Game.Server.Engine.Mia
                 var serverMove = new ServerMove(ServerMoveCode.ROUND_CANCELLED, string.Empty, failureCode, spectators, token);
                 eventHistory.Add(serverMove);
                 SendServerMessage(serverMove);
-                Log.Write($"Round '{gameNumber}' cancelled");
 
                 gameOverCompletion?.TrySetResult(true);
             }
@@ -155,7 +158,6 @@ namespace Game.Server.Engine.Mia
                 var serverMove = new ServerMove(ServerMoveCode.ROUND_STARTED, string.Empty, ServerFailureReasonCode.None, activePlayers, token);
                 eventHistory.Add(serverMove);
                 SendServerMessage(serverMove);
-                Log.Write($"Round '{gameNumber}' started ");
 
                 // Send YOUR_TURN
                 SendYourTurn(playerList.First());
@@ -220,6 +222,7 @@ namespace Game.Server.Engine.Mia
                                 {
                                     if (currentDice.IsMia)
                                     {
+                                        // TODO: Considering move the decision of raising MIA to the player
                                         var loosingPlayer = playerList.Previous();
                                         serverMove = new ServerMove(ServerMoveCode.PLAYER_LOST, loosingPlayer.Name, ServerFailureReasonCode.MIA, playerList.RegisteredPlayers.ToArray(), this.token);
                                         eventHistory.Add(serverMove);
@@ -406,8 +409,6 @@ namespace Game.Server.Engine.Mia
 
         private void SendYourTurn(IPlayer player)
         {
-            Log.Write($"Send YOUR_TURN to '{player.Name}'");
-
             NewTurn(player);
 
             var singlePlayerList = new IPlayer[] { player };

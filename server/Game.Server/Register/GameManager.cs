@@ -15,7 +15,8 @@ using Game.Server.Network.Event;
 using Game.Server.Logging;
 
 using LiteNetLib;
-
+using System.Numerics;
+using Game.Server.Engine.Mia.Move;
 
 namespace Game.Server.Register
 {
@@ -149,7 +150,10 @@ namespace Game.Server.Register
                     {
                         var gameInstance = FindGameInstance(gameToken);
                         if (gameInstance != null)
+                        {
+                            Log.Write($"{client.Name}: {ClientMoveCode.JOIN_ROUND};{gameToken}");
                             JoinGame(gameInstance, client, false);
+                        }
                     }
                 }
                 else if (firstEventPart == "JOIN_SPECTATOR" && eventParts.Length > 1)
@@ -159,7 +163,11 @@ namespace Game.Server.Register
                     if (isParsed)
                     {
                         var gameInstance = FindGameInstance(gameToken);
-                        JoinGame(gameInstance, client, true);
+                        if (gameInstance != null)
+                        {
+                            Log.Write($"{client.Name}: {ClientEventCode.JOIN_SPECTATOR};{gameToken}");
+                            JoinGame(gameInstance, client, true);
+                        }
                     }
                 }
                 else if (eventParts.Length > 1)
@@ -198,7 +206,7 @@ namespace Game.Server.Register
 
         public void SendEvent(string eventMessage, IPlayer[] players)
         {
-            Log.Write($"{eventMessage} - {string.Concat(players.Select(p => p.Name))}");
+            Log.Write($"{eventMessage} - {string.Concat(players.Select(p => p.Name))} ");
 
             for (int i = 0; i < players.Length; i++)
             {

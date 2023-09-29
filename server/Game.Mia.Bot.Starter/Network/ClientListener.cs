@@ -42,7 +42,7 @@ namespace Game.Server.Bot.Starter.Network
             byte[] eventMessageBytes = reader.GetRemainingBytes();
             string eventMessage = Encoding.UTF8.GetString(eventMessageBytes);
 
-            Log.Write($"OnNetworkReceive: {peer.EndPoint.Address}:{peer.EndPoint.Port} - Message: {eventMessage} - ChannelNumber: {channelNumber} - DeliveryMethod: {deliveryMethod}");
+            Log.Write($"OnNetworkReceive: {eventMessage}");
 
             gameLogic.ProcessEvent(eventMessage, peer);
         }
