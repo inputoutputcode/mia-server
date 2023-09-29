@@ -293,7 +293,6 @@ namespace Game.Server.Engine.Mia
                                     gameScorer.Lost(looserPlayer);
                                     gameScorer.Winner(winnerPlayer);
 
-                                    Log.Write($"Send PLAYER_LOST for '{looserPlayer.Name}' (Reason: {reasonCode})");
                                     serverMove = new ServerMove(ServerMoveCode.PLAYER_LOST, looserPlayer.Name, reasonCode, playerList.RegisteredPlayers.ToArray(), this.token);
                                     eventHistory.Add(serverMove);
                                     SendServerMessage(serverMove);
@@ -309,8 +308,6 @@ namespace Game.Server.Engine.Mia
                             break;
 
                         case ClientMoveCode.ANNOUNCE:
-                            // BUG: announcing lower dices as announced before should cause player lost event
-                            // TODO: anouncing dice numbers in wrong order should send player lost event
                             announcedDice = currentDice.Parse(playerMove.Value);
                             if (playerMove.Player.Name == playerList.Current().Name &&
                                 currentTurn.RollCount <= 2 &&
@@ -319,12 +316,12 @@ namespace Game.Server.Engine.Mia
                             {
                                 if (announcedDice.IsMia)
                                 {
+                                    // TODO: Implement if next player does not want to SEE for Mia to get less point reduction
                                     if (currentDice.IsMia)
                                     {
                                         var loosingPlayer = playerList.Previous();
 
                                         var failureReasonCode = ServerFailureReasonCode.MIA;
-                                        Log.Write($"Send PLAYER_LOST for '{loosingPlayer.Name}' (Reason: {failureReasonCode})");
                                         serverMove = new ServerMove(ServerMoveCode.PLAYER_LOST, loosingPlayer.Name, failureReasonCode, playerList.RegisteredPlayers.ToArray(), this.token);
                                         eventHistory.Add(serverMove);
                                         SendServerMessage(serverMove);
@@ -339,7 +336,6 @@ namespace Game.Server.Engine.Mia
                                         var nextPlayer = playerList.Next();
 
                                         var failureReasonCode = ServerFailureReasonCode.LIED_ABOUT_MIA;
-                                        Log.Write($"Send PLAYER_LOST for '{playerMove.Player.Name}' (Reason: {failureReasonCode})");
                                         serverMove = new ServerMove(ServerMoveCode.PLAYER_LOST, playerMove.Player.Name, failureReasonCode, playerList.RegisteredPlayers.ToArray(), this.token);
                                         eventHistory.Add(serverMove);
                                         SendServerMessage(serverMove);
