@@ -396,10 +396,13 @@ namespace Game.Server.Engine.Mia
             int turnTimeOut = Config.Config.Settings.TurnTimeOut;
             await Task.Delay(turnTimeOut);
 
-            var currentPlayer = playerList.Current();
-            if (currentPlayer != null && player.Name == currentPlayer.Name && player.CurrentState == PlayerState.Active)
+            lock (lockObject)
             {
-                SendPlayerLost(player, ServerFailureReasonCode.DID_NOT_TAKE_TURN);
+                var currentPlayer = playerList.Current();
+                if (currentPlayer != null && player.Name == currentPlayer.Name && player.CurrentState == PlayerState.Active)
+                {
+                    SendPlayerLost(player, ServerFailureReasonCode.DID_NOT_TAKE_TURN);
+                }
             }
         }
 
@@ -426,8 +429,6 @@ namespace Game.Server.Engine.Mia
 
         private void SendPlayerLost(IPlayer player, ServerFailureReasonCode reasonCode)
         {
-            Log.Write($"Send PLAYER_LOST for '{player.Name}' (Reason: {reasonCode})");
-
             // BUG: Timing issues(?) causes multiple PLAYER_LOST events
             gameScorer.Lost(player);
             var serverMove = new ServerMove(ServerMoveCode.PLAYER_LOST, player.Name, reasonCode, playerList.RegisteredPlayers.ToArray(), token);

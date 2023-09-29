@@ -50,8 +50,18 @@ namespace Game.Server.Bot.Starter.Game
                     break;
 
                 case "ROLLED":
-                    dice = messageParts[1];
-                    token = messageParts[2];
+                    if (messageParts.Length <= 2)
+                    {
+                        token = messageParts[1];
+                        // Make a good guess
+                        dice = "66";
+                        Log.Write($"BUG: server sends second ROLLED command");
+                    }
+                    else
+                    {
+                        dice = messageParts[1];
+                        token = messageParts[2];
+                    }
                     messageResponse = "ANNOUNCE;" + dice + ";" + token;
                     break;
             }

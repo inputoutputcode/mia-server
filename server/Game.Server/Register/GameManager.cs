@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 using Game.Server.Engine.Mia;
 using Game.Server.Engine.Mia.Interface;
+using Game.Server.Engine.Mia.Move;
 using Game.Server.Network.Interface;
 using Game.Server.Scoring;
 using Game.Server.Register.Interface;
@@ -15,8 +16,7 @@ using Game.Server.Network.Event;
 using Game.Server.Logging;
 
 using LiteNetLib;
-using System.Numerics;
-using Game.Server.Engine.Mia.Move;
+
 
 namespace Game.Server.Register
 {
@@ -46,19 +46,24 @@ namespace Game.Server.Register
         public GameManager()
         {
             this.serverInstance = new Network.Server(this);
+            Initialize();
         }
 
         public GameManager(IServer serverInstance)
         {
             this.serverInstance = serverInstance;
+            Initialize();
         }
 
-        public void Initialize()
+        private void Initialize()
         {
             activeGameInstances = new List<IGameInstance>();
             activeGames = new List<IGame>();
             clients = new List<IClient>();
+        }
 
+        public void Start()
+        {
             serverInstance.CreateServer(serverPort);
 
             // Wait to let clients register to game server
@@ -68,6 +73,11 @@ namespace Game.Server.Register
             Enum.TryParse(Config.Config.Settings.ScoreMode, out scoreMode);
 
             StartGame(scoreMode);
+        }
+
+        public void AddGame(IGame game)
+        {
+            activeGames.Add(game);
         }
 
         public void ReceiveEventMessage(string eventMessage, NetPeer peer)
@@ -100,7 +110,7 @@ namespace Game.Server.Register
                 var gameInstance = new GameInstance(game.GameNumber.ToString(), game.Token);
 
                 activeGameInstances.Add(gameInstance);
-                activeGames.Add(game);
+                AddGame(game);
 
                 for(int i = 0; i < clients.Count; i++)
                 {
@@ -192,12 +202,19 @@ namespace Game.Server.Register
                     if (Guid.TryParse(gameTokenValue, out gameToken))
                     {
                         var game = FindGame(gameToken);
-                        var player = game.Players.Find(p => p.Name == client.Name);
-                        if (game != null && player != null)
+                        if (game != null)
                         {
-                            Log.Write($"{player.Name}: {eventMessage};{eventValue};{gameToken}");
+                            var player = game.Players.Find(p => p.Name == client.Name);
+                            if (player != null)
+                            {
+                                Log.Write($"{player.Name}: {eventMessage};{eventValue};{gameToken}");
 
-                            game.ReceiveClientEvent(eventMessage, eventValue, player, gameToken);
+                                game.ReceiveClientEvent(eventMessage, eventValue, player, gameToken);
+                            }
+                        }
+                        else
+                        {
+                            Log.Write($"Game not found: {client.Name}: {eventMessage};{eventValue};{gameToken}");
                         }
                     }
                 }

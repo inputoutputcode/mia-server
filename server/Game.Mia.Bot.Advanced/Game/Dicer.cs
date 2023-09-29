@@ -183,33 +183,6 @@ namespace Game.Mia.Bot.Advanced.Game
             return (dice[0] > 0 && dice[0] < 7 && dice[1] > 0 && dice[1] < 7);
         }
 
-        public int CompareTo(Dicer dicer)
-        {
-            int compareResult = 0;
-
-            if (dicer.IsMia)
-            {
-                compareResult = 1;
-            }
-            else if (dicer.IsDouble)
-            {
-                if (dice[0] < dicer.DiceOne)
-                    compareResult = 1;
-                else
-                    compareResult = -1;
-            }
-            else if (dice[0] <= dicer.DiceOne && dice[1] < dicer.DiceTwo)
-            { 
-                compareResult = 1;
-            }
-            else if (dice[0] >= dicer.DiceOne && dice[1] > dicer.DiceTwo)
-            {
-                compareResult = -1;
-            }
-
-            return compareResult;
-        }
-
         #endregion
     }
 }

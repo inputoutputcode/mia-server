@@ -57,7 +57,7 @@ namespace Game.Mia.Bot.Nightmare.Game
                         var lastAnnouncedDice2 = diceHistory[diceHistory.Count - 2];
 
                         // SEE if last dice was only one higher than the previous
-                        if (diceHistory.Count > 0 && Dicer.BeatByOne(lastAnnouncedDice2).CompareTo(lastAnnouncedDice1) == 1)
+                        if (diceHistory.Count > 1 && Dicer.BeatByOne(lastAnnouncedDice2).IsHigherThan(lastAnnouncedDice1) == 0)
                         {
                             messageResponse = "SEE;" + token;
                         }
@@ -76,16 +76,16 @@ namespace Game.Mia.Bot.Nightmare.Game
                     Dicer lastAnnouncedDice = null;
                     Dicer rolledDice = null;
                     var randomizer = new Random();
-                    int randomSecondRoll = randomizer.Next(1, 2);
+                    int randomSecondRoll = randomizer.Next(0, 1);
 
                     if (diceHistory.Count > 0)
                         lastAnnouncedDice = diceHistory[diceHistory.Count - 1];
 
-                    // Reset to announce if already second ROLL
-                    if (rollCounter == 2)
+                    if (messageParts.Length == 2 && rollCounter == 2)
                     {
                         token = messageParts[1];
-                        randomSecondRoll = 1;
+                        // Reset to announce if already second ROLL
+                        randomSecondRoll = 0;
                     }
                     else
                     {
@@ -94,30 +94,30 @@ namespace Game.Mia.Bot.Nightmare.Game
                         rolledDice = Dicer.Parse(dice);
                     }
 
+                    // Second roll if current dice lower than last announced dice
+                    if (lastAnnouncedDice != null && rollCounter == 1 && lastAnnouncedDice.IsHigherThan(rolledDice) == 1)
+                    {
+                        randomSecondRoll = 1;
+                    }
+
                     switch(randomSecondRoll)
                     {
-                        case 1:
+                        case 0:
                             Dicer nextDice = null;
 
                             // Take rolled dice if higher than last one
-                            if (diceHistory.Count > 0 && lastAnnouncedDice != null && rolledDice != null && lastAnnouncedDice.CompareTo(rolledDice) == -1)
+                            if (lastAnnouncedDice != null && rolledDice != null && rolledDice.IsHigherThan(lastAnnouncedDice) == 1)
                             {
                                 nextDice = rolledDice;
                             }
                             // Beat last dice with randomized
+                            else if(diceHistory.Count == 0)
+                            {
+                                nextDice = rolledDice;
+                            }
                             else
                             {
-                                if (diceHistory.Count == 0)
-                                {
-                                    int randomOne = randomizer.Next(1, 6);
-                                    int randomTwo = randomizer.Next(1, 6);
-
-                                    nextDice = new Dicer(randomOne, randomTwo);
-                                }
-                                else
-                                {
-                                    nextDice = Dicer.Beat(lastAnnouncedDice);
-                                }
+                                nextDice = Dicer.Beat(lastAnnouncedDice);
                             }
 
                             messageResponse = "ANNOUNCE;" + nextDice + ";" + token;
@@ -125,7 +125,7 @@ namespace Game.Mia.Bot.Nightmare.Game
 
                             break;
 
-                        case 2:
+                        case 1:
                             messageResponse = "ROLL;" + token;
                             rollCounter = 2;
 

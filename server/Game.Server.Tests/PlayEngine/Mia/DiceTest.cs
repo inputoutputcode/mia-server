@@ -115,6 +115,7 @@ namespace Game.Server.Tests.PlayEngine.Mia
             for (int j = scores.Count - 1; j > 0; j--)
                 Assert.False(scores[j - 1].IsHigherThan(scores[j]));
 
+            Assert.False(new Dice(1, 1).IsHigherThan(new Dice(1, 1)));
         }
     }
 }

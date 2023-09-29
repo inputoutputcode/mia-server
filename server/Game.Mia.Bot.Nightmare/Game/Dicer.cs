@@ -150,26 +150,31 @@ namespace Game.Mia.Bot.Nightmare.Game
             return (dice[0] > 0 && dice[0] < 7 && dice[1] > 0 && dice[1] < 7);
         }
 
-        public int CompareTo(Dicer dicer)
+        /// <summary>
+        /// Higher=1;Lower=-1;Equal=0
+        /// </summary>
+        /// <param name="dicer"></param>
+        /// <returns></returns>
+        public int IsHigherThan(Dicer dicer)
         {
             int compareResult = 0;
 
             if (dicer.IsMia)
             {
-                compareResult = 1;
+                compareResult = -1;
             }
             else if (dicer.IsDouble)
             {
-                if (dice[0] < dicer.DiceOne)
+                if (dice[0] > dicer.DiceOne)
                     compareResult = 1;
                 else
                     compareResult = -1;
             }
-            else if (dice[0] <= dicer.DiceOne && dice[1] < dicer.DiceTwo)
+            else if (dice[0] >= dicer.DiceOne && dice[1] > dicer.DiceTwo)
             { 
                 compareResult = 1;
             }
-            else if (dice[0] >= dicer.DiceOne && dice[1] > dicer.DiceTwo)
+            else if (dice[0] <= dicer.DiceOne && dice[1] < dicer.DiceTwo)
             {
                 compareResult = -1;
             }

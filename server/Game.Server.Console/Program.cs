@@ -22,13 +22,13 @@ namespace Game.Server.Console
                 using (var consoleCopy = new ConsoleCopy())
                 {
                     var server = new GameManager() { ServerPort = Config.Config.Settings.ServerPort };
-                    server.Initialize();
+                    server.Start();
                 }
             }
             else
             {
                 var server = new GameManager() { ServerPort = Config.Config.Settings.ServerPort };
-                server.Initialize();
+                server.Start();
             }
 
             System.Console.WriteLine("Mia Server stopped");

@@ -103,7 +103,6 @@ namespace Game.Server.Engine.Mia
 
         public bool IsHigherThan(IDice otherDice)
         {
-            // TODO: double check if equal is correct
             bool isHigher = false;
 
             if (otherDice != null)

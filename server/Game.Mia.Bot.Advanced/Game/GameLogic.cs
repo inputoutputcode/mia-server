@@ -59,8 +59,7 @@ namespace Game.Mia.Bot.Advanced.Game
                     // Beat dice and announce
                     if (diceHistory.Count == 0)
                     {
-                        var nextDice = Dicer.Beat(Dicer.Parse(dice));
-                        messageResponse = "ANNOUNCE;" + nextDice + ";" + token;
+                        messageResponse = "ANNOUNCE;" + dice + ";" + token;
                     }
                     else if (diceHistory.Count > 0)
                     {
