@@ -127,7 +127,8 @@ namespace Game.Mia.Bot.Nightmare.Game
 
                     // Track last dice announcement
                     var announcedDice = Dicer.Parse(dice);
-                    diceHistory.Add(announcedDice);
+                    if (announcedDice != null)
+                        diceHistory.Add(announcedDice);
                     break;
             }
 

@@ -313,6 +313,11 @@ namespace Game.Server.Engine.Mia
                                 announcedDice != null &&
                                 announcedDice.IsValid)
                             {
+                                string announcement = $"{playerMove.Player.Name};{announcedDice}";
+                                serverMove = new ServerMove(ServerMoveCode.ANNOUNCED, announcement, ServerFailureReasonCode.None, playerList.RegisteredPlayers.ToArray(), this.token);
+                                eventHistory.Add(serverMove);
+                                SendServerMessage(serverMove);
+
                                 if (announcedDice.IsMia)
                                 {
                                     // TODO: Implement if next player does not want to SEE for Mia to get less point reduction
