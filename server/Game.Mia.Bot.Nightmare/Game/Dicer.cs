@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Game.Mia.Bot.Nightmare.Game
 {
-    internal class Dicer
+    public class Dicer
     {
         #region Members
 
@@ -99,7 +99,7 @@ namespace Game.Mia.Bot.Nightmare.Game
             {
                 returnDicer = new Dicer(1, 2);
             }
-            if (dicer.IsDouble)
+            else if (dicer.IsDouble)
             {
                 returnDicer = new Dicer(dicer.DiceOne + 1, dicer.DiceOne + 1);
             }
@@ -159,22 +159,33 @@ namespace Game.Mia.Bot.Nightmare.Game
         {
             int compareResult = 0;
 
-            if (dicer.IsMia)
+            if (IsMia || dicer.IsMia)
             {
-                compareResult = -1;
-            }
-            else if (dicer.IsDouble)
-            {
-                if (dice[0] > dicer.DiceOne)
+                if (IsMia)
                     compareResult = 1;
                 else
                     compareResult = -1;
             }
-            else if (dice[0] > dicer.DiceOne || dice[0] == dicer.DiceOne && dice[1] > dicer.DiceTwo)
+            else if (IsDouble || dicer.IsDouble)
+            {
+                if ((IsDouble && dicer.IsDouble && dice[0] > dicer.DiceOne) || 
+                    IsDouble && !dicer.IsDouble)
+                {
+                    compareResult = 1;
+                }
+                else if ((IsDouble && dicer.IsDouble && dice[0] < dicer.DiceOne) || 
+                    !IsDouble && dicer.IsDouble)
+                {
+                    compareResult = -1;
+                }
+            }
+            else if (dice[0] > dicer.DiceOne ||
+                dice[0] == dicer.DiceOne && dice[1] > dicer.DiceTwo)
             { 
                 compareResult = 1;
             }
-            else if (dice[0] < dicer.DiceOne || dice[0] == dicer.DiceOne && dice[1] < dicer.DiceTwo)
+            else if (dice[0] < dicer.DiceOne || 
+                dice[0] == dicer.DiceOne && dice[1] < dicer.DiceTwo)
             {
                 compareResult = -1;
             }

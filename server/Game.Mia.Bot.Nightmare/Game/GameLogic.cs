@@ -106,12 +106,7 @@ namespace Game.Mia.Bot.Nightmare.Game
                             Dicer nextDice = null;
 
                             // Take rolled dice if higher than last one
-                            if (lastAnnouncedDice != null && rolledDice != null && rolledDice.IsHigherThan(lastAnnouncedDice) == 1)
-                            {
-                                nextDice = rolledDice;
-                            }
-                            // Beat last dice with randomized
-                            else if(diceHistory.Count == 0)
+                            if (diceHistory.Count == 0 || lastAnnouncedDice != null && rolledDice != null && rolledDice.IsHigherThan(lastAnnouncedDice) == 1)
                             {
                                 nextDice = rolledDice;
                             }
