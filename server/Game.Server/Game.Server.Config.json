@@ -9,7 +9,7 @@
     "MaximumActivePlayers": 20,
     "MaximumSpectators": 20,
     "ScoreMode": "Points",
-    "ScoreIncrement": 5,
+    "ScoreIncrement": 10,
     "ScoreDecrement": 5,
     "ConnectionKey": "Corp123!",
     "UniqueIpAddressPerClientRequired": false

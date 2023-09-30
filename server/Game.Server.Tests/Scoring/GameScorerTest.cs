@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 
-using Xunit;
-
 using Game.Server.Scoring;
 using Game.Server.Engine.Mia;
 using Game.Server.Engine.Mia.Interface;
+
+using Xunit;
 
 
 namespace Game.Server.Tests.Scoring
@@ -20,6 +20,29 @@ namespace Game.Server.Tests.Scoring
 
             // Assert
             Assert.True(false);
+        }
+
+        [Fact]
+        public void Score_Never_Goes_Below_Zero()
+        {
+            var pointScorer = GameScoreFactory.Create(ScoreMode.Points);
+
+            var player1 = new Player("Player1", false, "10.0.0.1");
+            var player2 = new Player("Player2", false, "10.0.0.2");
+            var player3 = new Player("Player3", false, "10.0.0.3");
+            var playerList = new List<IPlayer>() { player1, player2, player3 };
+
+            pointScorer.SetActivePlayers(playerList);
+
+            // Act
+            pointScorer.Lost(player1);
+            pointScorer.Winner(player2);
+
+            pointScorer.Lost(player1);
+            pointScorer.Winner(player2);
+
+            // Assert
+            Assert.True(player1.Score == 0);
         }
 
         [Fact]
@@ -44,7 +67,6 @@ namespace Game.Server.Tests.Scoring
 
             pointScorer.Lost(player1);
             pointScorer.Winner(player2);
-
 
             // Assert
             Assert.True(player1.Score == -(scoreDecrement * 2));

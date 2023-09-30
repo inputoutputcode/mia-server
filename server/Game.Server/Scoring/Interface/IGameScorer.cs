@@ -11,7 +11,7 @@ namespace Game.Server.Scoring.Interface
 
         void Lost(IPlayer player);
 
-        void Looser(IPlayer player);
+        void Neutral(IPlayer player);
 
         void Winner(IPlayer player);
 

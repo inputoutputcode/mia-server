@@ -5,7 +5,7 @@ namespace Game.Server.Scoring
 {
     internal class MoneyScorer : GameScorerBase
     {
-        public override void Looser(IPlayer player)
+        public override void Neutral(IPlayer player)
         {
         }
 

@@ -4,7 +4,7 @@ namespace Game.Server.Scoring
 {
     internal class LifeScorer : GameScorerBase
     {
-        public override void Looser(IPlayer player)
+        public override void Neutral(IPlayer player)
         {
             player.Score -= 1;
         }

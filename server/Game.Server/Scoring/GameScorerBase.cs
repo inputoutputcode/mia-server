@@ -62,7 +62,7 @@ namespace Game.Server.Scoring
 
         public abstract void Lost(IPlayer player);
 
-        public abstract void Looser(IPlayer player);
+        public abstract void Neutral(IPlayer player);
 
         public abstract void Winner(IPlayer player);
 
