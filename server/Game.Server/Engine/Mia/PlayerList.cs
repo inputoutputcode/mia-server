@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.WebSockets;
+
 using Game.Server.Engine.Mia.Interface;
 
 
@@ -235,7 +235,9 @@ namespace Game.Server.Engine.Mia
         /// </summary>
         public void RoundReset()
         {
-            ActivePlayers.ForEach(p => Kick(p));
+            foreach (var player in RegisteredPlayers) 
+                if (player.CurrentState != PlayerState.Spectator)
+                    player.CurrentState = PlayerState.Inactive;
         }
 
         #endregion Methods

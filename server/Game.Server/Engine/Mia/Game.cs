@@ -118,16 +118,18 @@ namespace Game.Server.Engine.Mia
 
         public bool Register(IPlayer player)
         {
-            bool isRegistered = false;
+            bool playerAccepted = false;
             
             // TODO: Fix join procedure
             //if (gamePhase == GamePhase.Starting)
             {
-                playerList.Register(player);
-                isRegistered = playerList.Join(player);
+                playerAccepted = playerList.Register(player);
+
+                if (player.CurrentState != PlayerState.Spectator)
+                    playerAccepted = playerList.Join(player);
             }
 
-            return isRegistered;
+            return playerAccepted;
         }
 
         public void RoundStarted()
