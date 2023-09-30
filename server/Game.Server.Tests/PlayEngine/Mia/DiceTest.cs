@@ -29,6 +29,20 @@ namespace Game.Server.Tests.PlayEngine.Mia
         }
 
         [Fact]
+        public void Equal_Dices_Are_Equal()
+        {
+            // Act
+            var announcedDice = new Dice(1, 1);
+            var currentDice = new Dice(1, 1);
+
+            // Arrange
+            bool result = announcedDice.IsHigherOrEqual(currentDice);
+
+            // Assert
+            Assert.True(result);
+        }
+
+        [Fact]
         public void Detect_Mia()
         {
             // Act

@@ -113,6 +113,19 @@ namespace Game.Server.Engine.Mia
             return isHigher;
         }
 
+        public bool IsHigherOrEqual(IDice otherDice)
+        {
+            bool isHigher = false;
+
+            if (otherDice != null)
+            {
+                isHigher = Scoring(this) >= Scoring(otherDice);
+            }
+
+            return isHigher;
+        }
+        
+
         public override string ToString()
         {
             return DiceOne.ToString() + DiceTwo;

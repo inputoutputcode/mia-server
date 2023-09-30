@@ -14,6 +14,8 @@
 
         bool IsHigherThan(IDice otherDice);
 
+        bool IsHigherOrEqual(IDice otherDice);
+
         IDice Parse(string value);
 
         void Shake();

@@ -277,7 +277,7 @@ namespace Game.Server.Engine.Mia
                                     IPlayer winnerPlayer;
                                     ServerFailureReasonCode reasonCode = ServerFailureReasonCode.None;
 
-                                    if (announcedDice.IsHigherThan(currentDice))
+                                    if (announcedDice.IsHigherOrEqual(currentDice))
                                     {
                                         looserPlayer = playerList.Previous();
                                         winnerPlayer = playerMove.Player;
@@ -313,8 +313,8 @@ namespace Game.Server.Engine.Mia
                                 announcedDice != null &&
                                 announcedDice.IsValid)
                             {
-                                string announcement = $"{playerMove.Player.Name};{announcedDice}";
-                                serverMove = new ServerMove(ServerMoveCode.ANNOUNCED, announcement, ServerFailureReasonCode.None, playerList.RegisteredPlayers.ToArray(), this.token);
+                                string broadcastValue = $"{playerMove.Player.Name};{announcedDice}";
+                                serverMove = new ServerMove(ServerMoveCode.ANNOUNCED, broadcastValue, ServerFailureReasonCode.None, playerList.RegisteredPlayers.ToArray(), this.token);
                                 eventHistory.Add(serverMove);
                                 SendServerMessage(serverMove);
 
@@ -357,11 +357,6 @@ namespace Game.Server.Engine.Mia
                                 }
                                 else  if (announcedDice.IsHigherThan(lastAnnouncedDice))
                                 {
-                                    string broadcastValue = $"{playerMove.Player.Name};{announcedDice}";
-                                    serverMove = new ServerMove(ServerMoveCode.ANNOUNCED, broadcastValue, ServerFailureReasonCode.None, playerList.RegisteredPlayers.ToArray(), this.token);
-                                    eventHistory.Add(serverMove);
-                                    SendServerMessage(serverMove);
-
                                     var nextPlayer = playerList.Next();
                                     SendYourTurn(nextPlayer);
                                 }
