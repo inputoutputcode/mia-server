@@ -21,41 +21,44 @@ namespace Game.Server.Scoring
         {
             foreach (var player in playerList)
             {
-                IPlayer existingPlayer = null;
-                bool uniqueIp = Config.Config.Settings.UniqueIpAddressPerClientRequired;
-
-                if (uniqueIp) 
-                    existingPlayer = scoredPlayers.FirstOrDefault(p => p.Name == player.Name || p.IPAddress == player.IPAddress);
-                else
-                    existingPlayer = scoredPlayers.FirstOrDefault(p => p.Name == player.Name);
-
-                // new player
-                if (existingPlayer == null)
+                if (player.CurrentState != PlayerState.Spectator)
                 {
-                    scoredPlayers.Add(new Player(player.Name, false, player.IPAddress) { CurrentState = PlayerState.Active });
-                }
-                // existing IP address, but new player name
-                else if (existingPlayer.Name != player.Name && existingPlayer.IPAddress == player.IPAddress)
-                {
-                    var sameAddress = scoredPlayers.FirstOrDefault(p => p.IPAddress == player.IPAddress);
-                    if (sameAddress != null)
-                        sameAddress.CurrentState = PlayerState.Inactive;
+                    IPlayer existingPlayer = null;
+                    bool uniqueIp = Config.Config.Settings.UniqueIpAddressPerClientRequired;
 
-                    scoredPlayers.Add(new Player(player.Name, false, player.IPAddress) { CurrentState = PlayerState.Active });
-                }
-                // existing player name, but different IP address
-                else if (existingPlayer.Name == player.Name && existingPlayer.IPAddress != player.IPAddress)
-                {
-                    var sameAddress = scoredPlayers.FirstOrDefault(p => p.Name == player.Name);
-                    if (sameAddress != null)
-                        sameAddress.CurrentState = PlayerState.Inactive;
+                    if (uniqueIp)
+                        existingPlayer = scoredPlayers.FirstOrDefault(p => p.Name == player.Name || p.IPAddress == player.IPAddress);
+                    else
+                        existingPlayer = scoredPlayers.FirstOrDefault(p => p.Name == player.Name);
 
-                    scoredPlayers.Add(new Player(player.Name, false, player.IPAddress) { CurrentState = PlayerState.Active });
-                }
-                // existing player name with same IP address comes back
-                else
-                { 
-                    existingPlayer.CurrentState = PlayerState.Active;
+                    // new player
+                    if (existingPlayer == null)
+                    {
+                        scoredPlayers.Add(new Player(player.Name, false, player.IPAddress) { CurrentState = PlayerState.Active });
+                    }
+                    // existing IP address, but new player name
+                    else if (existingPlayer.Name != player.Name && existingPlayer.IPAddress == player.IPAddress)
+                    {
+                        var sameAddress = scoredPlayers.FirstOrDefault(p => p.IPAddress == player.IPAddress);
+                        if (sameAddress != null)
+                            sameAddress.CurrentState = PlayerState.Inactive;
+
+                        scoredPlayers.Add(new Player(player.Name, false, player.IPAddress) { CurrentState = PlayerState.Active });
+                    }
+                    // existing player name, but different IP address
+                    else if (existingPlayer.Name == player.Name && existingPlayer.IPAddress != player.IPAddress)
+                    {
+                        var sameAddress = scoredPlayers.FirstOrDefault(p => p.Name == player.Name);
+                        if (sameAddress != null)
+                            sameAddress.CurrentState = PlayerState.Inactive;
+
+                        scoredPlayers.Add(new Player(player.Name, false, player.IPAddress) { CurrentState = PlayerState.Active });
+                    }
+                    // existing player name with same IP address comes back
+                    else
+                    {
+                        existingPlayer.CurrentState = PlayerState.Active;
+                    }
                 }
             }
         }
@@ -75,7 +78,7 @@ namespace Game.Server.Scoring
         {
             string scores = string.Empty;
 
-            foreach (IPlayer player in scoredPlayers)
+            foreach (IPlayer player in scoredPlayers.OrderByDescending(p => p.Score))
             {
                 scores += player.Name + ":" + player.Score + ",";
             }

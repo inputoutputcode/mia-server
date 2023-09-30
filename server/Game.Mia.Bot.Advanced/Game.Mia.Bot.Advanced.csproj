@@ -10,9 +10,13 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Content Include="Game.Mia.Bot.Advanced.Config.json">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</Content>
+	  <None Remove="Game.Mia.Bot.Advanced.Config.json" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Include="Game.Mia.Bot.Advanced.Config.json">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
 	</ItemGroup>
 
 	<ItemGroup>

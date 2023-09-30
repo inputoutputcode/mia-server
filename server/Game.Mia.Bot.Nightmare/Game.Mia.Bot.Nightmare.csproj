@@ -10,6 +10,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Game.Mia.Bot.Nightmare.Config.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Include="Game.Mia.Bot.Nightmare.Config.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

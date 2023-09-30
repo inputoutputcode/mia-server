@@ -14,7 +14,7 @@ namespace Game.Server.Bot.Starter.Configuration
             {
                 if (config == null)
                 {
-                    string configFileName = "Game.Server.Bot.Starter.Config.json";
+                    string configFileName = "Game.Mia.Bot.Starter.Config.json";
                     var builder = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile(configFileName, optional: false);
                     config = builder.Build();
                 }

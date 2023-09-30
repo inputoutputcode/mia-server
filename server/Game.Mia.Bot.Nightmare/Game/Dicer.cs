@@ -170,11 +170,11 @@ namespace Game.Mia.Bot.Nightmare.Game
                 else
                     compareResult = -1;
             }
-            else if (dice[0] >= dicer.DiceOne && dice[1] > dicer.DiceTwo)
+            else if (dice[0] > dicer.DiceOne || dice[0] == dicer.DiceOne && dice[1] > dicer.DiceTwo)
             { 
                 compareResult = 1;
             }
-            else if (dice[0] <= dicer.DiceOne && dice[1] < dicer.DiceTwo)
+            else if (dice[0] < dicer.DiceOne || dice[0] == dicer.DiceOne && dice[1] < dicer.DiceTwo)
             {
                 compareResult = -1;
             }

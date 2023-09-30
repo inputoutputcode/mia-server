@@ -6,11 +6,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Game.Mia.Bot.Starter.Config.json" />
     <None Remove="Game.Server.Bot.Starter.Config.json" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Game.Server.Bot.Starter.Config.json">
+    <Content Include="Game.Mia.Bot.Starter.Config.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

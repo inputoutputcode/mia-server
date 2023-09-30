@@ -38,7 +38,7 @@ namespace Game.Server.Engine.Mia
 
         #region Properties
 
-    public ITurn CurrentTurn
+        public ITurn CurrentTurn
         {
             get { return currentTurn; }
             private set { }
@@ -132,7 +132,6 @@ namespace Game.Server.Engine.Mia
 
         public void RoundStarted()
         {
-            string eventMessage = string.Empty;
             gamePhase = GamePhase.Started;
             gameScorer.SetActivePlayers(playerList.ActivePlayers);
 
@@ -456,8 +455,6 @@ namespace Game.Server.Engine.Mia
         {
             playerList.RoundReset();
             var scoreValues = gameScorer.GetScoreValues();
-
-            Log.Write($"Round ended - game scores: {scoreValues}");
 
             var serverMove = new ServerMove(ServerMoveCode.SCORE, scoreValues, ServerFailureReasonCode.None, playerList.RegisteredPlayers.ToArray(), token);
             eventHistory.Add(serverMove);

@@ -1,15 +1,12 @@
-﻿using System;
-using System.Net;
-using System.Linq;
+﻿using System.Net;
 using System.Net.Sockets;
-using System.Threading;
 
-using Game.Server.Bot.Starter.Configuration;
+using Game.Server.Spectator.Configuration;
 
 using LiteNetLib;
 
 
-namespace Game.Server.Bot.Starter.Network
+namespace Game.Server.Spectator.Network
 {
     public class Client
     {

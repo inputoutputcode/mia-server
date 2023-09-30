@@ -112,6 +112,7 @@ namespace Game.Server.Register
 
                 for(int i = 0; i < clients.Count; i++)
                 {
+                    // BUG?: isSpectator=false 
                     game.Register(new Player(clients[i].Name, false, clients[i].Peer.EndPoint.Address.ToString()));
                 }
 

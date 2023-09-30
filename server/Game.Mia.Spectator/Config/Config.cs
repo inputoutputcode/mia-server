@@ -1,9 +1,7 @@
-﻿using System.IO;
-
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 
 
-namespace Game.Mia.Bot.Advanced.Configuration
+namespace Game.Server.Spectator.Configuration
 {
     public static class Config
     {
@@ -15,7 +13,7 @@ namespace Game.Mia.Bot.Advanced.Configuration
             {
                 if (config == null)
                 {
-                    string configFileName = "Game.Mia.Bot.Advanced.Config.json";
+                    string configFileName = "Game.Server.Spectator.Config.json";
                     var builder = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile(configFileName, optional: false);
                     config = builder.Build();
                 }
