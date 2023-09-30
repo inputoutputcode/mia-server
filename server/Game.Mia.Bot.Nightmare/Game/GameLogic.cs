@@ -22,15 +22,7 @@ namespace Game.Mia.Bot.Nightmare.Game
             peer.Send(messageBytes, DeliveryMethod.ReliableOrdered);
         }
 
-        public void SendEvent(string message, NetPeer peer)
-        {
-            byte[] messageBytes = Encoding.UTF8.GetBytes(message);
-            peer.Send(messageBytes, DeliveryMethod.ReliableOrdered);
-
-            Log.Write(message);
-        }
-
-        public void ProcessEvent(string eventMessage, NetPeer peer)
+        public string ProcessEvent(string eventMessage)
         {
             string[] messageParts = eventMessage.Split(';');
             string messageResponse = string.Empty;
@@ -139,8 +131,7 @@ namespace Game.Mia.Bot.Nightmare.Game
                     break;
             }
 
-            if (!string.IsNullOrEmpty(messageResponse))
-                SendEvent(messageResponse, peer);
+            return messageResponse;
         }
     }
 }

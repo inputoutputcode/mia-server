@@ -43,7 +43,14 @@ namespace Game.Mia.Bot.Nightmare.Network
 
             Log.Write($"OnNetworkReceive: {eventMessage}");
 
-            gameLogic.ProcessEvent(eventMessage, peer);
+            string messageResponse = gameLogic.ProcessEvent(eventMessage);
+            if (!string.IsNullOrEmpty(messageResponse))
+            {
+                byte[] messageBytes = Encoding.UTF8.GetBytes(messageResponse);
+                peer.Send(messageBytes, DeliveryMethod.ReliableOrdered);
+
+                Log.Write(messageResponse);
+            }
         }
 
         public void OnNetworkReceiveUnconnected(IPEndPoint remoteEndPoint, NetPacketReader reader, UnconnectedMessageType messageType)
