@@ -206,7 +206,6 @@ namespace Game.Server.Engine.Mia
                             break;
 
                         case ClientMoveCode.ROLL:
-                            // BUG: currentPlayerIndex not set correctly, causing player lost events
                             if (playerMove.Player.Name == playerList.Current().Name && currentTurn.RollCount < 2)
                             {
                                 serverMove = new ServerMove(ServerMoveCode.PLAYER_ROLLS, playerMove.Player.Name, ServerFailureReasonCode.None, playerList.RegisteredPlayers.ToArray(), this.token);
@@ -301,7 +300,6 @@ namespace Game.Server.Engine.Mia
                             }
                             else
                             {
-                                // BUG: SEE is correct when dice history exists
                                 SendPlayerLost(playerMove.Player, ServerFailureReasonCode.INVALID_TURN);
                             }
                             break;
@@ -428,7 +426,6 @@ namespace Game.Server.Engine.Mia
 
         private void SendPlayerLost(IPlayer player, ServerFailureReasonCode reasonCode)
         {
-            // BUG: Timing issues(?) causes multiple PLAYER_LOST events
             gameScorer.Lost(player);
             var serverMove = new ServerMove(ServerMoveCode.PLAYER_LOST, player.Name, reasonCode, playerList.RegisteredPlayers.ToArray(), token);
             eventHistory.Add(serverMove);
