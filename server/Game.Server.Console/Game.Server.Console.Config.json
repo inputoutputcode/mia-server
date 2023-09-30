@@ -1,7 +1,7 @@
 ﻿{
   "appSettings": {
     "ServerName": "Mia Game",
-    "RoundsPerRun": 5000,
+    "RoundsPerRun": 10000,
     "MinimumPlayerCount": 2,
     "ServerPort": 1000,
     "InitializeDelayTime" :  1000,

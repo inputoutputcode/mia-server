@@ -23,14 +23,12 @@ namespace Game.Server.Register
     public class GameManager : IGameManager
     {
         private IServer serverInstance;
-
         private List<IGameInstance> activeGameInstances;
-
         private List<IGame> activeGames;
-
         private List<IClient> clients;
-
         private int serverPort;
+
+        private static readonly Object lockObject = new Object();
 
         public List<IGameInstance> ActiveGamesInstances
         {
@@ -129,92 +127,95 @@ namespace Game.Server.Register
             if (string.IsNullOrWhiteSpace(clientEvent.Message) || clientEvent.Peer == null)
                 return;
 
-            var client = FindClient(clientEvent.Peer);
-            string[] eventParts = clientEvent.Message.Split(';');
-
-            if (client == null && eventParts.Length > 0)
+            lock (lockObject)
             {
-                string firstPart = eventParts[0];
+                var client = FindClient(clientEvent.Peer);
+                string[] eventParts = clientEvent.Message.Split(';');
 
-                if (firstPart == "REGISTER" && eventParts.Length > 1)
+                if (client == null && eventParts.Length > 0)
                 {
-                    string playerName = eventParts[1];
-                    IClient newClient = new Client(playerName, clientEvent.Peer);
-                    RegisterClient(newClient);
-                }
-            }
-            else if (client != null && eventParts.Length > 1)
-            {
-                string firstEventPart = eventParts[0];
+                    string firstPart = eventParts[0];
 
-                if (firstEventPart == "FIND_GAME" && eventParts.Length > 1)
-                {
-                    var gameInstance = FindGameInstance(eventParts[1].ToString());
-                    // TODO: only for cluster version
-                }
-                else if (firstEventPart == "JOIN_ROUND" && eventParts.Length > 1)
-                {
-                    Guid gameToken;
-                    bool isParsed = Guid.TryParse(eventParts[1], out gameToken);
-                    if (isParsed)
+                    if (firstPart == "REGISTER" && eventParts.Length > 1)
                     {
-                        var gameInstance = FindGameInstance(gameToken);
-                        if (gameInstance != null)
+                        string playerName = eventParts[1];
+                        IClient newClient = new Client(playerName, clientEvent.Peer);
+                        RegisterClient(newClient);
+                    }
+                }
+                else if (client != null && eventParts.Length > 1)
+                {
+                    string firstEventPart = eventParts[0];
+
+                    if (firstEventPart == "FIND_GAME" && eventParts.Length > 1)
+                    {
+                        var gameInstance = FindGameInstance(eventParts[1].ToString());
+                        // TODO: only for cluster version
+                    }
+                    else if (firstEventPart == "JOIN_ROUND" && eventParts.Length > 1)
+                    {
+                        Guid gameToken;
+                        bool isParsed = Guid.TryParse(eventParts[1], out gameToken);
+                        if (isParsed)
                         {
-                            Log.Write($"{client.Name}: {ClientMoveCode.JOIN_ROUND};{gameToken}");
-                            JoinGame(gameInstance, client, false);
-                        }
-                    }
-                }
-                else if (firstEventPart == "JOIN_SPECTATOR" && eventParts.Length > 1)
-                {
-                    Guid gameToken;
-                    bool isParsed = Guid.TryParse(eventParts[1], out gameToken);
-                    if (isParsed)
-                    {
-                        var gameInstance = FindGameInstance(gameToken);
-                        if (gameInstance != null)
-                        {
-                            Log.Write($"{client.Name}: {ClientEventCode.JOIN_SPECTATOR};{gameToken}");
-                            JoinGame(gameInstance, client, true);
-                        }
-                    }
-                }
-                else if (eventParts.Length > 1)
-                {
-                    Guid gameToken;
-                    string eventMessage = null;
-                    string eventValue = string.Empty;
-                    string gameTokenValue = string.Empty;
-
-                    if (eventParts.Length == 2)
-                    {
-                        eventMessage = eventParts[0];
-                        gameTokenValue = eventParts[1];
-                    }
-                    else if (eventParts.Length == 3)
-                    {
-                        eventMessage = eventParts[0];
-                        eventValue = eventParts[1];
-                        gameTokenValue = eventParts[2];
-                    }
-
-                    if (Guid.TryParse(gameTokenValue, out gameToken))
-                    {
-                        var game = FindGame(gameToken);
-                        if (game != null)
-                        {
-                            var player = game.Players.Find(p => p.Name == client.Name);
-                            if (player != null)
+                            var gameInstance = FindGameInstance(gameToken);
+                            if (gameInstance != null)
                             {
-                                Log.Write($"{player.Name}: {eventMessage};{eventValue};{gameToken}");
-
-                                game.ReceiveClientEvent(eventMessage, eventValue, player, gameToken);
+                                Log.Write($"{client.Name}: {ClientMoveCode.JOIN_ROUND};{gameToken}");
+                                JoinGame(gameInstance, client, false);
                             }
                         }
-                        else
+                    }
+                    else if (firstEventPart == "JOIN_SPECTATOR" && eventParts.Length > 1)
+                    {
+                        Guid gameToken;
+                        bool isParsed = Guid.TryParse(eventParts[1], out gameToken);
+                        if (isParsed)
                         {
-                            Log.Write($"Game not found: {client.Name}: {eventMessage};{eventValue};{gameToken}");
+                            var gameInstance = FindGameInstance(gameToken);
+                            if (gameInstance != null)
+                            {
+                                Log.Write($"{client.Name}: {ClientEventCode.JOIN_SPECTATOR};{gameToken}");
+                                JoinGame(gameInstance, client, true);
+                            }
+                        }
+                    }
+                    else if (eventParts.Length > 1)
+                    {
+                        Guid gameToken;
+                        string eventMessage = null;
+                        string eventValue = string.Empty;
+                        string gameTokenValue = string.Empty;
+
+                        if (eventParts.Length == 2)
+                        {
+                            eventMessage = eventParts[0];
+                            gameTokenValue = eventParts[1];
+                        }
+                        else if (eventParts.Length == 3)
+                        {
+                            eventMessage = eventParts[0];
+                            eventValue = eventParts[1];
+                            gameTokenValue = eventParts[2];
+                        }
+
+                        if (Guid.TryParse(gameTokenValue, out gameToken))
+                        {
+                            var game = FindGame(gameToken);
+                            if (game != null)
+                            {
+                                var player = game.Players.Find(p => p.Name == client.Name);
+                                if (player != null)
+                                {
+                                    Log.Write($"{player.Name}: {eventMessage};{eventValue};{gameToken}");
+
+                                    game.ReceiveClientEvent(eventMessage, eventValue, player, gameToken);
+                                }
+                            }
+                            else
+                            {
+                                Log.Write($"Game not found: {client.Name}: {eventMessage};{eventValue};{gameToken}");
+                            }
                         }
                     }
                 }
@@ -223,7 +224,7 @@ namespace Game.Server.Register
 
         public void SendEvent(string eventMessage, IPlayer[] players)
         {
-            Log.Write($"{eventMessage} - {string.Concat(players.Select(p => p.Name))} ");
+            Log.Write($"{eventMessage} - {string.Join(",", players.Select(p => p.Name))} ");
 
             for (int i = 0; i < players.Length; i++)
             {
