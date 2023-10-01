@@ -28,6 +28,9 @@ namespace Game.Server.Register
         private List<IClient> clients;
         private int serverPort;
 
+        private IGameInstance currentGameInstance;
+        private IGame currentGame;
+
         private static readonly Object lockObject = new Object();
 
         public List<IGameInstance> ActiveGamesInstances
@@ -104,21 +107,16 @@ namespace Game.Server.Register
             {
                 Log.Write($"Start game: {currentRoundNumber}");
 
-                var game = new Engine.Mia.Game(currentRoundNumber, scoreMode, this, null, gameScorer);
-                var gameInstance = new GameInstance(game.GameNumber.ToString(), game.Token);
-
-                activeGameInstances.Add(gameInstance);
-                AddGame(game);
+                currentGame = new Engine.Mia.Game(currentRoundNumber, scoreMode, this, null, gameScorer);
+                currentGameInstance = new GameInstance(currentGame.GameNumber.ToString(), currentGame.Token);
 
                 for(int i = 0; i < clients.Count; i++)
                 {
                     // BUG?: isSpectator=false 
-                    game.Register(new Player(clients[i].Name, false, clients[i].Peer.EndPoint.Address.ToString()));
+                    currentGame.Register(new Player(clients[i].Name, false, clients[i].Peer.EndPoint.Address.ToString()));
                 }
 
-                await game.StartAsync();
-                //game.GetScore();
-
+                await currentGame.StartAsync();
                 currentRoundNumber += 1;
             }
         }
@@ -272,18 +270,31 @@ namespace Game.Server.Register
 
         public IGameInstance FindGameInstance(Guid gameToken)
         {
-            return activeGameInstances.FirstOrDefault(x => x.GameToken == gameToken);
+            if (currentGameInstance.GameToken == gameToken)
+                return currentGameInstance;
+
+            return null;
+            //return activeGameInstances.FirstOrDefault(x => x.GameToken == gameToken);
         }
 
         public IGameInstance FindGameInstance(string name)
         {
-            return activeGameInstances.FirstOrDefault(x => x.Name == name);
+            if (currentGameInstance.Name == name)
+                return currentGameInstance;
+
+            return null;
+            //return activeGameInstances.FirstOrDefault(x => x.Name == name);
         }
 
         public IGame FindGame(Guid gameToken)
         {
-            // BUG: Exception when game added but still bot sends message
-            return activeGames.FirstOrDefault(x => x.Token == gameToken);
+            if (currentGame.Token == gameToken)
+                return currentGame;
+
+            return null;
+
+            // BUG: Exception when game added but still bot sends message to old game
+            //return activeGames.FirstOrDefault(x => x.Token == gameToken);
         }
 
         private void JoinGame(IGameInstance gameInstance, IClient client, bool isSpectator = false)
