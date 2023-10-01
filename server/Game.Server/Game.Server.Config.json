@@ -1,6 +1,6 @@
 ﻿{
   "appSettings": {
-    "RoundsPerGame": 10000,
+    "RoundsPerGame": 100000,
     "MinimumPlayerCount": 2,
     "RegistrationTimeOut": 500,
     "JoinTimeOut": 250,
