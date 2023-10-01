@@ -282,6 +282,7 @@ namespace Game.Server.Register
 
         public IGame FindGame(Guid gameToken)
         {
+            // BUG: Exception when game added but still bot sends message
             return activeGames.FirstOrDefault(x => x.Token == gameToken);
         }
 
