@@ -1,19 +1,21 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30907.101
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34031.279
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{A07B5EB6-E848-4116-A8D0-A826331D98C6}") = "Game.Cluster", "Game.Cluster.sfproj", "{B7E1F544-A612-45B9-ABFC-24427571E2D1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gateway", "Gateway\Gateway.csproj", "{C624AB4C-30AC-46F1-BE2F-20A2968EBFDF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gateway", "Gateway\Gateway.csproj", "{C624AB4C-30AC-46F1-BE2F-20A2968EBFDF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameRegister", "GameRegister\GameRegister.csproj", "{C0EE4856-BA5E-49E3-9D8F-81EBFBBDBA20}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameRegister", "GameRegister\GameRegister.csproj", "{C0EE4856-BA5E-49E3-9D8F-81EBFBBDBA20}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameManager", "GameManager\GameManager.csproj", "{2196C4D5-EE75-4F1B-BC62-96DE03AB79F1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameManager", "GameManager\GameManager.csproj", "{2196C4D5-EE75-4F1B-BC62-96DE03AB79F1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientManager", "ClientManager\ClientManager.csproj", "{EBA68A23-2AC0-4565-B01D-A0548E79D85B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClientManager", "ClientManager\ClientManager.csproj", "{EBA68A23-2AC0-4565-B01D-A0548E79D85B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game", "Game\Game.csproj", "{6C1BF2C2-C856-4F46-8524-983D45672231}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game", "Game\Game.csproj", "{6C1BF2C2-C856-4F46-8524-983D45672231}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web", "..\Web\Web.csproj", "{6D98C5B0-465F-43E8-9746-83270BBC287A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -71,6 +73,14 @@ Global
 		{6C1BF2C2-C856-4F46-8524-983D45672231}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6C1BF2C2-C856-4F46-8524-983D45672231}.Release|x64.ActiveCfg = Release|Any CPU
 		{6C1BF2C2-C856-4F46-8524-983D45672231}.Release|x64.Build.0 = Release|Any CPU
+		{6D98C5B0-465F-43E8-9746-83270BBC287A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D98C5B0-465F-43E8-9746-83270BBC287A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D98C5B0-465F-43E8-9746-83270BBC287A}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{6D98C5B0-465F-43E8-9746-83270BBC287A}.Debug|x64.Build.0 = Debug|Any CPU
+		{6D98C5B0-465F-43E8-9746-83270BBC287A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D98C5B0-465F-43E8-9746-83270BBC287A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6D98C5B0-465F-43E8-9746-83270BBC287A}.Release|x64.ActiveCfg = Release|Any CPU
+		{6D98C5B0-465F-43E8-9746-83270BBC287A}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
