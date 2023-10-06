@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Web.Pages
 {
-    public class ScoreDashboardController : Controller
+    public class ScoringController : Controller
     {
         // GET: ScoreDashboardController
         public ActionResult Index()
