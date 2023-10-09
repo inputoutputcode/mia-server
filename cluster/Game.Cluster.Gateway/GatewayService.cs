@@ -22,10 +22,10 @@ namespace Game.Cluster.Gateway
         {
             yield return new ServiceInstanceListener(initParams =>
             {
-                this.listener = new UdpCommunicationListener();
-                this.listener.Initialize(initParams.CodePackageActivationContext);
+                listener = new UdpCommunicationListener();
+                listener.Initialize(initParams.CodePackageActivationContext);
 
-                return this.listener;
+                return listener;
             });
         }
 
