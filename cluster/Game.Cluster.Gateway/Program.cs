@@ -5,7 +5,7 @@ using System.Threading;
 using Microsoft.ServiceFabric.Services.Runtime;
 
 
-namespace Gateway
+namespace Game.Cluster.Gateway
 {
     internal static class Program
     {

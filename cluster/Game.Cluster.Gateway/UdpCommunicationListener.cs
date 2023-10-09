@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 
 
-namespace Gateway
+namespace Game.Cluster.Gateway
 {
     public class UdpCommunicationListener : ICommunicationListener, IDisposable
     {

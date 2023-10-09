@@ -5,7 +5,7 @@ using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
 
 
-namespace Gateway
+namespace Game.Cluster.Gateway
 {
     /// <summary>
     /// An instance of this class is created for each service instance by the Service Fabric runtime.
