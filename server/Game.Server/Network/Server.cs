@@ -27,7 +27,7 @@ namespace Game.Server.Network
             var listener = new ServerListener(gameManager);
             server = new NetManager(listener);
             server.AutoRecycle = true;
-            server.DisconnectTimeout = 60000;
+            server.DisconnectTimeout = Config.Config.Settings.DisconnectTimeoutInMs;
             listener.Server = server;
             server.Start(port);
 

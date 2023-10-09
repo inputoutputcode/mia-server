@@ -31,7 +31,7 @@ namespace Game.Server.Engine.Mia
         private TaskCompletionSource<bool> gameOverCompletion = null;
         private EventHistory eventHistory = new EventHistory();
 
-        private static readonly Object lockObject = new Object();
+        private static readonly object lockObject = new object();
 
         #endregion Members
 

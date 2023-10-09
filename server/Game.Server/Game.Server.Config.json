@@ -12,6 +12,7 @@
     "ScoreIncrement": 20,
     "ScoreDecrement": 2,
     "ConnectionKey": "Corp123!",
-    "UniqueIpAddressPerClientRequired": false
+    "UniqueIpAddressPerClientRequired": false,
+    "DisconnectTimeoutInMs": 60000
   }
 }

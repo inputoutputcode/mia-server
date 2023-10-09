@@ -1,29 +1,31 @@
 ﻿using System;
-using System.Diagnostics;
-using System.Fabric;
-using System.Fabric.Description;
 using System.Net;
 using System.Net.Sockets;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
+using LiteNetLib;
+using LiteNetLib.Utils;
+
+using System.Fabric;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
+
+using Game.Cluster.Gateway.Config;
 
 
 namespace Game.Cluster.Gateway
 {
-    public class UdpCommunicationListener : ICommunicationListener, IDisposable
+    public class UdpCommunicationListener : ICommunicationListener, IDisposable, INetEventListener
     {
         private readonly CancellationTokenSource processRequestsCancellation = new CancellationTokenSource();
-
         public int Port { get; set; }
+        private NetManager server;
+        private ServiceSettings settings;
 
-        private UdpClient server;
-        private RoutingManager routingManager;
-
-        public UdpCommunicationListener()
+        public UdpCommunicationListener(ServiceSettings settings)
         {
-            this.routingManager = new RoutingManager();
+            this.settings = settings;
         }
 
         /// <summary>
@@ -31,7 +33,7 @@ namespace Game.Cluster.Gateway
         /// </summary>
         public void Abort()
         {
-            this.StopWebServer();
+            StopServer();
         }
 
         /// <summary>
@@ -41,8 +43,7 @@ namespace Game.Cluster.Gateway
         /// <returns>Task for Asynchron usage</returns>
         public Task CloseAsync(CancellationToken cancellationToken)
         {
-            this.StopWebServer();
-
+            StopServer();
             return Task.FromResult(true);
         }
 
@@ -51,7 +52,7 @@ namespace Game.Cluster.Gateway
         /// </summary>
         public void Dispose()
         {
-            this.Dispose(true);
+            Dispose(true);
             GC.SuppressFinalize(this);
         }
 
@@ -61,8 +62,8 @@ namespace Game.Cluster.Gateway
         /// <param name="context">Code Package Activation Context</param>
         public void Initialize(ICodePackageActivationContext context)
         {
-            EndpointResourceDescription serviceEndpoint = context.GetEndpoint("ServiceEndpoint");
-            this.Port = serviceEndpoint.Port;
+            var serviceEndpoint = context.GetEndpoint("ServiceEndpoint");
+            Port = serviceEndpoint.Port;
         }
 
         /// <summary>
@@ -74,42 +75,35 @@ namespace Game.Cluster.Gateway
         {
             try
             {
-                this.server = new UdpClient(this.Port);
+                server = new NetManager(this)
+                {
+                    AutoRecycle = true,
+                    DisconnectTimeout = settings.ClientDisconnectTimeoutInMs
+                };
+                server.Start(Port);
             }
             catch (Exception ex)
             {
+                ServiceEventSource.Current.Message(ex.Message);
             }
 
-            ThreadPool.QueueUserWorkItem((state) =>
-            {
-                this.MessageHandling(this.processRequestsCancellation.Token);
-            });
+            RunServerInfiniteAsync(this.processRequestsCancellation.Token);
 
             return Task.FromResult("udp://" + FabricRuntime.GetNodeContext().IPAddressOrFQDN + ":" + this.Port);
         }
 
-        protected void MessageHandling(CancellationToken cancellationToken)
+        private async void RunServerInfiniteAsync(CancellationToken cancellationToken)
         {
-            while (!cancellationToken.IsCancellationRequested)
+            await Task.Run(() =>
             {
-                IPEndPoint ipEndPoint = new IPEndPoint(IPAddress.Any, this.Port);
-                byte[] receivedBytes = this.server.Receive(ref ipEndPoint);
-                this.server.Send(receivedBytes, receivedBytes.Length, ipEndPoint);
+                while (!cancellationToken.IsCancellationRequested)
+                {
+                    server.PollEvents();
+                    Thread.Sleep(15);
+                }
 
-                routingManager.ReceiveCommand(receivedBytes);
-
-                Debug.WriteLine("Received bytes: " + receivedBytes.Length.ToString());
-            }
-        }
-
-        /// <summary>
-        /// Receives the specified endpoint.
-        /// </summary>
-        /// <param name="endpoint">The endpoint.</param>
-        /// <returns></returns>
-        public Task<byte[]> Receive(ref IPEndPoint endpoint)
-        {
-            return Task.FromResult(this.server.Receive(ref endpoint));
+                server.Stop();
+            });
         }
 
         /// <summary>
@@ -124,7 +118,7 @@ namespace Game.Cluster.Gateway
                 {
                     try
                     {
-                        this.server.Close();
+                        this.server.Stop();
                         this.server = null;
                     }
                     catch (Exception ex)
@@ -138,10 +132,61 @@ namespace Game.Cluster.Gateway
         /// <summary>
         /// Stops Server and Free Handles
         /// </summary>
-        private void StopWebServer()
+        private void StopServer()
         {
             this.processRequestsCancellation.Cancel();
             this.Dispose();
+        }
+
+        public void OnPeerConnected(NetPeer peer)
+        {
+            ServiceEventSource.Current.Message($"OnPeerConnected: {peer.EndPoint.Address}:{peer.EndPoint.Port}");
+
+            var writer = new NetDataWriter();
+            writer.Put("Connection accepted");
+            peer.Send(writer, DeliveryMethod.ReliableOrdered);
+        }
+
+        public void OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo)
+        {
+            ServiceEventSource.Current.Message($"OnPeerDisconnected: {peer.EndPoint.Address}:{peer.EndPoint.Port} - DisconnectInfo: {disconnectInfo.SocketErrorCode} {disconnectInfo.Reason}");
+        }
+
+        public void OnNetworkError(IPEndPoint endPoint, SocketError socketError)
+        {
+            ServiceEventSource.Current.Message($"OnNetworkError: {endPoint.Address}:{endPoint.Port} - {socketError}");
+        }
+
+        public void OnNetworkReceive(NetPeer peer, NetPacketReader reader, byte channelNumber, DeliveryMethod deliveryMethod)
+        {
+            byte[] eventMessageBytes = reader.GetRemainingBytes();
+            string eventMessage = Encoding.UTF8.GetString(eventMessageBytes);
+
+            //Log.Write($"OnNetworkReceive: {peer.EndPoint.Address}:{peer.EndPoint.Port} - Message: {eventMessage} - ChannelNumber: {channelNumber} - DeliveryMethod: {deliveryMethod}");
+            //Log.Write($"OnNetworkReceive: {eventMessage}");
+
+            //gameManager.ReceiveEventMessage(eventMessage, peer);
+        }
+
+        public void OnNetworkReceiveUnconnected(IPEndPoint remoteEndPoint, NetPacketReader reader, UnconnectedMessageType messageType)
+        {
+            ServiceEventSource.Current.Message($"OnNetworkReceiveUnconnected: {remoteEndPoint.Address}:{remoteEndPoint.Port} - Message: {reader.GetString(20)} - MessageType: {messageType}");
+        }
+
+        public void OnNetworkLatencyUpdate(NetPeer peer, int latency)
+        {
+            if (latency > 100)
+                ServiceEventSource.Current.Message($"OnNetworkLatencyUpdate: {peer.EndPoint.Address}:{peer.EndPoint.Port} - Latency: {latency}");
+        }
+
+        public void OnConnectionRequest(ConnectionRequest request)
+        {
+            ServiceEventSource.Current.Message($"OnConnectionRequest: {request.RemoteEndPoint.Address}:{request.RemoteEndPoint.Port}");
+
+            if (server.ConnectedPeersCount < 10 /* max connections */)
+                request.AcceptIfKey(settings.ClientConnectionKey);
+            else
+                request.Reject();
         }
     }
 }

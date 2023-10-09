@@ -27,5 +27,7 @@ namespace Game.Server.Config
         public string ConnectionKey { get; set; }
 
         public bool UniqueIpAddressPerClientRequired { get; set; }
+
+        public int DisconnectTimeoutInMs { get; set; }
     }
 }

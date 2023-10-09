@@ -31,7 +31,7 @@ namespace Game.Server.Register
         private IGameInstance currentGameInstance;
         private IGame currentGame;
 
-        private static readonly Object lockObject = new Object();
+        private static readonly object lockObject = new object();
 
         public List<IGameInstance> ActiveGamesInstances
         {
