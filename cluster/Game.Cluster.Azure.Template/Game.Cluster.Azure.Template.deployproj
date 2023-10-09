@@ -27,10 +27,6 @@
       <Visible>False</Visible>
     </None>
     <Content Include="Deploy-AzureResourceGroup.ps1" />
-    <Content Include="ServiceFabricCluster.json" />
-    <Content Include="ServiceFabricCluster.parameters.json" />
-    <Content Include="readme.txt" />
-    <Content Include="New-ServiceFabricClusterCertificate.ps1" />
   </ItemGroup>
   <Target Name="GetReferenceAssemblyPaths" />
 </Project>
