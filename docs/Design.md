@@ -64,14 +64,13 @@
 1. Gateway - Stateless (InstanceCount=-1) Try InstanceCount=3 with dynamic scaling through GameRegister
     1. Routing requests
         1. FindGameByName -> GameRegister
-        1. CreateGame -> GameRegister
-        1. GameTotal -> GameRegister
-        1. PlayerTotal -> GameRegister
-        1. RegisterPlayer -> GameManager (Name, IPAddress) 
+        1. GameTotalCount -> GameRegister
+        1. PlayerTotalCount -> GameRegister
+        1. RegisterPlayer -> GameRegister (Name, IPAddress) 
         1. CreateGame -> GameRegister -> GameId
-        1. JoinGame -> Game (by GameId, Token, RunMode, CompeteMode)
-        1. AnyTurn -> Game (by GameId, Token)
-        1. LeaveGame -> Game (by GameId, Token)
+        1. JoinGame -> GameRegister (by GameId, Token, RunMode, CompeteMode)
+        1. AnyTurn -> GameManager (by GameId, Token)
+        1. LeaveGame -> GameRegister (by GameId, Token)
 1. GameRegister - Stateful with auto-scaling
     1. Interface
         1. int TotalGames
@@ -81,19 +80,22 @@
         1. Scaling for Gateway
         1. Scaling for Nodes
         1. Scaling for GameManager
+    1. Response commands 
+        1. REGISTERED
+        1. REJECTED
 1. GameManager - Stateful with auto-scaling
     1. Manage a reserved pool of free Game instances
         1. Store the numbers of games, clients, pre-configured round runs.
     1. Automatic scaling for instances and nodes
         1. Named services by manager
-    1. Validates clients
+    1. Validates clients by Name and IP
     1. Interface
         1. Token RegisterNewClient(Name) 
         1. ReEnterExistingClient(Name, Token)
         1. StartNewGame([MinimumMoneyAmount, GameCompeteMode, GameRunModeDefault, MaxGameRoundRuns, Won, Lost, Others])
-    1. Commands 
-        1. REGISTERED
-        1. REJECTED
+    1. Response commands 
+        1. GAME_REGISTERED
+        1. GAME_REJECTED
     1. Unit tests
     1. Logic 
         1. Maintain a pool of free Game instances
