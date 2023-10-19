@@ -2,18 +2,19 @@
 
 ## Start with a plan
 1. Rule set
-1. Base architecture
-    1. Scaling
-    1. Routing
-    1. Service compute breakdown
-1. Unit tests with ServiceFabric.Mocks, XUnit
 1. C# simple starter bot
 1. C# advanced bot, all moves plus greater variance
+1. Build and test with console apps 
+1. Base architecture
+    1. Routing
+    1. Scaling
+    1. Compute bottleneck breakdown
+1. Unit tests with Moq, XUnit, ServiceFabric.Mocks
 
 ## General requirements
 1. Games must run fast, high density, fast decision making by bots
-1. Multi-game option
-1. UDP protocol (challenge)
+1. Multi-game option to add different game types later
+1. UDP protocol for fast networking
 1. IP address + Player name builds the actor ID
 1. Only one game session for one player at the same time
 1. Durability=Silver/Reliability=Silver with D2v3 on Windows, .NET Core, no container
@@ -29,7 +30,7 @@
 ## Capacity threshold for the start
 1. Gateway - InstanceCount = -1
 1. GameRegister - Instance = 1
-1. GameManager - InstanceCount = 2
+1. GameManager - Instance = 2
 1. Game - InstanceCount = 1, capacity 5,000 games
 1. Client - InstanceCount = 1, capacity 10,000 clients
 
