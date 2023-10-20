@@ -1,8 +1,20 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ApplicationManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ApplicationTypeName="Game.Cluster.Gateway.AppType" ApplicationTypeVersion="1.0.0" xmlns="http://schemas.microsoft.com/2011/01/fabric">
-  <Parameters />
+  <Parameters>
+    <Parameter Name="Gateway_ClientDisconnectTimeoutInMs" DefaultValue="60000" />
+    <Parameter Name="Gateway_ClientConnectionKey" DefaultValue="Corp123!Corp123!" />
+  </Parameters>
   <ServiceManifestImport>
     <ServiceManifestRef ServiceManifestName="GatewayPkg" ServiceManifestVersion="1.0.0" />
-    <ConfigOverrides />
+    <ConfigOverrides>
+      <ConfigOverride Name="Config">
+        <Settings>
+          <Section Name="Gateway.Settings">
+            <Parameter Name="ClientDisconnectTimeoutInMs" Value="[Gateway_ClientDisconnectTimeoutInMs]" />
+            <Parameter Name="ClientConnectionKey" Value="[Gateway_ClientConnectionKey]" />
+          </Section>
+        </Settings>
+      </ConfigOverride>
+    </ConfigOverrides>
   </ServiceManifestImport>
 </ApplicationManifest>
