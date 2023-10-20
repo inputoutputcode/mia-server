@@ -4,7 +4,7 @@ using System.Diagnostics.Tracing;
 using System.Fabric;
 
 
-namespace Game.Cluster.ClientManager
+namespace Game.Cluster.ClientRegister
 {
     [EventSource(Name = "MyCompany-UnderTheTable.Server-ClientManager")]
     internal sealed class ServiceEventSource : EventSource

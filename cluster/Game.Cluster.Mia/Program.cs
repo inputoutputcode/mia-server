@@ -22,9 +22,9 @@ namespace Game.Cluster.Game
                 // an instance of the class is created in this host process.
 
                 ServiceRuntime.RegisterServiceAsync("GameType",
-                    context => new Game(context)).GetAwaiter().GetResult();
+                    context => new GameService(context)).GetAwaiter().GetResult();
 
-                ServiceEventSource.Current.ServiceTypeRegistered(Process.GetCurrentProcess().Id, typeof(Game).Name);
+                ServiceEventSource.Current.ServiceTypeRegistered(Process.GetCurrentProcess().Id, typeof(GameService).Name);
 
                 // Prevents this host process from terminating so services keep running.
                 Thread.Sleep(Timeout.Infinite);

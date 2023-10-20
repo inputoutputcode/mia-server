@@ -4,7 +4,7 @@ using System.Diagnostics.Tracing;
 using System.Fabric;
 
 
-namespace Game.Cluster.Gateway
+namespace Game.Cluster.Gateway.Logging
 {
     [EventSource(Name = "MyCompany-UnderTheTable.Server-Gateway")]
     internal sealed class ServiceEventSource : EventSource
@@ -37,7 +37,7 @@ namespace Game.Cluster.Gateway
         [NonEvent]
         public void Message(string message, params object[] args)
         {
-            if (this.IsEnabled())
+            if (IsEnabled())
             {
                 string finalMessage = string.Format(message, args);
                 Message(finalMessage);
@@ -48,7 +48,7 @@ namespace Game.Cluster.Gateway
         [Event(MessageEventId, Level = EventLevel.Informational, Message = "{0}")]
         public void Message(string message)
         {
-            if (this.IsEnabled())
+            if (IsEnabled())
             {
                 WriteEvent(MessageEventId, message);
             }
@@ -57,7 +57,7 @@ namespace Game.Cluster.Gateway
         [NonEvent]
         public void ServiceMessage(StatelessServiceContext serviceContext, string message, params object[] args)
         {
-            if (this.IsEnabled())
+            if (IsEnabled())
             {
                 string finalMessage = string.Format(message, args);
                 ServiceMessage(
@@ -78,9 +78,9 @@ namespace Game.Cluster.Gateway
         private const int ServiceMessageEventId = 2;
         [Event(ServiceMessageEventId, Level = EventLevel.Informational, Message = "{7}")]
         private
-    #if UNSAFE
+#if UNSAFE
             unsafe
-    #endif
+#endif
             void ServiceMessage(
             string serviceName,
             string serviceTypeName,
@@ -91,9 +91,9 @@ namespace Game.Cluster.Gateway
             string nodeName,
             string message)
         {
-    #if !UNSAFE
+#if !UNSAFE
             WriteEvent(ServiceMessageEventId, serviceName, serviceTypeName, replicaOrInstanceId, partitionId, applicationName, applicationTypeName, nodeName, message);
-    #else
+#else
                 const int numArgs = 8;
                 fixed (char* pServiceName = serviceName, pServiceTypeName = serviceTypeName, pApplicationName = applicationName, pApplicationTypeName = applicationTypeName, pNodeName = nodeName, pMessage = message)
                 {
@@ -109,7 +109,7 @@ namespace Game.Cluster.Gateway
 
                     WriteEventCore(ServiceMessageEventId, numArgs, eventData);
                 }
-    #endif
+#endif
         }
 
         private const int ServiceTypeRegisteredEventId = 3;
@@ -145,7 +145,7 @@ namespace Game.Cluster.Gateway
         #endregion
 
         #region Private methods
-    #if UNSAFE
+#if UNSAFE
             private int SizeInBytes(string s)
             {
                 if (s == null)
@@ -157,7 +157,7 @@ namespace Game.Cluster.Gateway
                     return (s.Length + 1) * sizeof(char);
                 }
             }
-    #endif
+#endif
         #endregion
     }
 }

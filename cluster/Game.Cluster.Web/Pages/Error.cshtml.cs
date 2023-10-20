@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Diagnostics;
 
-namespace Web.Pages
+namespace Game.Cluster.Web.Pages
 {
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     [IgnoreAntiforgeryToken]

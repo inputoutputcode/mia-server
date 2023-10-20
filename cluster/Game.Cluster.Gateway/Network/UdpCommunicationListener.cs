@@ -12,19 +12,26 @@ using System.Fabric;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 
 using Game.Cluster.Gateway.Config;
+using Game.Cluster.Gateway.Logging;
+using Microsoft.ServiceFabric.Services.Remoting.Client;
+using Game.Cluster.GameManager.Interface;
+using Microsoft.ServiceFabric.Services.Client;
+using Game.Cluster.Gateway.Bla;
 
-
-namespace Game.Cluster.Gateway
+namespace Game.Cluster.Gateway.Network
 {
     public class UdpCommunicationListener : ICommunicationListener, IDisposable, INetEventListener
     {
         private readonly CancellationTokenSource processRequestsCancellation = new CancellationTokenSource();
+
         public int Port { get; set; }
         private NetManager server;
         private ServiceSettings settings;
 
-        public UdpCommunicationListener(ServiceSettings settings)
+        public UdpCommunicationListener(StatelessServiceContext context, ServiceSettings settings)
         {
+            var serviceEndpoint = context.CodePackageActivationContext.GetEndpoint("ServiceEndpoint");
+            Port = serviceEndpoint.Port;
             this.settings = settings;
         }
 
@@ -57,16 +64,6 @@ namespace Game.Cluster.Gateway
         }
 
         /// <summary>
-        /// Initializes Configuration
-        /// </summary>
-        /// <param name="context">Code Package Activation Context</param>
-        public void Initialize(ICodePackageActivationContext context)
-        {
-            var serviceEndpoint = context.GetEndpoint("ServiceEndpoint");
-            Port = serviceEndpoint.Port;
-        }
-
-        /// <summary>
         /// Starts the Server
         /// </summary>
         /// <param name="cancellationToken">Cancellation Token</param>
@@ -87,9 +84,9 @@ namespace Game.Cluster.Gateway
                 ServiceEventSource.Current.Message(ex.Message);
             }
 
-            RunServerInfiniteAsync(this.processRequestsCancellation.Token);
+            RunServerInfiniteAsync(processRequestsCancellation.Token);
 
-            return Task.FromResult("udp://" + FabricRuntime.GetNodeContext().IPAddressOrFQDN + ":" + this.Port);
+            return Task.FromResult("udp://" + FabricRuntime.GetNodeContext().IPAddressOrFQDN + ":" + Port);
         }
 
         private async void RunServerInfiniteAsync(CancellationToken cancellationToken)
@@ -114,12 +111,12 @@ namespace Game.Cluster.Gateway
         {
             if (disposing)
             {
-                if (this.server != null)
+                if (server != null)
                 {
                     try
                     {
-                        this.server.Stop();
-                        this.server = null;
+                        server.Stop();
+                        server = null;
                     }
                     catch (Exception ex)
                     {
@@ -134,8 +131,8 @@ namespace Game.Cluster.Gateway
         /// </summary>
         private void StopServer()
         {
-            this.processRequestsCancellation.Cancel();
-            this.Dispose();
+            processRequestsCancellation.Cancel();
+            Dispose();
         }
 
         public void OnPeerConnected(NetPeer peer)
@@ -157,15 +154,19 @@ namespace Game.Cluster.Gateway
             ServiceEventSource.Current.Message($"OnNetworkError: {endPoint.Address}:{endPoint.Port} - {socketError}");
         }
 
-        public void OnNetworkReceive(NetPeer peer, NetPacketReader reader, byte channelNumber, DeliveryMethod deliveryMethod)
+        public async void OnNetworkReceive(NetPeer peer, NetPacketReader reader, byte channelNumber, DeliveryMethod deliveryMethod)
         {
             byte[] eventMessageBytes = reader.GetRemainingBytes();
             string eventMessage = Encoding.UTF8.GetString(eventMessageBytes);
 
-            //Log.Write($"OnNetworkReceive: {peer.EndPoint.Address}:{peer.EndPoint.Port} - Message: {eventMessage} - ChannelNumber: {channelNumber} - DeliveryMethod: {deliveryMethod}");
-            //Log.Write($"OnNetworkReceive: {eventMessage}");
+            ServiceEventSource.Current.Message($"OnNetworkReceive: {peer.EndPoint.Address}:{peer.EndPoint.Port} - Message: {eventMessage} - ChannelNumber: {channelNumber} - DeliveryMethod: {deliveryMethod}");
 
-            //gameManager.ReceiveEventMessage(eventMessage, peer);
+            var client = new Client() { IPAddressPort = $"{peer.EndPoint.Address}:{peer.EndPoint.Port}" };
+
+            var proxy = ServiceProxy.Create<IGameManagerService>(new Uri("fabric:/Game.Cluster.App/Game.Cluster.GameManager"), new ServicePartitionKey(0));
+            string result = await proxy.RegisterPlayer(eventMessage, client);
+
+            // TODO: respond
         }
 
         public void OnNetworkReceiveUnconnected(IPEndPoint remoteEndPoint, NetPacketReader reader, UnconnectedMessageType messageType)

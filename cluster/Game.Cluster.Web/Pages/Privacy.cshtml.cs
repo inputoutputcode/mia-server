@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace Web.Pages
+namespace Game.Cluster.Web.Pages
 {
     public class PrivacyModel : PageModel
     {

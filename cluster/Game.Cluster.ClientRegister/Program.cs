@@ -5,7 +5,7 @@ using System.Threading;
 using Microsoft.ServiceFabric.Services.Runtime;
 
 
-namespace Game.Cluster.ClientManager
+namespace Game.Cluster.ClientRegister
 {
     internal static class Program
     {
@@ -22,9 +22,9 @@ namespace Game.Cluster.ClientManager
                 // an instance of the class is created in this host process.
 
                 ServiceRuntime.RegisterServiceAsync("ClientManagerType",
-                    context => new ClientManager(context)).GetAwaiter().GetResult();
+                    context => new ClientRegisterService(context)).GetAwaiter().GetResult();
 
-                ServiceEventSource.Current.ServiceTypeRegistered(Process.GetCurrentProcess().Id, typeof(ClientManager).Name);
+                ServiceEventSource.Current.ServiceTypeRegistered(Process.GetCurrentProcess().Id, typeof(ClientRegisterService).Name);
 
                 // Prevents this host process from terminating so services keep running.
                 Thread.Sleep(Timeout.Infinite);

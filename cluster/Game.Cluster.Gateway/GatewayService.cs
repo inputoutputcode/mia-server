@@ -1,23 +1,33 @@
 using System.Collections.Generic;
 
-using Game.Cluster.Gateway.Config;
-
 using System.Fabric;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
+
+using Game.Cluster.Gateway.Config;
+using Game.Cluster.Gateway.Logging;
+using Game.Cluster.Gateway.Network;
 
 
 namespace Game.Cluster.Gateway
 {
     /// <summary>
-    /// An instance of this class is created for each service instance by the Service Fabric runtime.
+    /// Duties of GatewayService
+    /// FindGameByName -> GameRegister
+    /// CreateGame -> GameRegister
+    /// GameTotal -> GameRegister
+    /// PlayerTotal -> GameRegister
+    /// RegisterPlayer -> GameManager(Name, IPAddress)
+    /// CreateGame -> GameRegister -> GameId
+    /// JoinGame -> Game(by GameId, Token, RunMode, CompeteMode)
+    /// AnyTurn -> Game(by GameId, Token)
+    /// LeaveGame -> Game(by GameId, Token)
     /// </summary>
-    internal sealed class Gateway : StatelessService
+    internal sealed class GatewayService : StatelessService
     {
-        private UdpCommunicationListener listener;
         private ServiceSettings settings;
 
-        public Gateway(StatelessServiceContext context)
+        public GatewayService(StatelessServiceContext context)
             : base(context)
         {
             var activationContext = FabricRuntime.GetActivationContext();
@@ -26,7 +36,7 @@ namespace Game.Cluster.Gateway
 
             foreach (var parameter in data.Parameters)
             {
-                ServiceEventSource.Current.ServiceMessage(this.Context, "Working-{0} - {1}", parameter.Name, parameter.Value);
+                ServiceEventSource.Current.ServiceMessage(Context, "Working-{0} - {1}", parameter.Name, parameter.Value);
             }
 
             settings = new ServiceSettings(data);
@@ -34,34 +44,10 @@ namespace Game.Cluster.Gateway
 
         protected override IEnumerable<ServiceInstanceListener> CreateServiceInstanceListeners()
         {
-            yield return new ServiceInstanceListener(initParams =>
+            return new[]
             {
-                listener = new UdpCommunicationListener(settings);
-                listener.Initialize(initParams.CodePackageActivationContext);
-
-                return listener;
-            });
+                new ServiceInstanceListener(context => new UdpCommunicationListener(context, settings))
+            };
         }
-
-        ///// <summary>
-        ///// This is the main entry point for your service instance.
-        ///// </summary>
-        ///// <param name="cancellationToken">Canceled when Service Fabric needs to shut down this service instance.</param>
-        //protected override async Task RunAsync(CancellationToken cancellationToken)
-        //{
-        //    // TODO: Replace the following sample code with your own logic 
-        //    //       or remove this RunAsync override if it's not needed in your service.
-
-        //    long iterations = 0;
-
-        //    while (true)
-        //    {
-        //        cancellationToken.ThrowIfCancellationRequested();
-
-        //        ServiceEventSource.Current.ServiceMessage(this.Context, "Working-{0}", ++iterations);
-
-        //        await Task.Delay(TimeSpan.FromSeconds(1), cancellationToken);
-        //    }
-        //}
     }
 }

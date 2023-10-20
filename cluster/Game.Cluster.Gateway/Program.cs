@@ -4,6 +4,8 @@ using System.Threading;
 
 using Microsoft.ServiceFabric.Services.Runtime;
 
+using Game.Cluster.Gateway.Logging;
+
 
 namespace Game.Cluster.Gateway
 {
@@ -22,9 +24,9 @@ namespace Game.Cluster.Gateway
                 // an instance of the class is created in this host process.
 
                 ServiceRuntime.RegisterServiceAsync("GatewayType",
-                    context => new Gateway(context)).GetAwaiter().GetResult();
+                    context => new GatewayService(context)).GetAwaiter().GetResult();
 
-                ServiceEventSource.Current.ServiceTypeRegistered(Process.GetCurrentProcess().Id, typeof(Gateway).Name);
+                ServiceEventSource.Current.ServiceTypeRegistered(Process.GetCurrentProcess().Id, typeof(GatewayService).Name);
 
                 // Prevents this host process from terminating so services keep running.
                 Thread.Sleep(Timeout.Infinite);

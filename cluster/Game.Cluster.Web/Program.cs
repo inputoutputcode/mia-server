@@ -1,43 +1,38 @@
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc.Authorization;
-using Microsoft.Identity.Web;
-using Microsoft.Identity.Web.UI;
+using Microsoft.ServiceFabric.Services.Runtime;
+using System;
+using System.Diagnostics;
+using System.Threading;
+using System.Threading.Tasks;
 
-var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
-builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
-    .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"));
-
-builder.Services.AddAuthorization(options =>
+namespace Game.Cluster.Web
 {
-    // By default, all incoming requests will be authorized according to the default policy.
-    options.FallbackPolicy = options.DefaultPolicy;
-});
-builder.Services.AddRazorPages()
-    .AddMicrosoftIdentityUI();
+    internal static class Program
+    {
+        /// <summary>
+        /// This is the entry point of the service host process.
+        /// </summary>
+        private static void Main()
+        {
+            try
+            {
+                // The ServiceManifest.XML file defines one or more service type names.
+                // Registering a service maps a service type name to a .NET type.
+                // When Service Fabric creates an instance of this service type,
+                // an instance of the class is created in this host process.
 
-var app = builder.Build();
+                ServiceRuntime.RegisterServiceAsync("Game.Cluster.WebType",
+                    context => new Web(context)).GetAwaiter().GetResult();
 
-// Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
-{
-    app.UseExceptionHandler("/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
+                ServiceEventSource.Current.ServiceTypeRegistered(Process.GetCurrentProcess().Id, typeof(Web).Name);
+
+                // Prevents this host process from terminating so services keeps running. 
+                Thread.Sleep(Timeout.Infinite);
+            }
+            catch (Exception e)
+            {
+                ServiceEventSource.Current.ServiceHostInitializationFailed(e.ToString());
+                throw;
+            }
+        }
+    }
 }
-
-app.UseHttpsRedirection();
-app.UseStaticFiles();
-
-app.UseRouting();
-
-app.UseAuthentication();
-app.UseAuthorization();
-
-app.MapRazorPages();
-app.MapControllers();
-
-app.Run();
