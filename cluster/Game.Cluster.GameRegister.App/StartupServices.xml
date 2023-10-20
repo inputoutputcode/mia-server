@@ -1,17 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<StartupServicesManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-                         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                         xmlns="http://schemas.microsoft.com/2011/01/fabric">
+<StartupServicesManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/2011/01/fabric">
   <Parameters>
-	  <Parameter Name="GameRegister_PartitionCount" DefaultValue="1" />
-	  <Parameter Name="GameRegister_MinReplicaSetSize" DefaultValue="3" />
-	  <Parameter Name="GameRegister_TargetReplicaSetSize" DefaultValue="5" />
+    <Parameter Name="GameRegister_PartitionCount" DefaultValue="1" />
+    <Parameter Name="GameRegister_MinReplicaSetSize" DefaultValue="3" />
+    <Parameter Name="GameRegister_TargetReplicaSetSize" DefaultValue="5" />
   </Parameters>
   <Services>
-	  <Service Name="GameRegister" ServicePackageActivationMode="ExclusiveProcess">
-		  <StatefulService ServiceTypeName="GameRegisterType" TargetReplicaSetSize="[GameRegister_TargetReplicaSetSize]" MinReplicaSetSize="[GameRegister_MinReplicaSetSize]">
-			  <UniformInt64Partition PartitionCount="[GameRegister_PartitionCount]" LowKey="-9223372036854775808" HighKey="9223372036854775807" />
-		  </StatefulService>
-	  </Service>
+    <Service Name="GameRegister" ServicePackageActivationMode="ExclusiveProcess">
+      <StatefulService ServiceTypeName="GameRegisterType" TargetReplicaSetSize="[GameRegister_TargetReplicaSetSize]" MinReplicaSetSize="[GameRegister_MinReplicaSetSize]">
+        <UniformInt64Partition PartitionCount="[GameRegister_PartitionCount]" LowKey="-9223372036854775808" HighKey="9223372036854775807" />
+      </StatefulService>
+    </Service>
   </Services>
 </StartupServicesManifest>

@@ -4,7 +4,7 @@ using System.Diagnostics.Tracing;
 using System.Fabric;
 
 
-namespace Game.Cluster.Gateway.Logging
+namespace Game.Cluster.Gateway
 {
     [EventSource(Name = "MyCompany-UnderTheTable.Server-Gateway")]
     internal sealed class ServiceEventSource : EventSource

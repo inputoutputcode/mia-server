@@ -14,7 +14,6 @@ using Microsoft.ServiceFabric.Services.Remoting.Client;
 using Microsoft.ServiceFabric.Services.Client;
 
 using Game.Cluster.Gateway.Config;
-using Game.Cluster.Gateway.Logging;
 using Game.Cluster.GameManager.Interface;
 using Game.Cluster.Gateway.Bla;
 

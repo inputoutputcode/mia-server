@@ -5,7 +5,6 @@ using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
 
 using Game.Cluster.Gateway.Config;
-using Game.Cluster.Gateway.Logging;
 using Game.Cluster.Gateway.Network;
 
 
