@@ -10,13 +10,14 @@ using LiteNetLib.Utils;
 
 using System.Fabric;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
+using Microsoft.ServiceFabric.Services.Remoting.Client;
+using Microsoft.ServiceFabric.Services.Client;
 
 using Game.Cluster.Gateway.Config;
 using Game.Cluster.Gateway.Logging;
-using Microsoft.ServiceFabric.Services.Remoting.Client;
 using Game.Cluster.GameManager.Interface;
-using Microsoft.ServiceFabric.Services.Client;
 using Game.Cluster.Gateway.Bla;
+
 
 namespace Game.Cluster.Gateway.Network
 {

@@ -6,7 +6,7 @@ using System.Fabric;
 
 namespace Game.Cluster.Game
 {
-    [EventSource(Name = "MyCompany-UnderTheTable.Server-Game")]
+    [EventSource(Name = "Game-Cluster-Mia")]
     internal sealed class ServiceEventSource : EventSource
     {
         public static readonly ServiceEventSource Current = new ServiceEventSource();

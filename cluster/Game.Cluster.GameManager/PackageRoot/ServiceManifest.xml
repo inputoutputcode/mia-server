@@ -12,7 +12,7 @@
     <CodePackage Name="Code" Version="1.0.0">
         <EntryPoint>
             <ExeHost>
-                <Program>GameManager.exe</Program>
+                <Program>Game.Cluster.GameManager.exe</Program>
             </ExeHost>
         </EntryPoint>
     </CodePackage>

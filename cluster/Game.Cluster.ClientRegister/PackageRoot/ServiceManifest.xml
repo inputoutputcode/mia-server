@@ -14,7 +14,7 @@
   <CodePackage Name="Code" Version="1.0.0">
     <EntryPoint>
       <ExeHost>
-        <Program>ClientRegister.exe</Program>
+        <Program>Game.Cluster.ClientRegister.exe</Program>
       </ExeHost>
     </EntryPoint>
   </CodePackage>

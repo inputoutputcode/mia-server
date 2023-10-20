@@ -14,7 +14,7 @@
   <CodePackage Name="Code" Version="1.0.0">
     <EntryPoint>
       <ExeHost>
-        <Program>Game.exe</Program>
+        <Program>Game.Cluster.Mia.exe</Program>
       </ExeHost>
     </EntryPoint>
   </CodePackage>
