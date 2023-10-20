@@ -2,18 +2,19 @@
 
 ## Start with a plan
 1. Rule set
-1. Base architecture
-    1. Scaling
-    1. Routing
-    1. Service compute breakdown
-1. Unit tests with ServiceFabric.Mocks, XUnit
 1. C# simple starter bot
 1. C# advanced bot, all moves plus greater variance
+1. Build and test with console apps 
+1. Base architecture
+    1. Routing
+    1. Scaling
+    1. Compute bottleneck breakdown
+1. Unit tests with Moq, XUnit, ServiceFabric.Mocks
 
 ## General requirements
 1. Games must run fast, high density, fast decision making by bots
-1. Multi-game option
-1. UDP protocol (challenge)
+1. Multi-game option to add different game types later
+1. UDP protocol for fast networking
 1. IP address + Player name builds the actor ID
 1. Only one game session for one player at the same time
 1. Durability=Silver/Reliability=Silver with D2v3 on Windows, .NET Core, no container
@@ -29,7 +30,7 @@
 ## Capacity threshold for the start
 1. Gateway - InstanceCount = -1
 1. GameRegister - Instance = 1
-1. GameManager - InstanceCount = 2
+1. GameManager - Instance = 2
 1. Game - InstanceCount = 1, capacity 5,000 games
 1. Client - InstanceCount = 1, capacity 10,000 clients
 
@@ -63,14 +64,13 @@
 1. Gateway - Stateless (InstanceCount=-1) Try InstanceCount=3 with dynamic scaling through GameRegister
     1. Routing requests
         1. FindGameByName -> GameRegister
-        1. CreateGame -> GameRegister
-        1. GameTotal -> GameRegister
-        1. PlayerTotal -> GameRegister
-        1. RegisterPlayer -> GameManager (Name, IPAddress) 
+        1. GameTotalCount -> GameRegister
+        1. PlayerTotalCount -> GameRegister
+        1. RegisterPlayer -> GameRegister (Name, IPAddress) 
         1. CreateGame -> GameRegister -> GameId
-        1. JoinGame -> Game (by GameId, Token, RunMode, CompeteMode)
-        1. AnyTurn -> Game (by GameId, Token)
-        1. LeaveGame -> Game (by GameId, Token)
+        1. JoinGame -> GameRegister (by GameId, Token, RunMode, CompeteMode)
+        1. AnyTurn -> GameManager (by GameId, Token)
+        1. LeaveGame -> GameRegister (by GameId, Token)
 1. GameRegister - Stateful with auto-scaling
     1. Interface
         1. int TotalGames
@@ -80,19 +80,22 @@
         1. Scaling for Gateway
         1. Scaling for Nodes
         1. Scaling for GameManager
+    1. Response commands 
+        1. REGISTERED
+        1. REJECTED
 1. GameManager - Stateful with auto-scaling
     1. Manage a reserved pool of free Game instances
         1. Store the numbers of games, clients, pre-configured round runs.
     1. Automatic scaling for instances and nodes
         1. Named services by manager
-    1. Validates clients
+    1. Validates clients by Name and IP
     1. Interface
         1. Token RegisterNewClient(Name) 
         1. ReEnterExistingClient(Name, Token)
         1. StartNewGame([MinimumMoneyAmount, GameCompeteMode, GameRunModeDefault, MaxGameRoundRuns, Won, Lost, Others])
-    1. Commands 
-        1. REGISTERED
-        1. REJECTED
+    1. Response commands 
+        1. GAME_REGISTERED
+        1. GAME_REJECTED
     1. Unit tests
     1. Logic 
         1. Maintain a pool of free Game instances
