@@ -5,24 +5,25 @@
                  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
-    <ServiceTypes>
-        <StatefulServiceType ServiceTypeName="GameManagerType" HasPersistedState="true" />
-    </ServiceTypes>
+	<ServiceTypes>
+		<StatefulServiceType ServiceTypeName="GameManagerType" HasPersistedState="true" />
+	</ServiceTypes>
 
-    <CodePackage Name="Code" Version="1.0.0">
-        <EntryPoint>
-            <ExeHost>
-                <Program>Game.Cluster.GameManager.exe</Program>
-            </ExeHost>
-        </EntryPoint>
-    </CodePackage>
+	<CodePackage Name="Code" Version="1.0.0">
+		<EntryPoint>
+			<ExeHost>
+				<Program>Game.Cluster.GameManager.exe</Program>
+			</ExeHost>
+		</EntryPoint>
+	</CodePackage>
 
-    <ConfigPackage Name="Config" Version="1.0.0" />
+	<ConfigPackage Name="Config" Version="1.0.0" />
 
-    <Resources>
-	    <Endpoints>
-		    <Endpoint Name="ServiceEndpointV2_1" />
-	    </Endpoints>
-    </Resources>
-	
+	<Resources>
+		<Endpoints>
+			<Endpoint Name="ServiceEndpoint" />
+			<Endpoint Name="ReplicatorEndpoint" />
+		</Endpoints>
+	</Resources>
+
 </ServiceManifest>
