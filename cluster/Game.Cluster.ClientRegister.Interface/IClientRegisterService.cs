@@ -7,6 +7,6 @@ namespace Game.Cluster.ClientRegister.Interface
 {
     public interface IClientRegisterService : IService
     {
-        Task<string> ReceiveClientCommand();
+        Task<string> ReceiveClientCommand(string commandText);
     }
 }

@@ -1,8 +1,11 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using System.Fabric;
 using Microsoft.ServiceFabric.Services.Runtime;
+using Microsoft.ServiceFabric.Services.Remoting.Runtime;
+using Microsoft.ServiceFabric.Services.Communication.Runtime;
 
 using Game.Cluster.GameManager.Interface;
 
@@ -12,20 +15,26 @@ namespace Game.Cluster.GameManager
     /// <summary>
     /// An instance of this class is created for each service replica by the Service Fabric runtime.
     /// </summary>
-    internal sealed class GameManagerService : StatefulService, IGameManagerService
+    public sealed class GameManagerService : StatefulService, IGameManagerService
     {
         public GameManagerService(StatefulServiceContext context)
             : base(context)
         { }
 
-        public Task<Guid> CreateGame()
+        protected override IEnumerable<ServiceReplicaListener> CreateServiceReplicaListeners()
         {
-            throw new NotImplementedException();
+            return this.CreateServiceRemotingReplicaListeners();
         }
 
-        public Task<string> RegisterPlayer(string playerName, IClient client)
+
+        public Task<Guid> CreateGame()
         {
-            throw new NotImplementedException();
+            return Task.FromResult(Guid.NewGuid());
+        }
+
+        public Task<bool> RegisterPlayer(string playerName, IClient client)
+        {
+            return Task.FromResult(true);
         }
     }
 }

@@ -13,6 +13,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.ServiceFabric.Diagnostics.Internal" Version="7.0.1816" />
     <PackageReference Include="Microsoft.ServiceFabric.Services" Version="7.0.1816" />
+    <PackageReference Include="Microsoft.ServiceFabric.Services.Remoting" Version="7.0.1816" />
   </ItemGroup>
 
 </Project>

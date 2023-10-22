@@ -1,9 +1,12 @@
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
 using System.Fabric;
 using Microsoft.ServiceFabric.Data.Collections;
+using Microsoft.ServiceFabric.Services.Communication.Runtime;
+using Microsoft.ServiceFabric.Services.Remoting.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
 
 using Game.Cluster.ClientRegister.Interface;
@@ -14,15 +17,20 @@ namespace Game.Cluster.ClientRegister
     /// <summary>
     /// An instance of this class is created for each service replica by the Service Fabric runtime.
     /// </summary>
-    internal sealed class ClientRegisterService : StatefulService, IClientRegisterService
+    public sealed class ClientRegisterService : StatefulService, IClientRegisterService
     {
         public ClientRegisterService(StatefulServiceContext context)
             : base(context)
         { }
 
-        public Task<string> ReceiveClientCommand()
+        protected override IEnumerable<ServiceReplicaListener> CreateServiceReplicaListeners()
         {
-            throw new NotImplementedException();
+            return this.CreateServiceRemotingReplicaListeners();
+        }
+
+        public Task<string> ReceiveClientCommand(string commandText)
+        {
+            return Task.FromResult("");
         }
 
         protected override async Task RunAsync(CancellationToken cancellationToken)

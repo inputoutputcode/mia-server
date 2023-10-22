@@ -4,23 +4,24 @@
                  xmlns="http://schemas.microsoft.com/2011/01/fabric"
                  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <ServiceTypes>
-    <StatelessServiceType ServiceTypeName="GatewayType" />
-  </ServiceTypes>
+	<ServiceTypes>
+		<StatelessServiceType ServiceTypeName="GatewayType" />
+	</ServiceTypes>
 
-  <CodePackage Name="Code" Version="1.0.0">
-    <EntryPoint>
-      <ExeHost>
-        <Program>Game.Cluster.Gateway.exe</Program>
-      </ExeHost>
-    </EntryPoint>
-  </CodePackage>
+	<CodePackage Name="Code" Version="1.0.0">
+		<EntryPoint>
+			<ExeHost>
+				<Program>Game.Cluster.Gateway.exe</Program>
+			</ExeHost>
+		</EntryPoint>
+	</CodePackage>
 
-  <ConfigPackage Name="Config" Version="1.0.0" />
+	<ConfigPackage Name="Config" Version="1.0.0" />
 
-  <Resources>
-    <Endpoints>
-      <Endpoint Name="ServiceEndpoint" Port="5000" />
-    </Endpoints>
-  </Resources>
+	<Resources>
+		<Endpoints>
+			<Endpoint Name="UdpListenerEndpoint" Protocol="udp" Port="12345" Type="Input"  />
+			<Endpoint Name="ServiceRemotingEndpoint" Protocol="tcp" />
+		</Endpoints>
+	</Resources>
 </ServiceManifest>

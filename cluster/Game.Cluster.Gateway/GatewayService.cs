@@ -2,9 +2,11 @@ using System.Collections.Generic;
 
 using System.Fabric;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
+using Microsoft.ServiceFabric.Services.Remoting.V2.FabricTransport.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
 
 using Game.Cluster.Gateway.Config;
+using Game.Cluster.Gateway.Interface;
 using Game.Cluster.Gateway.Network;
 
 
@@ -22,7 +24,7 @@ namespace Game.Cluster.Gateway
     /// AnyTurn -> Game(by GameId, Token)
     /// LeaveGame -> Game(by GameId, Token)
     /// </summary>
-    internal sealed class GatewayService : StatelessService
+    internal sealed class GatewayService : StatelessService, IGatewayService
     {
         private ServiceSettings settings;
 
@@ -45,7 +47,8 @@ namespace Game.Cluster.Gateway
         {
             return new[]
             {
-                new ServiceInstanceListener(context => new UdpCommunicationListener(context, settings))
+                new ServiceInstanceListener(context => new UdpListener(context, settings), "UdpListenerEndpoint"),
+                new ServiceInstanceListener(context => new FabricTransportServiceRemotingListener(context, this), "ServiceRemotingEndpoint")
             };
         }
     }

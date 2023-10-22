@@ -21,7 +21,7 @@
 
 	<Resources>
 		<Endpoints>
-			<Endpoint Name="ServiceEndpoint" />
+			<Endpoint Name="ServiceEndpointV2_1" />
 			<Endpoint Name="ReplicatorEndpoint" />
 		</Endpoints>
 	</Resources>

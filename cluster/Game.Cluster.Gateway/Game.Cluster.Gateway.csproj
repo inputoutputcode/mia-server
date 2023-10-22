@@ -19,6 +19,7 @@
     <ProjectReference Include="..\Game.Cluster.ClientRegister.Interface\Game.Cluster.ClientRegister.Interface.csproj" />
     <ProjectReference Include="..\Game.Cluster.GameManager.Interface\Game.Cluster.GameManager.Interface.csproj" />
     <ProjectReference Include="..\Game.Cluster.GameRegister.Interface\Game.Cluster.GameRegister.Interface.csproj" />
+    <ProjectReference Include="..\Game.Cluster.Gateway.Interface\Game.Cluster.Gateway.Interface.csproj" />
     <ProjectReference Include="..\Game.Cluster.Mia.Interface\Game.Cluster.Mia.Interface.csproj" />
   </ItemGroup>
 

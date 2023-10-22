@@ -29,7 +29,7 @@ namespace Game.Cluster.GameRegister
         /// <returns>A collection of listeners.</returns>
         protected override IEnumerable<ServiceReplicaListener> CreateServiceReplicaListeners()
         {
-            return new ServiceReplicaListener[0];
+            return this.CreateServiceReplicaListeners();
         }
 
         /// <summary>

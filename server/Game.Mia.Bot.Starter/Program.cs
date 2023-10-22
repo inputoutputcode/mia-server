@@ -12,7 +12,7 @@ namespace Game.Server.Bot.Starter
         {
             Console.Title = Configuration.Config.Settings.PlayerName;
             
-            var client = new Client(new ClientListener(new GameLogic()), true);
+            var client = new Client(new ClientListener(new GameLogic()), false);
             client.Start();
 
             Console.ReadKey();

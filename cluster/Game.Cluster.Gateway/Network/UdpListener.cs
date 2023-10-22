@@ -15,12 +15,13 @@ using Microsoft.ServiceFabric.Services.Client;
 
 using Game.Cluster.Gateway.Config;
 using Game.Cluster.GameManager.Interface;
-using Game.Cluster.Gateway.Bla;
+using Game.Cluster.GameRegister.Interface;
+using Game.Cluster.ClientRegister.Interface;
 
 
 namespace Game.Cluster.Gateway.Network
 {
-    public class UdpCommunicationListener : ICommunicationListener, IDisposable, INetEventListener
+    public class UdpListener : ICommunicationListener, IDisposable, INetEventListener
     {
         private readonly CancellationTokenSource processRequestsCancellation = new CancellationTokenSource();
 
@@ -28,9 +29,9 @@ namespace Game.Cluster.Gateway.Network
         private NetManager server;
         private ServiceSettings settings;
 
-        public UdpCommunicationListener(StatelessServiceContext context, ServiceSettings settings)
+        public UdpListener(StatelessServiceContext context, ServiceSettings settings)
         {
-            var serviceEndpoint = context.CodePackageActivationContext.GetEndpoint("ServiceEndpoint");
+            var serviceEndpoint = context.CodePackageActivationContext.GetEndpoint("UdpListenerEndpoint");
             Port = serviceEndpoint.Port;
             this.settings = settings;
         }
@@ -161,10 +162,14 @@ namespace Game.Cluster.Gateway.Network
 
             ServiceEventSource.Current.Message($"OnNetworkReceive: {peer.EndPoint.Address}:{peer.EndPoint.Port} - Message: {eventMessage} - ChannelNumber: {channelNumber} - DeliveryMethod: {deliveryMethod}");
 
-            var client = new Client() { IPAddressPort = $"{peer.EndPoint.Address}:{peer.EndPoint.Port}" };
+            IClient client = new Client() { IPAddressPort = $"{peer.EndPoint.Address}:{peer.EndPoint.Port}" };
 
-            var proxy = ServiceProxy.Create<IGameManagerService>(new Uri("fabric:/Game.Cluster.App/Game.Cluster.GameManager"), new ServicePartitionKey(0));
-            string result = await proxy.RegisterPlayer(eventMessage, client);
+
+            var gameManagerServiceProxy = ServiceProxy.Create<IGameManagerService>(new Uri("fabric:/Game.Cluster.GameManager.App/GameManager"), new ServicePartitionKey(0));
+            bool resultManager = await gameManagerServiceProxy.RegisterPlayer(eventMessage, client);
+
+            var gameRegisterServiceProxy = ServiceProxy.Create<IClientRegisterService>(new Uri("fabric:/Game.Cluster.ClientRegister.App/ClientRegister"), new ServicePartitionKey(0));
+            string resultRegister = await gameRegisterServiceProxy.ReceiveClientCommand(eventMessage);
 
             // TODO: respond
         }

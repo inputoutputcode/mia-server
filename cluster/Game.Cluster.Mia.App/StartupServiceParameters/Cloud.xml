@@ -3,6 +3,6 @@
   <Parameters>
     <Parameter Name="GameMia_PartitionCount" Value="1" />
     <Parameter Name="GameMia_MinReplicaSetSize" Value="3" />
-    <Parameter Name="GameMia_TargetReplicaSetSize" Value="3" />
+    <Parameter Name="GameMia_TargetReplicaSetSize" Value="5" />
   </Parameters>
 </StartupServices>

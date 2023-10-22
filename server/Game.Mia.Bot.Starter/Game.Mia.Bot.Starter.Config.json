@@ -2,8 +2,8 @@
   "appSettings": {
     "PlayerName": "StarterBot",
     "ServerAddress": "127.0.0.1",
-    "ServerPort": 1000,
+    "ServerPort": 12345,
     "LocalPort": 1001,
-    "ConnectionKey": "Corp123!"
+    "ConnectionKey": "Corp123!Corp123!"
   }
 }
