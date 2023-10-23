@@ -26,13 +26,12 @@ namespace Game.Cluster.GameManager
             return this.CreateServiceRemotingReplicaListeners();
         }
 
-
         public Task<Guid> CreateGame()
         {
             return Task.FromResult(Guid.NewGuid());
         }
 
-        public Task<bool> RegisterPlayer(string playerName, IClient client)
+        public Task<bool> RegisterPlayer(string playerName)
         {
             return Task.FromResult(true);
         }

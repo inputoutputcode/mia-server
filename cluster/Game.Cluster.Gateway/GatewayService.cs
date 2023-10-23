@@ -48,7 +48,7 @@ namespace Game.Cluster.Gateway
             return new[]
             {
                 new ServiceInstanceListener(context => new UdpListener(context, settings), "UdpListenerEndpoint"),
-                new ServiceInstanceListener(context => new FabricTransportServiceRemotingListener(context, this), "ServiceRemotingEndpoint")
+                new ServiceInstanceListener(context => new FabricTransportServiceRemotingListener(context, this), "ServiceEndpointV2_1")
             };
         }
     }

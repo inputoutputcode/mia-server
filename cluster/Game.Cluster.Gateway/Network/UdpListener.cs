@@ -162,11 +162,10 @@ namespace Game.Cluster.Gateway.Network
 
             ServiceEventSource.Current.Message($"OnNetworkReceive: {peer.EndPoint.Address}:{peer.EndPoint.Port} - Message: {eventMessage} - ChannelNumber: {channelNumber} - DeliveryMethod: {deliveryMethod}");
 
-            IClient client = new Client() { IPAddressPort = $"{peer.EndPoint.Address}:{peer.EndPoint.Port}" };
-
+            var client = new Client() { IPAddressPort = $"{peer.EndPoint.Address}:{peer.EndPoint.Port}" };
 
             var gameManagerServiceProxy = ServiceProxy.Create<IGameManagerService>(new Uri("fabric:/Game.Cluster.GameManager.App/GameManager"), new ServicePartitionKey(0));
-            bool resultManager = await gameManagerServiceProxy.RegisterPlayer(eventMessage, client);
+            bool resultManager = await gameManagerServiceProxy.RegisterPlayer(eventMessage);
 
             var gameRegisterServiceProxy = ServiceProxy.Create<IClientRegisterService>(new Uri("fabric:/Game.Cluster.ClientRegister.App/ClientRegister"), new ServicePartitionKey(0));
             string resultRegister = await gameRegisterServiceProxy.ReceiveClientCommand(eventMessage);

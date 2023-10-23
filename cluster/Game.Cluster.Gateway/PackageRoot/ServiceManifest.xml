@@ -21,7 +21,7 @@
 	<Resources>
 		<Endpoints>
 			<Endpoint Name="UdpListenerEndpoint" Protocol="udp" Port="12345" Type="Input"  />
-			<Endpoint Name="ServiceRemotingEndpoint" Protocol="tcp" />
+			<Endpoint Name="ServiceEndpointV2_1" Protocol="tcp" />
 		</Endpoints>
 	</Resources>
 </ServiceManifest>
