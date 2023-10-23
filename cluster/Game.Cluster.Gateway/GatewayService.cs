@@ -7,7 +7,6 @@ using Microsoft.ServiceFabric.Services.Runtime;
 
 using Game.Cluster.Gateway.Config;
 using Game.Cluster.Gateway.Interface;
-using Game.Cluster.Gateway.Network;
 
 
 namespace Game.Cluster.Gateway
@@ -47,7 +46,7 @@ namespace Game.Cluster.Gateway
         {
             return new[]
             {
-                new ServiceInstanceListener(context => new UdpListener(context, settings), "UdpListenerEndpoint"),
+                new ServiceInstanceListener(context => new UdpCommunicationListener(context, settings), "UdpListenerEndpoint"),
                 new ServiceInstanceListener(context => new FabricTransportServiceRemotingListener(context, this), "ServiceEndpointV2_1")
             };
         }

@@ -19,9 +19,9 @@ using Game.Cluster.GameRegister.Interface;
 using Game.Cluster.ClientRegister.Interface;
 
 
-namespace Game.Cluster.Gateway.Network
+namespace Game.Cluster.Gateway
 {
-    public class UdpListener : ICommunicationListener, IDisposable, INetEventListener
+    public class UdpCommunicationListener : ICommunicationListener, IDisposable, INetEventListener
     {
         private readonly CancellationTokenSource processRequestsCancellation = new CancellationTokenSource();
 
@@ -29,7 +29,7 @@ namespace Game.Cluster.Gateway.Network
         private NetManager server;
         private ServiceSettings settings;
 
-        public UdpListener(StatelessServiceContext context, ServiceSettings settings)
+        public UdpCommunicationListener(StatelessServiceContext context, ServiceSettings settings)
         {
             var serviceEndpoint = context.CodePackageActivationContext.GetEndpoint("UdpListenerEndpoint");
             Port = serviceEndpoint.Port;
